@@ -2,6 +2,7 @@ package router
 
 import (
 	"charge/config"
+	"charge/dao/redis"
 	"charge/router/types"
 	"encoding/json"
 	"fmt"
@@ -15,11 +16,11 @@ func Run() {
 		c.JSON(200, gin.H{"message": "pong"})
 	})
 
-	g.POST("/from", func(c *gin.Context) {
-		rep := &types.FormReq{}
+	g.POST("/charge", func(c *gin.Context) {
 		buf, _ := io.ReadAll(c.Request.Body)
+		rep := &types.FormReq{}
 		json.Unmarshal(buf, rep)
-		resp := types.FormResp{}
+		resp := redis.FindAllCharge(c.Copy(), rep.Key)
 		c.JSON(200, resp)
 	})
 

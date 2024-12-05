@@ -1,0 +1,18 @@
+redis:
+  Addr:  ""
+  Password: ""
+
+Mongodb:
+  Addr:     ""
+  Password: ""
+
+Port:
+CKs:
+  - ""
+  - ""
+  - ""
+
+User-Agent:
+ChargeUid:
+  - ""
+

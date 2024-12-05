@@ -1,0 +1,59 @@
+{
+  "code": 0,
+  "data": {
+    "lottery_id": 330479,
+    "sender_uid": 385136374,
+    "business_type": 12,
+    "business_id": 1006518945822277649,
+    "status": 0,
+    "lottery_time": 1734004800,
+    "lottery_at_num": 0,
+    "lottery_feed_limit": 1,
+    "need_post": 7,
+    "pay_status": 0,
+    "first_prize": 1,
+    "second_prize": 2,
+    "third_prize": 3,
+    "ts": 1733418202,
+    "participants": 116,
+    "has_charge_right": true,
+    "participated": true,
+    "followed": false,
+    "reposted": false,
+    "lottery_detail_url": "",
+    "first_prize_cmt": "Switch OLED",
+    "second_prize_cmt": "蓝牙手柄",
+    "third_prize_cmt": "闭源掌机",
+    "first_prize_pic": "",
+    "second_prize_pic": "",
+    "third_prize_pic": "",
+    "vip_batch_sign": "",
+    "prize_type_first": {
+      "type": 0,
+      "value": {
+        "stype": 0
+      }
+    },
+    "prize_type_second": {
+      "type": 0,
+      "value": {
+        "stype": 0
+      }
+    },
+    "prize_type_third": {
+      "type": 0,
+      "value": {
+        "stype": 0
+      }
+    },
+    "exclusive_level": {
+      "privilege_type": 10,
+      "upower_level_str": "6元档包月充电",
+      "upower_title": "鸡动员",
+      "upower_intro": "开通此档位可以获得我的粉丝勋章",
+      "upower_open_url": "https://www.bilibili.com/h5/upower/index?mid=385136374\u0026default_level=10\u0026levels=10\u0026navhide=1"
+    }
+  },
+  "message": "",
+  "msg": ""
+}

@@ -18,6 +18,9 @@ type config struct {
 		Addr     string
 		Password string
 	}
+	Cks        []string
+	User_Agent string   `yaml:"user-agent"`
+	ChargeUid  []string `yaml:"chargeUid"`
 }
 
 var Cfg = *new(config)
