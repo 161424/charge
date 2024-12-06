@@ -28,12 +28,20 @@ func Start() {
 	}
 }
 
+//func SetDefaultZset() {
+//	if RedisClient == nil {
+//		return
+//	}
+//	RedisClient.Z
+//}
+
 // 用Zset保存charge信息
 // 读取信息
-func FindAllCharge(ctx context.Context, key string) []types.FormResp {
+func FindAllCharge(ctx context.Context, header, key string) []types.FormResp {
 	if key == "" {
 		key = Month
 	}
+	key = fmt.Sprintf("%s-%s", header, Month)
 	if RedisClient == nil {
 		return nil
 	}
@@ -46,7 +54,7 @@ func FindAllCharge(ctx context.Context, key string) []types.FormResp {
 	for _, v := range result {
 		j := &types.FormResp{}
 		json.Unmarshal([]byte(v), j)
-		if utils.Filter(j.EndTime) {
+		if utils.TimeFilter(j.EndTime) {
 			resp = append(resp, *j)
 		}
 	}
@@ -54,8 +62,8 @@ func FindAllCharge(ctx context.Context, key string) []types.FormResp {
 }
 
 // 添加信息
-func AddCharge(ctx context.Context, score int, member types.FormResp) {
-	RedisClient.ZAdd(ctx, Month, redis.Z{Score: float64(score), Member: member.String()})
+func AddCharge(ctx context.Context, header string, score int64, member types.FormResp) {
+	RedisClient.ZAdd(ctx, fmt.Sprintf("%s-%s", header, Month), redis.Z{Score: float64(score), Member: member.String()})
 }
 
 func Add(tp string, key string, value interface{}) {

@@ -8,7 +8,7 @@ import (
 
 const (
 	// 时间轮的槽数（bucket数量），通常是一个2的幂，以便于位运算
-	wheelSize = 64
+	wheelSize = 1440 // 一天1440分钟
 	// 每个槽的时间间隔，单位：毫秒
 	tickDuration = time.Minute
 )
@@ -17,6 +17,7 @@ const (
 type Timer struct {
 	callback func()
 	expiry   int64 // 到期时间（以tick为单位）
+	circle   bool
 }
 
 // TimingWheel 表示时间轮
@@ -32,7 +33,7 @@ type TimingWheel struct {
 func NewTimingWheel() *TimingWheel {
 	tw := &TimingWheel{
 		buckets: make([]*list.List, wheelSize),
-		current: 0,
+		current: time.Now().Minute() + time.Now().Hour()*60,
 		stop:    make(chan struct{}),
 	}
 
@@ -55,12 +56,12 @@ func (tw *TimingWheel) Stop() {
 }
 
 // AddTimer 添加一个定时任务
-func (tw *TimingWheel) AddTimer(duration time.Duration, callback func()) {
+func (tw *TimingWheel) AddTimer(duration time.Duration, circle bool, callback func()) {
 	tw.Lock()
 	defer tw.Unlock()
 
 	// 计算到期时间（以tick为单位）
-	expiry := (time.Now().UnixNano() / int64(tickDuration)) + int64(duration/tickDuration)
+	expiry := (time.Now().UnixMilli() / int64(tickDuration)) + int64(duration/tickDuration)
 	position := expiry % wheelSize
 	ticksUntilExpiry := int(expiry/wheelSize) - (tw.current / wheelSize)
 	if ticksUntilExpiry < 0 {
@@ -70,6 +71,7 @@ func (tw *TimingWheel) AddTimer(duration time.Duration, callback func()) {
 	timer := &Timer{
 		callback: callback,
 		expiry:   expiry,
+		circle:   circle,
 	}
 
 	// 将定时任务添加到对应槽的末尾
@@ -103,7 +105,11 @@ func (tw *TimingWheel) processTimersAtPosition(position int) {
 		if time.Now().UnixNano()/int64(tickDuration) >= timer.expiry {
 			go timer.callback() // 在新goroutine中执行回调，以避免阻塞时间轮
 			next := e.Next()
-			tw.buckets[position].Remove(e)
+			if timer.circle {
+				tw.AddTimer(time.Duration(timer.expiry), timer.circle, timer.callback)
+			} else {
+				tw.buckets[position].Remove(e)
+			}
 			e = next
 		} else {
 			break // 如果当前时间还没到该任务的到期时间，则停止处理该槽的其他任务（因为它们是按序添加的）

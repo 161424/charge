@@ -7,19 +7,23 @@ type FormReq struct {
 }
 
 type FormResp struct {
-	Id              int    `json:"id"`   // 默认id
+	Id              int    `json:"id"` // 默认id
+	BusinessId      string `json:"business_id"`
 	UName           string `json:"name"` // 抽奖者名字
 	UFans           string `json:"fans"` // 抽奖者粉丝数
-	Uid             int    `json:"uid"`  //
+	Uid             int64  `json:"uid"`  //
 	EndTimeUnix     int64  `json:"end_timeUnix"`
-	EndTime         string `json:"end_time"`         // 结束时间
-	Prizes          string `json:"Prizes"`           // 奖品内容
+	EndTime         string `json:"end_time"` // 结束时间
+	DynamicMessage  string `json:"dynamic_message"`
+	Prizes          string `json:"Prizes"` // 奖品内容
+	PrizesUrl       string `json:"PrizesUrl"`
 	NumParticipants int    `json:"num_participants"` // 参与人数
 	NumPrizes       int    `json:"num_prizes"`       // 奖品个数
-	Cost            int    `json:"cost"`             // 需要花多少钱
-	IsParticipants  bool   `json:"is_participants"`  // 是否参加
-	AllCost         int    `json:"all_cost"`         // 总花费money，按月计算
-	Winner          string `json:"wins"`
+	//NumPrizesString       string   `json:"num_prizes_string"`       // 奖品个数
+	Cost           string `json:"cost"`            // 需要花多少钱
+	IsParticipants string `json:"is_participants"` // 是否参加
+	AllCost        int    `json:"all_cost"`        // 总花费money，按月计算
+	Winner         string `json:"wins"`
 }
 
 func (f FormResp) String() string {

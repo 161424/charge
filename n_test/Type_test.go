@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"testing"
+	"time"
 )
 
 type U struct {
@@ -17,4 +18,8 @@ func TestType(t *testing.T) {
 	}
 	buf, err := json.Marshal(u1)
 	fmt.Println(string(buf), err)
+}
+
+func TestTimeMinute(t *testing.T) {
+	fmt.Println(time.Now().Minute() + time.Now().Hour()*60)
 }

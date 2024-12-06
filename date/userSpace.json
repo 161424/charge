@@ -1,0 +1,177 @@
+{
+  "code": 0,
+  "message": "0",
+  "ttl": 1,
+  "data": {
+    "has_more": true,
+    "items": [
+      {
+        "content": "充电抽奖合集12.6及之后",
+        "jump_url": "//www.bilibili.com/opus/1007475508047249432",
+        "opus_id": "1007475508047249432",
+        "stat": {
+          "like": "1"
+        }
+      },
+      {
+        "content": "充电抽奖合集12.5及之后",
+        "jump_url": "//www.bilibili.com/opus/1007102387056279575",
+        "opus_id": "1007102387056279575",
+        "stat": {
+          "like": "1"
+        }
+      },
+      {
+        "content": "充电抽奖合集12.4及之后",
+        "jump_url": "//www.bilibili.com/opus/1006733719941152770",
+        "opus_id": "1006733719941152770",
+        "stat": {
+          "like": "3"
+        }
+      },
+      {
+        "content": "充电抽奖合集12.3及之后",
+        "jump_url": "//www.bilibili.com/opus/1006387034478084100",
+        "opus_id": "1006387034478084100",
+        "stat": {
+          "like": "1"
+        }
+      },
+      {
+        "content": "充电抽奖合集12.2及之后",
+        "jump_url": "//www.bilibili.com/opus/1005990072158257160",
+        "opus_id": "1005990072158257160",
+        "stat": {
+          "like": "2"
+        }
+      },
+      {
+        "content": "充电抽奖合集12.1及之后",
+        "jump_url": "//www.bilibili.com/opus/1005629380799496216",
+        "opus_id": "1005629380799496216",
+        "stat": {
+          "like": "3"
+        }
+      },
+      {
+        "content": "充电抽奖合集11.30及之后",
+        "jump_url": "//www.bilibili.com/opus/1005251604072366088",
+        "opus_id": "1005251604072366088",
+        "stat": {
+          "like": "1"
+        }
+      },
+      {
+        "content": "[笑哭][笑哭][笑哭]我这样行不",
+        "cover": {
+          "height": 1080,
+          "url": "http://i0.hdslb.com/bfs/new_dyn/eee612ab111ca50a350f28741ce000e52149231.jpg",
+          "width": 1440
+        },
+        "jump_url": "//www.bilibili.com/opus/1005242438603767812",
+        "opus_id": "1005242438603767812",
+        "stat": {
+          "like": "6"
+        }
+      },
+      {
+        "content": "充电抽奖合集11.29及之后",
+        "jump_url": "//www.bilibili.com/opus/1004859572341440516",
+        "opus_id": "1004859572341440516",
+        "stat": {
+          "like": "4"
+        }
+      },
+      {
+        "content": "充电抽奖合集11.28及之后",
+        "jump_url": "//www.bilibili.com/opus/1004526119643250689",
+        "opus_id": "1004526119643250689",
+        "stat": {
+          "like": "4"
+        }
+      },
+      {
+        "content": "三连赞转抽奖合集",
+        "jump_url": "//www.bilibili.com/opus/1004150657919221760",
+        "opus_id": "1004150657919221760",
+        "stat": {
+          "like": "3"
+        }
+      },
+      {
+        "content": "充电抽奖合集11.27及之后",
+        "jump_url": "//www.bilibili.com/opus/1004148338609618945",
+        "opus_id": "1004148338609618945",
+        "stat": {
+          "like": "1"
+        }
+      },
+      {
+        "content": "三连赞转抽奖合集",
+        "jump_url": "//www.bilibili.com/opus/1003783786087841794",
+        "opus_id": "1003783786087841794",
+        "stat": {
+          "like": "2"
+        }
+      },
+      {
+        "content": "充电抽奖合集11.26及之后",
+        "jump_url": "//www.bilibili.com/opus/1003782781074931747",
+        "opus_id": "1003782781074931747",
+        "stat": {
+          "like": "1"
+        }
+      },
+      {
+        "content": "三连赞转抽奖合集",
+        "jump_url": "//www.bilibili.com/opus/1003391702831988768",
+        "opus_id": "1003391702831988768",
+        "stat": {
+          "like": "1"
+        }
+      },
+      {
+        "content": "充电抽奖合集11.25及之后",
+        "jump_url": "//www.bilibili.com/opus/1003388730693648391",
+        "opus_id": "1003388730693648391",
+        "stat": {
+          "like": "0"
+        }
+      },
+      {
+        "content": "三连赞转抽奖合集",
+        "jump_url": "//www.bilibili.com/opus/1003015519507316741",
+        "opus_id": "1003015519507316741",
+        "stat": {
+          "like": "2"
+        }
+      },
+      {
+        "content": "充电抽奖合集11.24及之后",
+        "jump_url": "//www.bilibili.com/opus/1003014265382109193",
+        "opus_id": "1003014265382109193",
+        "stat": {
+          "like": "1"
+        }
+      },
+      {
+        "content": "三连赞转抽奖合集",
+        "jump_url": "//www.bilibili.com/opus/1002645847385571382",
+        "opus_id": "1002645847385571382",
+        "stat": {
+          "like": "4"
+        }
+      },
+      {
+        "content": "充电抽奖合集11.23及之后",
+        "jump_url": "//www.bilibili.com/opus/1002644374215983112",
+        "opus_id": "1002644374215983112",
+        "stat": {
+          "like": "2"
+        }
+      }
+    ],
+    "offset": "1002644374215983112",
+    "update_num": 0
+  }
+}

@@ -20,7 +20,7 @@ func Run() {
 		buf, _ := io.ReadAll(c.Request.Body)
 		rep := &types.FormReq{}
 		json.Unmarshal(buf, rep)
-		resp := redis.FindAllCharge(c.Copy(), rep.Key)
+		resp := redis.FindAllCharge(c.Copy(), "charge", rep.Key)
 		c.JSON(200, resp)
 	})
 

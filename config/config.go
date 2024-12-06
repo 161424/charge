@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"gopkg.in/yaml.v3"
 	"io"
 
@@ -11,24 +12,23 @@ import (
 type config struct {
 	Port  string `yaml:"port"`
 	Redis struct {
-		Addr     string
-		Password string
+		Addr     string `yaml:"addr"`
+		Password string `yaml:"password"`
 	}
 	Mongodb struct {
-		Addr     string
-		Password string
+		Addr     string `yaml:"addr"`
+		Password string `yaml:"password"`
 	}
-	Cks        []string
-	User_Agent string   `yaml:"user-agent"`
-	ChargeUid  []string `yaml:"chargeUid"`
+	Cks        []string `yaml:"CKs"`
+	User_Agent string   `yaml:"UserAgent"`
+	ChargeUid  []string `yaml:"ChargeUid"`
 }
 
-var Cfg = *new(config)
+var Cfg = &config{}
 
 func Start() {
-
 	// 读取 YAML 文件
-	data, err := os.OpenFile("./config/config.yaml", os.O_RDWR, 777)
+	data, err := os.OpenFile("D:\\编程\\golang\\porject-study\\charge\\config\\config.yaml", os.O_RDWR, 777)
 	if err != nil {
 		log.Fatalf("读取文件失败: %v", err)
 	}
@@ -41,5 +41,6 @@ func Start() {
 	if err != nil {
 		log.Fatalf("解析 YAML 失败: %v", err)
 	}
+	fmt.Println(Cfg)
 
 }
