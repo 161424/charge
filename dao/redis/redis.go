@@ -63,7 +63,17 @@ func FindAllCharge(ctx context.Context, header, key string) []types.FormResp {
 
 // 添加信息
 func AddCharge(ctx context.Context, header string, score int64, member types.FormResp) {
-	RedisClient.ZAdd(ctx, fmt.Sprintf("%s-%s", header, Month), redis.Z{Score: float64(score), Member: member.String()})
+	if RedisClient == nil {
+		Start()
+	}
+	w := RedisClient.ZAdd(ctx, fmt.Sprintf("%s-%s", header, Month), redis.Z{Score: float64(score), Member: member.String()})
+
+	if w.Err() != nil {
+		fmt.Println(w.Err())
+	} else {
+		fmt.Println(w.Result())
+	}
+	//fmt.Println(w.Err())
 }
 
 func Add(tp string, key string, value interface{}) {

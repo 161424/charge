@@ -5,10 +5,12 @@ import (
 	"charge/inet"
 	"charge/pkg/getcharge"
 	"charge/router/types"
+	"charge/utils"
 	"encoding/json"
 	"fmt"
 	"regexp"
 	"testing"
+	"time"
 )
 
 func TestChargeInfo(t *testing.T) {
@@ -50,4 +52,13 @@ func TestChargeOtherInfo(t *testing.T) {
 	err := json.Unmarshal(body, &detail)
 	fmt.Println(err, detail)
 
+}
+
+func TestGetChargeFromMonitorDefaultUsersDynamic(t *testing.T) {
+	defer utils.Tracker(time.Now())
+	config.Start()
+	f := getcharge.GetChargeFromMonitorDefaultUsersDynamic()
+	f()
+	time.Sleep(5 * time.Second)
+	fmt.Println("end")
 }

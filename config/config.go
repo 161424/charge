@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"gopkg.in/yaml.v3"
 	"io"
+	"strings"
 
 	"log"
 	"os"
@@ -28,7 +29,11 @@ var Cfg = &config{}
 
 func Start() {
 	// 读取 YAML 文件
-	data, err := os.OpenFile("D:\\编程\\golang\\porject-study\\charge\\config\\config.yaml", os.O_RDWR, 777)
+	path, _ := os.Getwd()
+	npath := strings.Split(path, "\\")
+	path = strings.Join(npath[:len(npath)-1], "/")
+	fmt.Println(path)
+	data, err := os.OpenFile(path+"/config/config.yaml", os.O_RDWR, 777)
 	if err != nil {
 		log.Fatalf("读取文件失败: %v", err)
 	}

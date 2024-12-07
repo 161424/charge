@@ -15,7 +15,7 @@ func TestSpace(t *testing.T) {
 	opus := []string{}
 
 	body := inet.DefaultClient.RedundantDW(_url)
-
+	//fmt.Println(string(body))
 	doc, err := goquery.NewDocumentFromReader(bytes.NewReader(body))
 	if err != nil {
 		panic(err)

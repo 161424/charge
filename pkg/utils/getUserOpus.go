@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"charge/inet"
 	"encoding/json"
+	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"strings"
 )
@@ -30,7 +31,11 @@ func GetUserOpus(Uid []string) []string {
 			url := DefaultUrl + uid
 			body := inet.DefaultClient.RedundantDW(url)
 			userSpace := UserSpace{}
-			json.Unmarshal(body, &userSpace)
+			err := json.Unmarshal(body, &userSpace)
+			if err != nil {
+				fmt.Println(err)
+				continue
+			}
 			for _, item := range userSpace.Data.Items {
 				if !strings.Contains(item.Content, "充电") {
 					continue
@@ -53,6 +58,9 @@ func GetUserOpus(Uid []string) []string {
 						opus = append(opus, v)
 					}
 				})
+			}
+			if len(opus) == 0 {
+				fmt.Println(string(body))
 			}
 
 		}
