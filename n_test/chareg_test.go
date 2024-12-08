@@ -62,3 +62,12 @@ func TestGetChargeFromMonitorDefaultUsersDynamic(t *testing.T) {
 	time.Sleep(5 * time.Second)
 	fmt.Println("end")
 }
+
+func TestShuffle(t *testing.T) {
+	u := []int{}
+	for i := 0; i < 20; i++ {
+		u = append(u, i)
+	}
+	utils.Shuffle(u)
+	fmt.Println(u)
+}

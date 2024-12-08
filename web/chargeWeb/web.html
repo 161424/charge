@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+</head>
+<body>
+<div id="app">
+    <table>
+        <thead>
+        <tr>
+            <!-- @click与@change输出相反，click应该属beforclick，change应该是afterclick-->
+            <td><input type="checkbox" v-model="data.selected" ></td>
+            <td>ID</td>
+            <td>BusinessId</td>
+            <td>用户名</td>
+            <td>粉丝数</td>
+            <td>动态信息</td>
+            <td>奖品</td>
+            <td>参与人数</td>
+            <td>奖品个数</td>
+            <td>cost</td>
+            <td>是否参与</td>
+            <td>奖品个数</td>
+            <td><button @click="refresh">刷新</button></td>
+            <td><button @click="join">参与</button></td>
+
+        </tr>
+
+        </thead>
+        <tbody>
+        <tr v-for="(value,index) in data.list">
+            <td><input type="checkbox" :value="value" v-model="data.checkbox" ></td>
+            <td>{{value.name}}</td>
+            <td>{{value.price}}</td>
+            <td>{{value.stock}}</td>
+            <td>
+                <button @click="sub(value)">-</button>
+                {{value.number}}
+                <button @click="add(value)">+</button>
+            </td>
+            <td>
+                <button @click="del(index,value.id)"> 删除</button>
+
+            </td>
+
+        </tr>
+        </tbody>
+        <tfoot><tr><td>总价 {{ totalPrice }}</td></tr></tfoot>
+
+    </table>
+
+</div>
+<script type="module">
+    const {createApp,reactive,watch,computed,ref}=Vue
+
+    createApp({
+        setup() {
+            const data = []
+
+
+            const resp = axios.get("/")
+
+
+            return {
+                data
+            }
+
+        }}).mount("#app")
+</script>
+</body>
+</html>

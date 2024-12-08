@@ -70,9 +70,10 @@ func AddCharge(ctx context.Context, header string, score int64, member types.For
 
 	if w.Err() != nil {
 		fmt.Println(w.Err())
-	} else {
-		fmt.Println(w.Result())
 	}
+	//
+	//fmt.Println(w.Result())
+	//
 	//fmt.Println(w.Err())
 }
 
