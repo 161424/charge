@@ -2,14 +2,17 @@ package utils
 
 import (
 	"bytes"
+	"charge/config"
 	"charge/inet"
+	"charge/utils"
 	"encoding/json"
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"strings"
+	"time"
 )
 
-var DefaultUrl = "https://api.bilibili.com/x/polymer/web-dynamic/v1/opus/feed/space?host_mid="
+var DefaultUrl = "https://api.bilibili.com/x/polymer/web-dynamic/v1/opus/feed/space?page=1&host_mid="
 var SpaceUrl = "https://www.bilibili.com/opus/"
 
 type UserSpace struct {
@@ -27,6 +30,7 @@ type UserSpace struct {
 func GetUserOpus(Uid []string) []string {
 	opus := []string{}
 	if len(Uid) != 0 {
+		utils.Shuffle(Uid) // 打乱被监听者uid
 		for _, uid := range Uid {
 			url := DefaultUrl + uid
 			body := inet.DefaultClient.RedundantDW(url)
@@ -36,10 +40,17 @@ func GetUserOpus(Uid []string) []string {
 				fmt.Println(err)
 				continue
 			}
+			// 获取uid用户的space_opus
+			// 只获取第一页的前十个动态
+			counter := 0
 			for _, item := range userSpace.Data.Items {
 				if !strings.Contains(item.Content, "充电") {
 					continue
 				}
+				if counter == 10 {
+					break
+				}
+				f := DaleyTime(time.Now()) // 做个延时，减少风控几率
 				_url := SpaceUrl + item.OpusID
 				ibody := inet.DefaultClient.RedundantDW(_url)
 
@@ -58,7 +69,10 @@ func GetUserOpus(Uid []string) []string {
 						opus = append(opus, v)
 					}
 				})
+				f()
+				counter++
 			}
+
 			if len(opus) == 0 {
 				fmt.Println(string(body))
 			}
@@ -67,4 +81,14 @@ func GetUserOpus(Uid []string) []string {
 
 	}
 	return opus
+}
+
+func DaleyTime(t time.Time) func() {
+	return func() {
+		nt := time.Now()
+		if nt.Sub(t) < time.Duration(config.Cfg.DaleyTime) {
+			time.Sleep(t.Add(time.Duration(config.Cfg.DaleyTime)).Sub(nt))
+		}
+	}
+
 }

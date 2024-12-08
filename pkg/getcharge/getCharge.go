@@ -63,17 +63,14 @@ type ChargeOtherInfo struct {
 
 func GetChargeFromMonitorDefaultUsersDynamic() func() {
 	opus := utils.GetUserOpus(config.Cfg.ChargeUid)
-	fmt.Println("opus:", opus)
 	return func() {
 		CU := "https://api.bilibili.com/x/polymer/web-dynamic/v1/detail?id="
 		COU := "https://api.vc.bilibili.com/lottery_svr/v1/lottery_svr/lottery_notice?business_type=12&business_id="
 		re := regexp.MustCompile(`\d+`)
-		fmt.Println("2opus:", opus)
 		for _, op := range opus {
 			data := types.FormResp{}
 			data.BusinessId = op
 			_url := CU + op
-			fmt.Println(_url)
 			body := inet.DefaultClient.RedundantDW(_url)
 			if body == nil {
 				fmt.Println("body is nil")
@@ -108,7 +105,7 @@ func GetChargeFromMonitorDefaultUsersDynamic() func() {
 			// other info
 			//  https://api.vc.bilibili.com/lottery_svr/v1/lottery_svr/lottery_notice?business_id=1006518945822277649&business_type=12
 			_url = COU + op
-			fmt.Println(1, data)
+
 			oBody := inet.DefaultClient.RedundantDW(_url)
 			oDetail := ChargeOtherInfo{}
 			err = json.Unmarshal(oBody, &oDetail)

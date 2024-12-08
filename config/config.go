@@ -23,6 +23,7 @@ type config struct {
 	Cks        []string `yaml:"CKs"`
 	User_Agent string   `yaml:"UserAgent"`
 	ChargeUid  []string `yaml:"ChargeUid"`
+	DaleyTime  int64    `yaml:"DaleyTime"`
 }
 
 var Cfg = &config{}

@@ -5,17 +5,19 @@ import (
 	"charge/utils"
 	"io"
 	"net/http"
-	"sync"
 	"time"
 )
 
 type defaultClient struct {
-	Client *http.Client
-	sync.Once
+	Client     *http.Client
+	Tracker    time.Ticker
+	IsActive   bool
+	AliveCK    []int
+	AliveCkNum int
+	State      []int
 }
 
 var DefaultClient = &defaultClient{}
-var AliveCK []int
 
 func init() {
 	DefaultClient.Client = &http.Client{
@@ -62,9 +64,9 @@ func (d *defaultClient) CheckSelect(url string, idx int) []byte {
 }
 
 func (d *defaultClient) RedundantDW(url string) []byte {
-	d.Do(func() {
+	if d.IsActive {
 		d.CheckAliveCk()
-	})
+	}
 	var re = []byte{}
 	l := len(config.Cfg.Cks)
 	if l == 0 {
@@ -74,7 +76,7 @@ func (d *defaultClient) RedundantDW(url string) []byte {
 		}
 	} else {
 		for i := 0; i < l; i++ {
-			if AliveCK[i] == 0 {
+			if d.AliveCK[i] == 0 {
 				continue
 			}
 			re = d.CheckSelect(url, i)
@@ -89,12 +91,12 @@ func (d *defaultClient) RedundantDW(url string) []byte {
 func (d *defaultClient) CheckAliveCk() {
 	url := ""
 	l := len(config.Cfg.Cks)
-	AliveCK = make([]int, l)
-
+	d.AliveCK = make([]int, l)
+	d.State = make([]int, l)
 	for i := 0; i < l; i++ {
 		re := d.CheckSelect(url, i)
 		if utils.WebFilter(re) {
-			AliveCK[i] = 1
+			d.AliveCK[i] = 1
 		}
 	}
 }
