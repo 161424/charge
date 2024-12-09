@@ -104,9 +104,8 @@ func (d *defaultClient) CheckSelect(url string, idx int) []byte {
 	return body
 }
 
-func (d *defaultClient) RedundantDW(url string) []byte {
+func (d *defaultClient) RedundantDW(url string) (re []byte) {
 
-	var re = []byte{}
 	l := len(config.Cfg.Cks)
 	if l == 1 {
 		re = d.CheckOne(url)
@@ -158,12 +157,12 @@ func (d *defaultClient) RedundantDW(url string) []byte {
 			}
 			idx++
 			if moreSleepNeedToStop > d.AliveCkNum*2 {
-				return nil
+				return
 			}
 
 		}
 	}
-	return nil
+	return
 }
 
 func (d *defaultClient) Unav(unav *Unav, idx int, t time.Time) {

@@ -28,7 +28,7 @@ type UserSpace struct {
 
 // 获取uname最近的几个动态dity
 func GetUserOpus(Uid []string) []string {
-	opus := []string{}
+	opus := map[string]struct{}{} // 去重使用
 	if len(Uid) != 0 {
 		utils.Shuffle(Uid) // 打乱被监听者uid
 		for _, uid := range Uid {
@@ -66,7 +66,7 @@ func GetUserOpus(Uid []string) []string {
 						if v[0] == '/' {
 							v = v[1:]
 						}
-						opus = append(opus, v)
+						opus[v] = struct{}{}
 					}
 				})
 				f()
@@ -80,7 +80,11 @@ func GetUserOpus(Uid []string) []string {
 		}
 
 	}
-	return opus
+	reOpus := []string{}
+	for k := range opus {
+		reOpus = append(reOpus, k)
+	}
+	return reOpus
 }
 
 func DaleyTime(t time.Time) func() {

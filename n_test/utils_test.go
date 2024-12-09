@@ -18,3 +18,12 @@ func TestCutUid(t *testing.T) {
 	u := make([]time.Time, 3)
 	fmt.Println(u)
 }
+
+func TestY(t *testing.T) {
+	w := k()
+	fmt.Println(w, len(w), w == nil)
+}
+
+func k() (re []int) {
+	return
+}
