@@ -39,6 +39,7 @@ type ckStatus struct {
 }
 
 var DefaultClient = &defaultClient{}
+var AliveCK []int
 
 func init() {
 	DefaultClient.Client = &http.Client{
