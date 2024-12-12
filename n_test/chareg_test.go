@@ -30,7 +30,7 @@ func TestChargeInfo(t *testing.T) {
 	txl := re.FindAllString(tx, -1)
 	data.Cost = txl[0]
 	data.Prizes = mainBody.Module_dynamic.Additional.Upower_lottery.Desc.Text
-	data.PrizesUrl = mainBody.Module_dynamic.Additional.Upower_lottery.Desc.Jump_url
+	//data.PrizesUrl = mainBody.Module_dynamic.Additional.Upower_lottery.Desc.Jump_url
 	dm := ""
 	for _, v := range mainBody.Module_dynamic.Desc.Rich_text_nodes {
 		dm += v.Text
@@ -70,4 +70,18 @@ func TestShuffle(t *testing.T) {
 	}
 	utils.Shuffle(u)
 	fmt.Println(u)
+}
+
+type Name struct {
+	U struct {
+		Uname string `json:"uname"`
+		Age   int    `json:"age"`
+	}
+}
+
+func TestNilStruct(t *testing.T) {
+	s := `{"name":null}"`
+	n := new(Name)
+	json.Unmarshal([]byte(s), n)
+	fmt.Println(*n)
 }

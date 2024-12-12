@@ -2,124 +2,129 @@
   import {provide} from "vue";
   const props = defineProps({})
   import axios from 'axios';
-  const body = axios
+  const durl = "http://127.0.0.1:2025/";
+  const currentDate = new Date();
+
+  const currentMonth = currentDate.getMonth();
+  const month = "December"
+  const res = axios({
+    method: "GET",
+    url:durl+"charge/",
+    // params: {
+    //   month:"December",
+    //   page:1
+  // }
+}).then(response => {
+    // 从响应对象中提取数据
+    console.log("???",response.status);
+    const dataList = response.data; // 假设服务器返回的数据在 response.data 中
+
+    // 在这里处理你的数据列表
+    console.log("获取到的数据列表：", dataList);
+
+    // 示例：遍历列表并打印每个项目的某个属性
+    dataList.forEach(item => {
+      console.log("项目ID：", item.id); // 假设每个项目都有一个 id 属性
+      // 根据你的数据结构调整这里的属性访问
+    });
+
+  }).catch(error => {
+    // 处理错误情况
+    console.error("请求出错：", error);
+  });
+  console.log(res)
 
 
-  const data = [{
-    name:"wuka",
-    ufans:"35",
-    endtime:"2024.11.1",
-    uposmessage:"表格边框。指定CSS表格边框，使用border属性。下面的例子指定了一个表格的Th和TD元素 …" +
-        "折叠边框。border-collapse 属性设置表格的边框是否被折叠成一个单一的边框或隔开：实 …" +
-        "表格宽度和高度。Width和height属性定义表格的宽度和高度。下面的例子是设置100％的宽 …" +
-        "表格文字对齐。表格中的文本对齐和垂直对齐属性。text-align属性设置水平对齐方式，向 …",
-    prize:"3",
-    numpart:15,
-    numprize:3,
-    cost:6,
-    ispart:"未参与",
-    part:"http://www.bilibili.com",
-    winpage:"www.bilibili.com",
-  },{name:"wuka",
-    ufans:"35",
-    endtime:"2024.11.1",
-    uposmessage:"快来",
-    prize:"3",
-    numpart:15,
-    numprize:3,
-    cost:6,
-    ispart:"未参与",
-    part:"www.bilibili.com",
-    winpage:"www.bilibili.com",},{name:"wuka",
-    ufans:"35",
-    endtime:"2024.11.1",
-    uposmessage:"快来",
-    prize:"3",
-    numpart:15,
-    numprize:3,
-    cost:6,
-    ispart:"未参与",
-    part:"www.bilibili.com",
-    winpage:"www.bilibili.com",},{name:"wuka",
-    ufans:"35",
-    endtime:"2024.11.1",
-    uposmessage:"快来",
-    prize:"3",
-    numpart:15,
-    numprize:3,
-    cost:6,
-    ispart:"未参与",
-    part:"www.bilibili.com",
-    winpage:"www.bilibili.com",},{name:"wuka",
-    ufans:"35",
-    endtime:"2024.11.1",
-    uposmessage:"快来",
-    prize:"3",
-    numpart:15,
-    numprize:3,
-    cost:6,
-    ispart:"未参与",
-    part:"www.bilibili.com",
-    winpage:"www.bilibili.com",}]
+  // const data = [{
+  //   name:"wuka",
+  //   ufans:"35",
+  //   endtime:"2024.11.1",
+  //   uposmessage:"表格边框。指定CSS表格边框，使用border属性。下面的例子指定了一个表格的Th和TD元素 …" +
+  //       "折叠边框。border-collapse 属性设置表格的边框是否被折叠成一个单一的边框或隔开：实 …" +
+  //       "表格宽度和高度。Width和height属性定义表格的宽度和高度。下面的例子是设置100％的宽 …" +
+  //       "表格文字对齐。表格中的文本对齐和垂直对齐属性。text-align属性设置水平对齐方式，向 …",
+  //   prize:"3",
+  //   numpart:15,
+  //   numprize:3,
+  //   cost:6,
+  //   ispart:"未参与",
+  //   part:"http://www.bilibili.com",
+  //   winpage:"www.bilibili.com",
+  // }]
 </script>
 
 <template  style="overflow-x:auto;">
   <h3>home</h3>
   <a href="http://www.baidu.com">#</a>
-  <table  >
-  <thead>
-    <tr >
-      <!-- @click与@change输出相反，click应该属beforclick，change应该是afterclick-->
-      <th id="mini"><input type="checkbox" ></th>
-      <th id="mini">Id</th>
-      <th id="middle">用户名</th>
-      <th id="middle">粉丝数</th>
 
-      <th>结束时间</th>
-      <th colspan="2">动态信息</th>
-      <th colspan="2">奖品内容</th>
+  <tr >
+    <td >
+      <button>刷新</button>
+    </td>
+    <td colspan="13">总价:</td>
+  </tr>
 
-      <th id="middle">参与人数</th>
-      <th id="middle">抽奖个数</th>
-      <th id="mini">花费</th>
-      <th id="middle">是否参与</th>
-      <th id="middle"> 开奖页面</th>
+  <table >
+    <thead>
+      <tr >
+        <!-- @click与@change输出相反，click应该属beforclick，change应该是afterclick-->
+        <th id="mini"><input type="checkbox" ></th>
+        <th id="mini">Id</th>
+        <th id="middle">用户名</th>
+        <th id="middle">粉丝数</th>
 
-    </tr>
+        <th>结束时间</th>
+        <th colspan="2">动态信息</th>
+        <th colspan="2">奖品内容</th>
 
-  </thead>
-  <tbody>
-    <tr v-for="(value,index) in data" >
-      <td id="mini"><input type="checkbox" v-bind:value="value" ></td>
-      <td >{{index}}</td>
-      <td>{{value.name}}</td>
-      <td>{{value.ufans}}</td>
+        <th id="middle">参与人数</th>
+        <th id="middle">抽奖个数</th>
+        <th id="mini">花费</th>
+        <th id="middle">是否参与</th>
+        <th id="middle">开奖页面</th>
+        <th >充电过期日期 </th>
 
-      <td>{{value.endtime}}</td>
-      <td colspan="2" align="left" v-bind:title="value.uposmessage">{{value.uposmessage}}</td>
-      <td colspan="2" align="left" v-bind:title="value.prize"> {{value.prize}}</td>
+      </tr>
 
-      <td>{{value.numpart}}</td>
-      <td>{{value.numprize}}</td>
-      <td>{{value.cost}}</td>
+    </thead>
+    <tbody>
+      <tr v-for="(value,index) in dataList" >
+        <td id="mini"><input type="checkbox" v-bind:value="value" ></td>
+        <td >{{index}}</td>
+        <td>{{value.name}}</td>
+        <td>{{value.ufans}}</td>
 
-      <td>
-        <a v-bind:href="value.part">{{value.ispart}}</a>
-      </td>
-      <td>
-        <a v-bind:href="value.winpage">开奖连接</a>
-      </td>
+        <td>{{value.endtime}}</td>
+        <td colspan="2" align="left" v-bind:title="value.uposmessage">{{value.uposmessage}}</td>
+        <td colspan="2" align="left" v-bind:title="value.prize">{{value.prize}}</td>
 
-    </tr>
-  </tbody>
-  <tfoot>
-    <tr >
-      <td  >
-        <button>刷新</button>
-      </td>
-      <td colspan="13">总价:</td>
-    </tr>
-  </tfoot>
+        <td>{{value.numpart}}</td>
+        <td>{{value.numprize}}</td>
+        <td>{{value.cost}}</td>
+
+        <td>
+          <a v-bind:href="value.part">{{value.ispart}}</a>
+        </td>
+        <td>
+          <a v-bind:href="value.winpage">开奖连接</a>
+        </td>
+        <td>{{data.chargeEndTime}}</td>
+
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td class="prev"><a href="#" onclick="return false;">Previous</a></td>
+        <!-- 数字序列，这里只显示第1、2、3、4页和省略号、27页作为示例 -->
+        <td><a href="#" onclick="return false;">1</a></td>
+        <td><a href="#" onclick="return false;">2</a></td>
+        <td><a href="#" onclick="return false;">3</a></td>
+        <td><a href="#" onclick="return false;">4</a></td>
+        <td class="dots">...</td>
+        <td class="active"><span>27</span></td> <!-- 当前页用span表示，不链接 -->
+        <td class="next"><a href="#" onclick="return false;">Next</a></td>
+      </tr>
+    </tfoot>
 
   </table>
 

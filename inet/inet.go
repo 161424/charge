@@ -68,6 +68,7 @@ func init() {
 	//}()
 }
 
+// 为ck[0]单独使用
 func (d *defaultClient) CheckOne(url string) []byte {
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {

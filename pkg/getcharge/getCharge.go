@@ -13,8 +13,6 @@ import (
 	"time"
 )
 
-var chargeUrl = ""
-
 type ChargeDetail struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
@@ -127,7 +125,7 @@ func GetChargeFromMonitorDefaultUsersDynamic() func() {
 			err = json.Unmarshal(oBody, &oDetail)
 			if err != nil {
 				fmt.Println(err)
-				return
+				continue
 			}
 			data.EndTimeUnix = oDetail.Data.Lottery_time
 			data.EndTime = time.Unix(oDetail.Data.Lottery_time, 0).Format(time.DateOnly)

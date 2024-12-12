@@ -11,19 +11,21 @@ import (
 )
 
 type config struct {
-	Port  string `yaml:"port"`
+	Port  string `yaml:"Port"`
 	Redis struct {
-		Addr     string `yaml:"addr"`
-		Password string `yaml:"password"`
+		Addr     string `yaml:"Addr"`
+		Password string `yaml:"Password"`
 	}
 	Mongodb struct {
-		Addr     string `yaml:"addr"`
-		Password string `yaml:"password"`
+		Addr     string `yaml:"Addr"`
+		Password string `yaml:"Password"`
 	}
-	Cks        []string `yaml:"CKs"`
-	User_Agent string   `yaml:"UserAgent"`
-	ChargeUid  []string `yaml:"ChargeUid"`
-	DaleyTime  int64    `yaml:"DaleyTime"`
+	Cks            []string `yaml:"CKs"`
+	User_Agent     string   `yaml:"UserAgent"`
+	ChargeUid      []string `yaml:"ChargeUid"`
+	LotteryUid     []string `yaml:"LotteryUid"`
+	FakeLotteryUid []string `yaml:"FakeLotteryUid"`
+	DaleyTime      int64    `yaml:"DaleyTime"`
 }
 
 var Cfg = &config{}
@@ -34,7 +36,7 @@ func Start() {
 	npath := strings.Split(path, "\\")
 	path = strings.Join(npath[:len(npath)-1], "/")
 	fmt.Println(path)
-	data, err := os.OpenFile(path+"/config/config.yaml", os.O_RDWR, 777)
+	data, err := os.OpenFile(path+"/charge/config/config.yaml", os.O_RDWR, 777)
 	if err != nil {
 		log.Fatalf("读取文件失败: %v", err)
 	}

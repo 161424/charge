@@ -24,6 +24,8 @@ type FormResp struct {
 	IsParticipants string `json:"is_participants"` // 是否参加
 	AllCost        int    `json:"all_cost"`        // 总花费money，按月计算
 	Winner         string `json:"wins"`
+	IsNew          bool   `json:"is_new"`
+	RemainingTime  int    `json:"remaining_time"` // 充电剩余时间
 }
 
 func (f FormResp) String() string {

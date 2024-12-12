@@ -2,10 +2,12 @@ package n_test
 
 import (
 	"charge/config"
+	redis2 "charge/dao/redis"
 	"context"
 	"fmt"
 	"github.com/redis/go-redis/v9"
 	"testing"
+	"time"
 )
 
 type U struct {
@@ -37,4 +39,13 @@ func TestRedisZrang(t *testing.T) {
 	fmt.Println(k.Result())
 	fmt.Println(k.Val())
 
+}
+
+func TestFindTimeCharge(t *testing.T) {
+	redis2.Start()
+	key := redis2.Month
+	ts := time.Now().Format(time.DateOnly)
+	tr, _ := time.Parse(time.DateOnly, ts)
+	resp := redis2.FindTimeCharge(context.Background(), "charge", key, tr)
+	fmt.Println(resp)
 }
