@@ -34,6 +34,8 @@ func TestListenLotteryUp(t *testing.T) {
 	config.Start()
 	redis.Start()
 	defer utils.Tracker(time.Now())
-	f := listenUpForLottery.ListenLotteryUp()
-	f()
+	f1 := listenUpForLottery.ListenLotteryUp()
+	f1()
+	f2 := listenUpForLottery.BalanceLottery()
+	f2()
 }

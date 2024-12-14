@@ -179,11 +179,9 @@ func DeleteUp(ctx context.Context, key string) bool {
 
 // lottery
 
-func ExitLottery(ctx context.Context, key string) bool {
-	// zset
+func ExitLottery(ctx context.Context, key string) bool { // hash
 	ok := RedisClient.HExists(ctx, "lottery", key)
 	return ok.Val()
-
 }
 func AddLotteryRecord(ctx context.Context, key, member string) {
 	w := RedisClient.HSet(ctx, "lottery", key, member)
@@ -191,21 +189,39 @@ func AddLotteryRecord(ctx context.Context, key, member string) {
 		fmt.Println(w.Err())
 	}
 }
-func ExitLotteryDay(ctx context.Context, header string) int64 {
-	// set
+
+func ReadLotteryRecord(ctx context.Context) map[string]string {
+	w := RedisClient.HGetAll(ctx, "lottery")
+	if w.Err() != nil {
+		fmt.Println(w.Err())
+	}
+	return w.Val()
+}
+
+func DelLotteryRecord(ctx context.Context, key string) {
+	w := RedisClient.HDel(ctx, "lottery", key)
+	if w.Err() != nil {
+		fmt.Println(w.Err())
+	}
+}
+
+func ExitLotteryDay(ctx context.Context, header string) int64 { // set
 	ok := RedisClient.Exists(ctx, "lottery-"+header)
 	return ok.Val()
 }
-func AddLotteryDay(ctx context.Context, header, key string, member string) {
-	w := RedisClient.HSet(ctx, "lottery-"+header, key, member)
+func AddLotteryDay(ctx context.Context, header, key string) bool {
+	w := RedisClient.SAdd(ctx, "lottery-"+header, key)
 	if w.Err() != nil {
 		fmt.Println(w.Err())
+		return false
+
 	}
+	return true
 }
-func ReadLotteryDay(ctx context.Context, header, key string) []string {
-	w := RedisClient.HGet(ctx, "lottery-"+header, key)
+func ReadLotteryDay(ctx context.Context, header string) []string {
+	w := RedisClient.SMembers(ctx, "lottery-"+header)
 	if w.Err() != nil {
 		fmt.Println(w.Err())
 	}
-	return nil
+	return w.Val()
 }

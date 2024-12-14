@@ -34,7 +34,11 @@ func Start() {
 	// 读取 YAML 文件
 	path, _ := os.Getwd()
 	npath := strings.Split(path, "\\")
-	path = strings.Join(npath[:len(npath)-1], "/")
+	if npath[len(npath)-1] != "charge" {
+		npath = npath[:len(npath)-1]
+	}
+	path = strings.Join(npath, "/")
+
 	fmt.Println(path)
 	data, err := os.OpenFile(path+"/config/config.yaml", os.O_RDWR, 777)
 	if err != nil {

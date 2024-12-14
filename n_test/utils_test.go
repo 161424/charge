@@ -2,6 +2,7 @@ package n
 
 import (
 	"fmt"
+	"os"
 	"regexp"
 	"strings"
 	"testing"
@@ -26,4 +27,10 @@ func TestY(t *testing.T) {
 
 func k() (re []int) {
 	return
+}
+
+func TestPath(t *testing.T) {
+	p, _ := os.Getwd()
+	npath := strings.Split(p, "\\")
+	fmt.Println(p, npath)
 }

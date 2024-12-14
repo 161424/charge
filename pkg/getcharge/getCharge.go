@@ -22,8 +22,9 @@ type ChargeDetail struct {
 		Item struct {
 			Modules struct {
 				Module_author struct {
-					Mid  int64
-					Name string
+					Mid    int64
+					Name   string
+					Pub_ts int64 // 动态发布时间
 				}
 				Module_dynamic struct {
 					Additional struct { // 抽奖信息
@@ -105,9 +106,11 @@ func GetChargeFromMonitorDefaultUsersDynamic() func() {
 				continue
 			}
 			if !(oDetail.Code == 0 || oDetail.Code == 200) {
+				fmt.Println(3, "err code: ", oDetail.Code)
 				continue
 			}
 			if oDetail.Data.Lottery_time < t.Unix() { // 过期
+				fmt.Println(4, "过期")
 				continue
 			}
 			data.EndTimeUnix = oDetail.Data.Lottery_time
