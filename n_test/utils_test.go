@@ -34,3 +34,10 @@ func TestPath(t *testing.T) {
 	npath := strings.Split(p, "\\")
 	fmt.Println(p, npath)
 }
+
+func TestTime(t *testing.T) {
+	tn := time.Now()
+	tw := tn.Format(time.DateOnly)
+	fmt.Println(tw, tn)
+
+}

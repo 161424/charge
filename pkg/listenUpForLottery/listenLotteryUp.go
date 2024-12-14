@@ -44,7 +44,7 @@ type BLottery struct {
 // 根据多ck监听其关注的up 或 将up进行列表统计然后多ck进行监听
 func ListenLotteryUp() func() {
 	lotterys := utils.ListenupforLottery(config.Cfg.LotteryUid)
-	time.Sleep(2 * time.Second)
+	time.Sleep(20 * time.Second)
 	fmt.Println(len(lotterys), lotterys)
 	return func() {
 		t := time.Now()
@@ -54,10 +54,7 @@ func ListenLotteryUp() func() {
 		idx := 0
 		for _, lottery := range lotterys {
 			idx++
-			if idx/20 == 1 {
-				time.Sleep(5)
-				idx = 0
-			}
+
 			if redis.ExitLottery(ctx, lottery) {
 				continue
 			}
@@ -65,7 +62,7 @@ func ListenLotteryUp() func() {
 			LotteryData.AddTime = t.Unix()
 			LotteryData.BusinessId = lottery
 			_url := COU + lottery
-			time.Sleep(1 * time.Second)
+			time.Sleep(2 * time.Second)
 			body := inet.DefaultClient.RedundantDW(_url)
 			if body == nil {
 				fmt.Println("body is nil")
@@ -76,15 +73,15 @@ func ListenLotteryUp() func() {
 			detail := LotteryBody{}
 			err := json.Unmarshal(body, &detail)
 			if err != nil {
-				fmt.Println(err, string(body))
+				fmt.Println(1, lottery, err, string(body))
 				// invalid character '{' after top-level value {"code":-400,"message":"strconv.ParseInt: parsing \"id_from=333.999.0.0\": invalid syntax","ttl":1}{"code":-9999,"data":{},"message":"服务系统错误","msg":"服务系统错误"}
 				continue
 			}
+			time.Sleep(2 * time.Second)
 			if detail.Code == -9999 {
 				fmt.Println("非官抽")
 				// 需要添加detail里面的pub_time，进行定期清除lotterylist
 				_url = CU + lottery
-				time.Sleep(1 * time.Second)
 				body = inet.DefaultClient.RedundantDW(_url)
 				if body == nil {
 					fmt.Println("body is nil")
@@ -98,17 +95,26 @@ func ListenLotteryUp() func() {
 					continue
 				}
 				if !(_detail.Code == 0 || _detail.Code == 200) {
-					fmt.Println(3, "err code: ", _detail.Code)
+					fmt.Println(3, "5m大休息。err code: ", _detail.Code)
 					// 3 err code:  4101152
 					// 3 err code:  500
+					time.Sleep(5 * time.Minute)
 					continue
 				}
 				LotteryData.CreateTime = _detail.Data.Item.Modules.Module_author.Pub_ts
 			} else if detail.Code == 0 {
+				if detail.Data.Lottery_time < t.Unix() { // 管抽访问太频繁会风控
+					continue
+				}
 				LotteryData.IsOfficial = true
 				LotteryData.EndTime = detail.Data.Lottery_time
 				LotteryData.NumParticipate = detail.Data.Participants
 				LotteryData.NumPrizes = detail.Data.FirstPrize + detail.Data.SecondPrize + detail.Data.ThirdPrize
+				if idx/10 == 1 {
+					fmt.Println("20s小休息")
+					time.Sleep(time.Minute)
+					idx = 0
+				}
 			} else {
 				fmt.Println("other err code")
 				continue
@@ -126,15 +132,17 @@ func ListenLotteryUp() func() {
 
 func (l *Lottery) String() string {
 	str, _ := json.Marshal(l)
+
 	return string(str)
 }
 
 func BalanceLottery() func() {
 	return func() {
 		bl := &BLottery{}
+		bl.Official = make(map[string]Lottery)
 		ctx := context.Background()
-		tn := time.Now()
-		t, _ := time.Parse("20060102", tn.String())
+		tn := time.Now().Add(-6 * 24 * time.Hour)
+		t := tn.Format(time.DateOnly)
 		lr := redis.ReadLotteryRecord(ctx)
 		if lr == nil {
 			fmt.Println("balance lottery err: redis.ReadLotteryRecord is nil")
@@ -156,10 +164,10 @@ func BalanceLottery() func() {
 				} else {
 					bl.Official[k] = shortL
 					tlk = append(tlk, shortL.EndTime)
-					tlv = append(tlv, v)
+					tlv = append(tlv, shortL.BusinessId)
 				}
 			} else {
-				if shortL.CreateTime < tn.Add(30*24*time.Hour).Unix() { //  删除距离动态发布时间超过一个月的数据
+				if shortL.CreateTime < tn.Add(-30*24*time.Hour).Unix() { //  删除距离动态发布时间超过一个月的数据
 					redis.DelLotteryRecord(ctx, k)
 				} else {
 					bl.Common = append(bl.Common, k)
@@ -167,7 +175,7 @@ func BalanceLottery() func() {
 			}
 			shortLL[k] = shortL
 		}
-
+		fmt.Printf("管抽数量：%d，非关抽数量：%d\n\t", len(tlk), len(bl.Common))
 		// 生成 lottery-t
 		sort.Slice(tlk, func(i, j int) bool {
 			if tlk[i] < tlk[j] {
@@ -187,17 +195,17 @@ func BalanceLottery() func() {
 				break
 			}
 		}
-		cml := len(bl.Common) / 30
+		cml := len(bl.Common)/30 + 1
 		sort.Strings(bl.Common)
-		_bid = bl.Common[:cml]
+		_bid = append(_bid, bl.Common[:cml]...)
 
 		for _, v := range _bid {
-			if redis.AddLotteryDay(ctx, t.String(), v) {
+			if redis.AddLotteryDay(ctx, t, v) {
 				_v := shortLL[v]
 				_v.Sent = true
 				redis.AddLotteryRecord(ctx, v, _v.String())
 			}
 		}
-		fmt.Println("BalanceLottery complete")
+		fmt.Printf("BalanceLottery complete. %s管抽数量%d，非关抽数量%d\n\t", t, len(_bid)-cml, cml)
 	}
 }

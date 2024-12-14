@@ -28,9 +28,9 @@ func Run() error {
 	// 12点钟
 	tw.AddTimer(12*60*time.Minute, true, getcharge.GetChargeRecordFromCharger()) // 监听充电者的充电状态
 	// 1点钟
-	tw.AddTimer(1*60*time.Minute, true, listenUpForLottery.ListenLotteryUp()) // 监听lottery
+	tw.AddTimer(7*60*time.Minute, true, listenUpForLottery.ListenLotteryUp()) // 监听lottery
 	// 3点钟
-	tw.AddTimer(3*60*time.Minute, true, listenUpForLottery.BalanceLottery()) // 设置每日转发lottery
+	tw.AddTimer(8*60*time.Minute, true, listenUpForLottery.BalanceLottery()) // 设置每日转发lottery
 	//todo 多账号监听up充电
 	//todo
 	defer tw.Stop()

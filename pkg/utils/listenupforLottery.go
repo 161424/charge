@@ -18,7 +18,7 @@ func ListenupforLottery(Uid []string) []string {
 		utils.Shuffle(Uid) // 打乱被监听者uid
 		re := regexp.MustCompile("[0-9]{18,}")
 		for _, uid := range Uid {
-			fmt.Println("查看用户uid：", uid)
+			fmt.Printf("查看用户uid：%s", uid)
 			url := DefaultUrl + uid
 			body := inet.DefaultClient.RedundantDW(url)
 			userSpace := UserSpace{}
@@ -53,11 +53,14 @@ func ListenupforLottery(Uid []string) []string {
 					}
 
 					if v, ok := s.Find("a").Attr("href"); ok { // 内嵌url
-						v = v[len(v)-19:]
-						if v[0] == '/' {
-							v = v[1:]
+						//v = v[len(v)-19:]
+						//if v[0] == '/' {
+						//	v = v[1:]
+						//}
+						if re.MatchString(v) {
+							opus[re.FindString(v)] = struct{}{}
 						}
-						opus[v] = struct{}{}
+						//opus[v] = struct{}{}
 					}
 				})
 				f()
@@ -66,6 +69,8 @@ func ListenupforLottery(Uid []string) []string {
 			if len(opus) == 0 {
 				fmt.Println(string(body))
 			}
+			fmt.Println("    目前有数据：", len(opus))
+
 		}
 	}
 	reOpus := []string{}
