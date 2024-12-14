@@ -77,6 +77,7 @@ func ListenLotteryUp() func() {
 			err := json.Unmarshal(body, &detail)
 			if err != nil {
 				fmt.Println(err, string(body))
+				// invalid character '{' after top-level value {"code":-400,"message":"strconv.ParseInt: parsing \"id_from=333.999.0.0\": invalid syntax","ttl":1}{"code":-9999,"data":{},"message":"服务系统错误","msg":"服务系统错误"}
 				continue
 			}
 			if detail.Code == -9999 {
@@ -149,6 +150,7 @@ func BalanceLottery() func() {
 				continue
 			}
 			if shortL.IsOfficial == true { // 官抽
+				// err nil
 				if shortL.EndTime < tn.Unix() { // 超时删除
 					redis.DelLotteryRecord(ctx, k)
 				} else {
