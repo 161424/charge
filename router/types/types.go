@@ -9,9 +9,10 @@ type FormReq struct {
 type FormResp struct {
 	Id              int    `json:"id"` // 默认id
 	BusinessId      string `json:"business_id"`
-	UName           string `json:"name"` // 抽奖者名字
-	UFans           string `json:"fans"` // 抽奖者粉丝数
-	Uid             int64  `json:"uid"`  //
+	UName           string `json:"name"`        // 抽奖者名字
+	UFans           string `json:"fans"`        // 抽奖者粉丝数
+	Uid             int64  `json:"uid"`         //
+	ChargerUid      string `json:"charger_uid"` //   抽奖参与者uid
 	EndTimeUnix     int64  `json:"end_timeUnix"`
 	EndTime         string `json:"end_time"` // 结束时间
 	DynamicMessage  string `json:"dynamic_message"`
@@ -25,7 +26,7 @@ type FormResp struct {
 	AllCost        int    `json:"all_cost"`        // 总花费money，按月计算
 	Winner         string `json:"wins"`
 	IsNew          bool   `json:"is_new"`
-	RemainingTime  int    `json:"remaining_time"` // 充电剩余时间
+	RemainingTime  int64  `json:"remaining_time"` // 充电剩余时间
 }
 
 func (f FormResp) String() string {

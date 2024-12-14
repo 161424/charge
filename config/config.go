@@ -36,7 +36,7 @@ func Start() {
 	npath := strings.Split(path, "\\")
 	path = strings.Join(npath[:len(npath)-1], "/")
 	fmt.Println(path)
-	data, err := os.OpenFile(path+"/charge/config/config.yaml", os.O_RDWR, 777)
+	data, err := os.OpenFile(path+"/config/config.yaml", os.O_RDWR, 777)
 	if err != nil {
 		log.Fatalf("读取文件失败: %v", err)
 	}

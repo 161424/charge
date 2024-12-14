@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-var chargeRecordUrl = "https://api.live.bilibili.com/xlive/revenue/v1/guard/getChargeRecord?type=1$page="
+var chargeRecordUrl = "https://api.live.bilibili.com/xlive/revenue/v1/guard/getChargeRecord?type=1&page="
 
 type chargeRecordLoad struct {
 	UpUid        int    `json:"up_uid"`
@@ -43,7 +43,7 @@ type chargeRecord struct {
 					Period            int   `json:"period"`            //  充电时长
 				}
 			}
-			Start int64 `json:"start_time"` //  充电开始时间
+			Start int64 `json:"start"` //  充电开始时间
 		}
 		Total_page int `json:"total_page"`
 		Total_num  int `json:"total_num"`
@@ -55,9 +55,8 @@ func GetChargeRecordFromCharger() func() {
 	return func() {
 		page := 1
 		url := chargeRecordUrl + strconv.Itoa(page)
+		fmt.Println(url)
 		body := inet.DefaultClient.CheckOne(url)
-		//chargeRecordLoads := []chargeRecordLoad{}
-		//fmt.Println(chargeRecordLoads)
 		record := chargeRecord{}
 		err := json.Unmarshal(body, &record)
 		if err != nil {
@@ -66,11 +65,12 @@ func GetChargeRecordFromCharger() func() {
 		}
 		if record.Code != 0 {
 			fmt.Println("ChargeRecode.Code:", record.Code)
+			fmt.Println(record)
 			return
 		}
 		total_page := record.Data.Total_page
 		//key_member := []string{}
-		for i := 1; i < total_page; i++ {
+		for i := 1; i <= total_page; i++ {
 			time.Sleep(500 * time.Millisecond)
 			if i != 1 {
 				url = chargeRecordUrl + strconv.Itoa(i)
@@ -82,29 +82,30 @@ func GetChargeRecordFromCharger() func() {
 					continue
 				}
 			}
-			recd := record.Data.List[0]
-			chargeRecordData := chargeRecordLoad{}
-			chargeRecordData.UpUid = recd.Up_uid
-			chargeRecordData.UpName = recd.User_name
-			chargeRecordData.Start = recd.Start
-			chargeRecordData.Expire_time = recd.Item[0].Expire_time
-			chargeRecordData.ReNew = false
-			if recd.Item[0].Renew.Uid != 0 {
-				chargeRecordData.ReNew = true
-				chargeRecordData.ChargerId = recd.Item[0].Renew.Uid
-				chargeRecordData.Period = recd.Item[0].Renew.Period
-				chargeRecordData.Signed_price = recd.Item[0].Renew.Signed_price
-			} else {
-				chargeRecordData.ChargerId, err = strconv.Atoi(utils.CutUid(config.Cfg.Cks[0]))
-				if err != nil {
-					continue
+			for j := 0; j < len(record.Data.List); j++ {
+				recd := record.Data.List[j]
+				chargeRecordData := chargeRecordLoad{}
+				chargeRecordData.UpUid = recd.Up_uid
+				chargeRecordData.UpName = recd.User_name
+				chargeRecordData.Start = recd.Start
+				chargeRecordData.Expire_time = recd.Item[0].Expire_time
+				chargeRecordData.ReNew = false
+				if recd.Item[0].Renew.Uid != 0 {
+					chargeRecordData.ReNew = true
+					chargeRecordData.ChargerId = recd.Item[0].Renew.Uid
+					chargeRecordData.Period = recd.Item[0].Renew.Period
+					chargeRecordData.Signed_price = recd.Item[0].Renew.Signed_price
+				} else {
+					chargeRecordData.ChargerId, err = strconv.Atoi(utils.CutUid(config.Cfg.Cks[0]))
+					if err != nil {
+						continue
+					}
 				}
+				header := strconv.Itoa(chargeRecordData.ChargerId)
+				key := strconv.Itoa(chargeRecordData.UpUid)
+				member := chargeRecordData.String()
+				redis.AddChargeRecord(context.Background(), header, key, member)
 			}
-			header := strconv.Itoa(chargeRecordData.ChargerId)
-			key := strconv.Itoa(chargeRecordData.UpUid)
-			member := chargeRecordData.String()
-			redis.AddChargeRecord(context.Background(), header, key, member)
-
 		}
 	}
 } // 初始化使用

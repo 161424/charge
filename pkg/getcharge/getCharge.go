@@ -6,10 +6,12 @@ import (
 	"charge/inet"
 	"charge/pkg/utils"
 	"charge/router/types"
+	utils2 "charge/utils"
 	"context"
 	"encoding/json"
 	"fmt"
 	"regexp"
+	"strconv"
 	"time"
 )
 
@@ -28,6 +30,9 @@ type ChargeDetail struct {
 						Upower_lottery struct {
 							Button struct {
 								Check struct {
+									Text string
+								}
+								Jump_style struct {
 									Text string
 								}
 							}
@@ -70,11 +75,50 @@ func GetChargeFromMonitorDefaultUsersDynamic() func() {
 		COU := "https://api.vc.bilibili.com/lottery_svr/v1/lottery_svr/lottery_notice?business_type=12&business_id="
 		PrePrizesUrl := "https://www.bilibili.com/h5/lottery/result?business_type=12&business_id="
 		re := regexp.MustCompile(`\d+`)
+		ctx := context.Background()
+		addChargeList := true
+		t := time.Now()
+		//idx := 0
+
 		for _, op := range opus {
+			//idx++
+			//if idx == 10 {
+			//	return
+			//}
+			if redis.ExitCharge(ctx, op) == true {
+				continue
+			}
+
 			data := types.FormResp{}
+
+			time.Sleep(500 * time.Millisecond)
+			_url := COU + op
+			oBody := inet.DefaultClient.RedundantDW(_url)
+			if oBody == nil {
+				fmt.Println("body is nil")
+				continue
+			}
+			oDetail := ChargeOtherInfo{}
+			err := json.Unmarshal(oBody, &oDetail)
+			if err != nil {
+				fmt.Println(1, err)
+				continue
+			}
+			if !(oDetail.Code == 0 || oDetail.Code == 200) {
+				continue
+			}
+			if oDetail.Data.Lottery_time < t.Unix() { // 过期
+				continue
+			}
+			data.EndTimeUnix = oDetail.Data.Lottery_time
+			data.EndTime = time.Unix(oDetail.Data.Lottery_time, 0).Format(time.DateOnly)
+			data.NumParticipants = oDetail.Data.Participants
+			data.NumPrizes = oDetail.Data.FirstPrize + oDetail.Data.SecondPrize + oDetail.Data.ThirdPrize
+			ChargerUid := utils2.CutUid(config.Cfg.Cks[0])
+			data.ChargerUid = ChargerUid
 			data.BusinessId = op
-			_url := CU + op
-			time.Sleep(time.Second)
+
+			_url = CU + op
 			body := inet.DefaultClient.RedundantDW(_url)
 			if body == nil {
 				fmt.Println("body is nil")
@@ -82,13 +126,20 @@ func GetChargeFromMonitorDefaultUsersDynamic() func() {
 			}
 			// 过滤出有用信息
 			detail := ChargeDetail{}
-			err := json.Unmarshal(body, &detail)
+			err = json.Unmarshal(body, &detail)
 			if err != nil {
-				fmt.Println(err)
+				fmt.Println(2, err)
+				continue
+			}
+			if !(detail.Code == 0 || detail.Code == 200) {
 				continue
 			}
 			mainBody := detail.Data.Item.Modules
 			data.IsParticipants = mainBody.Module_dynamic.Additional.Upower_lottery.Button.Check.Text //  "已参与"
+			if data.IsParticipants == "" {
+				data.IsParticipants = mainBody.Module_dynamic.Additional.Upower_lottery.Button.Jump_style.Text // 未参加的没有check按钮
+			}
+
 			data.Uid = mainBody.Module_author.Mid
 			data.UName = mainBody.Module_author.Name
 			tx := mainBody.Module_dynamic.Additional.Upower_lottery.Hint.Text
@@ -97,6 +148,7 @@ func GetChargeFromMonitorDefaultUsersDynamic() func() {
 				data.Cost = txl[0]
 			} else {
 				data.Cost = "被风控了"
+				addChargeList = false
 			}
 
 			data.Prizes = mainBody.Module_dynamic.Additional.Upower_lottery.Desc.Text
@@ -114,25 +166,27 @@ func GetChargeFromMonitorDefaultUsersDynamic() func() {
 
 			// other info
 			//  https://api.vc.bilibili.com/lottery_svr/v1/lottery_svr/lottery_notice?business_id=1006518945822277649&business_type=12
-			_url = COU + op
-			time.Sleep(time.Second)
-			oBody := inet.DefaultClient.RedundantDW(_url)
-			if oBody == nil {
-				fmt.Println("body is nil")
-				continue
-			}
-			oDetail := ChargeOtherInfo{}
-			err = json.Unmarshal(oBody, &oDetail)
-			if err != nil {
-				fmt.Println(err)
-				continue
-			}
-			data.EndTimeUnix = oDetail.Data.Lottery_time
-			data.EndTime = time.Unix(oDetail.Data.Lottery_time, 0).Format(time.DateOnly)
-			data.NumParticipants = oDetail.Data.Participants
-			data.NumPrizes = oDetail.Data.FirstPrize + oDetail.Data.SecondPrize + oDetail.Data.ThirdPrize
+			go func() {
+				if s := redis.ReadOneChargeRecord(ctx, ChargerUid, strconv.Itoa(int(data.Uid))); s != "" {
+					tr := chargeRecordLoad{}
+					err = json.Unmarshal([]byte(s), &tr)
+					if err == nil {
+						if tr.Expire_time < t.Unix() {
+							return
+						}
+						if tr.ReNew {
+							data.RemainingTime = (tr.Expire_time - t.Unix()) % (24 * 60 * 60)
+						}
+					}
+				}
+				redis.AddCharge(ctx, "charge", data.EndTimeUnix, data)
+			}()
+
 			fmt.Println(2, data)
-			redis.AddCharge(context.Background(), "charge", data.EndTimeUnix, data)
+			time.Sleep(500 * time.Millisecond)
+			if addChargeList {
+				redis.AddChargeList(ctx, op, data.String())
+			}
 		}
 		inet.DefaultClient.Lock()
 		inet.DefaultClient.AliveCh = nil

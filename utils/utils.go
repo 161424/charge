@@ -10,7 +10,7 @@ import (
 
 func Tracker(t time.Time) {
 	tm := time.Now()
-	fmt.Println(tm.Sub(t))
+	fmt.Println("Run time:", tm.Sub(t))
 }
 
 func Shuffle(arr interface{}) {

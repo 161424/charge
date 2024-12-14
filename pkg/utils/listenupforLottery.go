@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"regexp"
-	"strings"
 	"time"
 )
 
@@ -31,10 +30,7 @@ func ListenupforLottery(Uid []string) []string {
 			// 只获取前五个图文数据
 			counter := 0
 			for _, item := range userSpace.Data.Items {
-				if !strings.Contains(item.Content, "充电") {
-					continue
-				}
-				// https://www.bilibili.com/opus/1009676614375571474?spm_id_from=333.1387.0.0
+				// https://www.bilibili.com/opus/1009676614375571474
 				if counter == 5 { //
 					break
 				}
@@ -53,7 +49,6 @@ func ListenupforLottery(Uid []string) []string {
 						if re.MatchString(v) {
 							opus[re.FindString(v)] = struct{}{}
 						}
-
 					}
 
 					if v, ok := s.Find("a").Attr("href"); ok { // 内嵌url
@@ -67,7 +62,6 @@ func ListenupforLottery(Uid []string) []string {
 				f()
 				counter++
 			}
-
 			if len(opus) == 0 {
 				fmt.Println(string(body))
 			}

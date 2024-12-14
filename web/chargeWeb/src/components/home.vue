@@ -1,39 +1,26 @@
 <script setup>
-  import {provide} from "vue";
-  const props = defineProps({})
+import { ref} from "vue";
   import axios from 'axios';
-  const durl = "http://127.0.0.1:2025/";
+
   const currentDate = new Date();
 
   const currentMonth = currentDate.getMonth();
   const month = "December"
-  const res = axios({
+  const dataList = ref([])
+  console.log(month)
+  async function ag (){await axios({
     method: "GET",
-    url:durl+"charge/",
+    url:"/api/charge/",
     // params: {
     //   month:"December",
     //   page:1
-  // }
-}).then(response => {
-    // 从响应对象中提取数据
-    console.log("???",response.status);
-    const dataList = response.data; // 假设服务器返回的数据在 response.data 中
-
-    // 在这里处理你的数据列表
-    console.log("获取到的数据列表：", dataList);
-
-    // 示例：遍历列表并打印每个项目的某个属性
-    dataList.forEach(item => {
-      console.log("项目ID：", item.id); // 假设每个项目都有一个 id 属性
-      // 根据你的数据结构调整这里的属性访问
-    });
-
+  }).then(response => {
+    dataList.value = response.data; // 假设服务器返回的数据在 response.data 中
   }).catch(error => {
-    // 处理错误情况
     console.error("请求出错：", error);
-  });
-  console.log(res)
-
+  });}
+  ag()
+  console.log("?",dataList)
 
   // const data = [{
   //   name:"wuka",
@@ -54,15 +41,10 @@
 </script>
 
 <template  style="overflow-x:auto;">
-  <h3>home</h3>
-  <a href="http://www.baidu.com">#</a>
 
-  <tr >
-    <td >
-      <button>刷新</button>
-    </td>
-    <td colspan="13">总价:</td>
-  </tr>
+<!-- <a ><button>刷新</button> </a>-->
+<!--  <p >总价:</p>-->
+
 
   <table >
     <thead>
@@ -108,7 +90,7 @@
         <td>
           <a v-bind:href="value.winpage">开奖连接</a>
         </td>
-        <td>{{data.chargeEndTime}}</td>
+<!--        <td>{{data.chargeEndTime}}</td>-->
 
       </tr>
     </tbody>
@@ -153,12 +135,11 @@
     padding-bottom: 12px;
   }
   tr,td {
-
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
-
   }
+
   tr:nth-child(even) {
     background-color: #f2f2f2;
   }

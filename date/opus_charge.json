@@ -134,6 +134,13 @@
                   "text": "已参与",
                   "toast": "已成功参与抽奖"
                 },
+
+                "jump_style": {
+
+                  "icon_url": "",
+                  "text": "6元充电"
+                },
+
                 "status": 2,
                 "type": 2
               },

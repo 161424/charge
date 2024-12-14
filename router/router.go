@@ -16,7 +16,7 @@ func Run() {
 		c.JSON(200, gin.H{"message": "pong"})
 	})
 
-	g.GET("/charge", func(c *gin.Context) {
+	g.GET("/charge/", func(c *gin.Context) {
 
 		//buf, _ := io.ReadAll(c.Request.Body)
 		//rep := &types.FormReq{}
@@ -27,15 +27,21 @@ func Run() {
 		np, _ := strconv.Atoi(page)
 		t, _ := time.Parse(time.DateOnly, ts)
 		resp := redis.FindTimeCharge(c.Copy(), "charge", key, t)
+
 		if l := len(resp); l < 20 { // 每页补全20个
 			for i := l; i < 20; i++ {
 				resp = append(resp, types.FormResp{})
 			}
 		}
-		c.JSON(200, resp[20*(np-1):20*np])
+		rr := resp[20*(np-1) : 20*np]
+		for i := 0; i < len(rr); i++ {
+
+		}
+
+		c.JSON(200, rr)
 	})
 	//fmt.Println(config.Cfg.Port)
-	fmt.Println(config.Cfg)
+	//fmt.Println(config.Cfg)
 	err := g.Run(config.Cfg.Port)
 	if err != nil {
 		fmt.Println(err)

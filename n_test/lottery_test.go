@@ -1,11 +1,16 @@
 package n
 
 import (
+	"charge/config"
+	"charge/dao/redis"
+	"charge/pkg/listenUpForLottery"
+	"charge/utils"
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"os"
 	"regexp"
 	"testing"
+	"time"
 )
 
 func TestLottery2(t *testing.T) {
@@ -23,4 +28,12 @@ func TestLottery2(t *testing.T) {
 		}
 	})
 	fmt.Println(data, len(data))
+}
+
+func TestListenLotteryUp(t *testing.T) {
+	config.Start()
+	redis.Start()
+	defer utils.Tracker(time.Now())
+	f := listenUpForLottery.ListenLotteryUp()
+	f()
 }

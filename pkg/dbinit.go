@@ -24,6 +24,7 @@ func Start() {
 	if k, err := redis.Exists(ctx, fmt.Sprintf("charge-%s", Month)).Result(); err == nil {
 		if k == 0 {
 			f := getcharge.GetChargeFromMonitorDefaultUsersDynamic()
+			fmt.Println("getcharge.GetChargeFromMonitorDefaultUsersDynamic()")
 			lf = append(lf, f)
 		}
 	}
@@ -31,6 +32,7 @@ func Start() {
 	if k, err := redis.Exists(ctx, fmt.Sprintf("%s-chargeRecord", utils.CutUid(config.Cfg.Cks[0]))).Result(); err == nil {
 		if k == 0 {
 			f := getcharge.GetChargeRecordFromCharger()
+			fmt.Println("getcharge.GetChargeRecordFromCharger()")
 			lf = append(lf, f)
 		}
 	}

@@ -2,6 +2,7 @@ package redis
 
 import (
 	"charge/config"
+	utils2 "charge/pkg/utils"
 	"charge/router/types"
 	"charge/utils"
 	"context"
@@ -100,11 +101,16 @@ func AddCharge(ctx context.Context, header string, score int64, member types.For
 	//fmt.Println(w.Err())
 }
 
-func Add(tp string, key string, value interface{}) {
-
+func ExitCharge(ctx context.Context, key string) bool {
+	ok := RedisClient.HExists(ctx, "charge", key)
+	return ok.Val()
 }
-
-func Del(tp string, key string) {}
+func AddChargeList(ctx context.Context, key, member string) {
+	w := RedisClient.HSet(ctx, "charge", key, member)
+	if w.Err() != nil {
+		fmt.Println(w.Err())
+	}
+}
 
 // chargeRecord
 // key chargeUid_chargeRecord
@@ -119,47 +125,87 @@ func FindAllChargeRecord(ctx context.Context, header, key string) map[string]str
 	return result
 }
 
-func FindOneChargeRecord(ctx context.Context, header, key, field string) string {
-	key = fmt.Sprintf("%s-chargeRecord", header)
-
+func ReadOneChargeRecord(ctx context.Context, header, field string) string {
+	key := fmt.Sprintf("%s-chargeRecord", header)
 	result, err := RedisClient.HGet(ctx, key, field).Result()
 	if err != nil {
-		fmt.Println(err)
-		return "{}"
+		fmt.Println(err) // 没有找到
+		return ""
 	}
 	return result
 }
 
 func AddChargeRecord(ctx context.Context, header string, key, member string) {
-
 	w := RedisClient.HSet(ctx, fmt.Sprintf("%s-chargeRecord", header), key, member)
+	if w.Err() != nil {
+		fmt.Println("?", w.Err())
+	}
+}
+
+// up 数据
+func AddUp(ctx context.Context, key, member string) {
+	w := RedisClient.HSet(ctx, "up", key, member)
 	if w.Err() != nil {
 		fmt.Println(w.Err())
 	}
+}
+
+func ExitUp(ctx context.Context, key string) bool {
+	return RedisClient.HExists(ctx, "up", key).Val()
+}
+
+func UpdateUp(ctx context.Context, key, tp string, member int) {
+	n := RedisClient.HGet(ctx, "up", key).Val()
+	up := utils2.Up{}
+	json.Unmarshal([]byte(n), &up)
+	switch tp {
+	case "fans":
+		up.Fans = member
+	case "charge":
+		up.ChargeLottery++
+	case "ol":
+		up.OfficialLottery++
+	case "cl":
+		up.CommonLottery++
+	}
+	w, _ := json.Marshal(up)
+	AddUp(ctx, key, string(w))
 
 }
 
-// Fans 数据
+func DeleteUp(ctx context.Context, key string) bool {
+	return true
+}
 
 // lottery
 
 func ExitLottery(ctx context.Context, key string) bool {
+	// zset
 	ok := RedisClient.HExists(ctx, "lottery", key)
 	return ok.Val()
 
 }
 func AddLotteryRecord(ctx context.Context, key, member string) {
-
 	w := RedisClient.HSet(ctx, "lottery", key, member)
 	if w.Err() != nil {
 		fmt.Println(w.Err())
 	}
-
 }
-
+func ExitLotteryDay(ctx context.Context, header string) int64 {
+	// set
+	ok := RedisClient.Exists(ctx, "lottery-"+header)
+	return ok.Val()
+}
 func AddLotteryDay(ctx context.Context, header, key string, member string) {
 	w := RedisClient.HSet(ctx, "lottery-"+header, key, member)
 	if w.Err() != nil {
 		fmt.Println(w.Err())
 	}
+}
+func ReadLotteryDay(ctx context.Context, header, key string) []string {
+	w := RedisClient.HGet(ctx, "lottery-"+header, key)
+	if w.Err() != nil {
+		fmt.Println(w.Err())
+	}
+	return nil
 }

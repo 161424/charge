@@ -33,14 +33,25 @@ type LotteryBody struct {
 	}
 }
 
+type BLottery struct {
+	Official map[int][]string `json:"official"`
+	Common   []string         `json:"common"`
+}
+
 // 根据多ck监听其关注的up 或 将up进行列表统计然后多ck进行监听
 func ListenLotteryUp() func() {
 	lotterys := utils.ListenupforLottery(config.Cfg.LotteryUid)
+	fmt.Println(len(lotterys), lotterys)
 	return func() {
 		t := time.Now()
 		COU := "https://api.vc.bilibili.com/lottery_svr/v1/lottery_svr/lottery_notice?business_type=1&business_id=" // 非官抽是-9999
 		ctx := context.Background()
+		idx := 0
 		for _, lottery := range lotterys {
+			idx++
+			if idx == 40 {
+				return
+			}
 			if redis.ExitLottery(ctx, lottery) {
 				continue
 			}
@@ -71,9 +82,10 @@ func ListenLotteryUp() func() {
 				LotteryData.NumParticipate = detail.Data.Participants
 				LotteryData.NumPrizes = detail.Data.FirstPrize + detail.Data.SecondPrize + detail.Data.ThirdPrize
 			} else {
+				fmt.Println("other err code")
 				continue
 			}
-
+			fmt.Println(2, LotteryData)
 			redis.AddLotteryRecord(ctx, lottery, LotteryData.String())
 			redis.AddLotteryDay(ctx, t.Format("20060102"), lottery, LotteryData.BusinessId) // lottery-20260102:[BusinessId...]
 		}
@@ -86,4 +98,12 @@ func ListenLotteryUp() func() {
 func (l *Lottery) String() string {
 	str, _ := json.Marshal(l)
 	return string(str)
+}
+
+func BalanceLottery() {
+	bl := &BLottery{}
+	t, _ := time.Parse("20060102", time.Now().String())
+	if k := redis.ExitLotteryDay(context.Background(), t.String()); k == 1 {
+
+	}
 }

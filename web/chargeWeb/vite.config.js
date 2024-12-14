@@ -20,14 +20,17 @@ export default defineConfig({
     // 是否开启 https
     https: false,
     // 设置反向代理，跨域
-    // proxy: {
-    //   '/api1': {
-    //     // 后台地址
-    //     target: 'http://127.0.0.1:8990/',
-    //     changeOrigin: true,
-    //     // rewrite: path => path.replace(/^\/api1/, '')
-    //   },
-    // }
+    proxy: {
+      '/api': {
+        // 后台地址
+        target: 'http://localhost:2025',
+        changeOrigin: true,
+        rewrite: path => path.replace(/^\/api/, '')
+        // pathRewrite:{
+        //   '^/api':''//重写路径
+        // }
+      },
+    }
   },
 
 })

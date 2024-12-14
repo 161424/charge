@@ -2,10 +2,12 @@ package n
 
 import (
 	"charge/config"
+	"charge/dao/redis"
 	"charge/inet"
 	"charge/pkg/getcharge"
 	"charge/router/types"
 	"charge/utils"
+	"context"
 	"encoding/json"
 	"fmt"
 	"regexp"
@@ -57,6 +59,7 @@ func TestChargeOtherInfo(t *testing.T) {
 func TestGetChargeFromMonitorDefaultUsersDynamic(t *testing.T) {
 	defer utils.Tracker(time.Now())
 	config.Start()
+	redis.Start()
 	f := getcharge.GetChargeFromMonitorDefaultUsersDynamic()
 	f()
 	time.Sleep(5 * time.Second)
@@ -84,4 +87,19 @@ func TestNilStruct(t *testing.T) {
 	n := new(Name)
 	json.Unmarshal([]byte(s), n)
 	fmt.Println(*n)
+}
+
+func TestGetChargeRecordFromCharger(t *testing.T) {
+	config.Start()
+	redis.Start()
+	defer utils.Tracker(time.Now())
+	f := getcharge.GetChargeRecordFromCharger()
+	f()
+}
+
+func TestT(t *testing.T) {
+	config.Start()
+	redis.Start()
+	s := redis.ReadOneChargeRecord(context.Background(), "74199115", "686127")
+	fmt.Println(s)
 }

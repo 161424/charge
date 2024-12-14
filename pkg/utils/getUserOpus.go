@@ -36,7 +36,8 @@ func GetUserOpus(Uid []string) []string {
 			userSpace := UserSpace{}
 			err := json.Unmarshal(body, &userSpace)
 			if err != nil {
-				fmt.Println(err)
+				fmt.Println(string(body))
+				fmt.Println(3, err)
 				continue
 			}
 			// 获取uid用户的space_opus
