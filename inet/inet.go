@@ -1,9 +1,11 @@
 package inet
 
 import (
+	"bytes"
 	"charge/config"
 	"charge/utils"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"sync"
@@ -207,3 +209,30 @@ func (d *defaultClient) HandCheckAlive() {
 //		}
 //	}
 //}
+
+// csrf就是bili_jct
+// csrf极易失效
+func (d *defaultClient) JoinChargeLottery(csrf, businessId string) []byte {
+	ck := config.Cfg.Cks[0]
+	if csrf == "" {
+		csrf = utils.CutCsrf(ck)
+	}
+	url := "https://api.bilibili.com/x/dynamic/feed/attach/click?csrf=" + csrf
+	pbody := fmt.Sprintf(`{"attach_card_type": 20,"cur_btn_status": 1,"dynamic_id_str": "%s"}`, businessId)
+	pbodyReader := bytes.NewReader([]byte(pbody))
+	req, err := http.NewRequest(http.MethodPost, url, pbodyReader)
+	if err != nil {
+		return nil
+	}
+
+	req.Header.Set("User-Agent", config.Cfg.User_Agent)
+	req.Header.Set("Connection", "keep-alive")
+	req.Header.Set("Cookie", ck)
+	resp, err := d.Client.Do(req)
+	if err != nil {
+		return nil
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	return body
+}

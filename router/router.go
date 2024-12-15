@@ -26,7 +26,7 @@ func Run() {
 		page := c.DefaultQuery("page", "1")
 		np, _ := strconv.Atoi(page)
 		t, _ := time.Parse(time.DateOnly, ts)
-		resp := redis.FindTimeCharge(c.Copy(), "charge", key, t)
+		resp := redis.FindTimeCharge(c.Copy(), key, t)
 
 		if l := len(resp); l < 20 { // 每页补全20个
 			for i := l; i < 20; i++ {

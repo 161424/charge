@@ -2,6 +2,7 @@ package redis
 
 import (
 	"charge/config"
+	"charge/pkg/getcharge"
 	utils2 "charge/pkg/utils"
 	"charge/router/types"
 	"charge/utils"
@@ -33,12 +34,14 @@ func Start() {
 }
 
 // 用Zset保存charge信息
+// 数据类型：ZSEt。key：charge-月份，score：结束时间，(return) member：types.FormResp
 // 读取信息
-func FindAllCharge(ctx context.Context, header, key string) []types.FormResp {
+func FindAllCharge(ctx context.Context, key string) []types.FormResp {
 	if key == "" {
 		key = Month
 	}
-	key = fmt.Sprintf("%s-%s", header, Month)
+	// charge-月份
+	key = fmt.Sprintf("charge-%s", Month)
 	if RedisClient == nil {
 		return nil
 	}
@@ -58,16 +61,16 @@ func FindAllCharge(ctx context.Context, header, key string) []types.FormResp {
 	return resp
 }
 
-func FindTimeCharge(ctx context.Context, header, key string, t time.Time) []types.FormResp {
+func FindTimeCharge(ctx context.Context, key string, t time.Time) []types.FormResp {
 	if key == "" {
 		key = Month
 	}
-	key = fmt.Sprintf("%s-%s", header, Month)
+	key = fmt.Sprintf("charge-%s", Month)
 	if RedisClient == nil {
 		return nil
 	}
 	score := t.Add(-2 * 24 * time.Hour).Unix()
-	fmt.Println(header, key, t.Unix(), score)
+
 	result, err := RedisClient.ZRangeByScore(ctx, key, &redis.ZRangeBy{
 		Min: strconv.Itoa(int(score)),
 		Max: "+inf",
@@ -88,9 +91,9 @@ func FindTimeCharge(ctx context.Context, header, key string, t time.Time) []type
 }
 
 // 添加信息
-func AddCharge(ctx context.Context, header string, score int64, member types.FormResp) {
+func AddCharge(ctx context.Context, score int64, member types.FormResp) {
 
-	w := RedisClient.ZAdd(ctx, fmt.Sprintf("%s-%s", header, Month), redis.Z{Score: float64(score), Member: member.String()})
+	w := RedisClient.ZAdd(ctx, fmt.Sprintf("charge-%s", Month), redis.Z{Score: float64(score), Member: member.String()})
 
 	if w.Err() != nil {
 		fmt.Println(w.Err())
@@ -101,6 +104,8 @@ func AddCharge(ctx context.Context, header string, score int64, member types.For
 	//fmt.Println(w.Err())
 }
 
+// 数据类型：hash。key：business_id，member：types.FormResp.String()
+// 去重使用
 func ExitCharge(ctx context.Context, key string) bool {
 	ok := RedisClient.HExists(ctx, "charge", key)
 	return ok.Val()
@@ -113,16 +118,23 @@ func AddChargeList(ctx context.Context, key, member string) {
 }
 
 // chargeRecord
-// key chargeUid_chargeRecord
-func FindAllChargeRecord(ctx context.Context, header, key string) map[string]string {
-	key = fmt.Sprintf("%s-chargeRecord", header)
+// 数据类型：Hash。key：chargerUid_chargeRecord，(return) field:upuid，member：chargeRecordLoad.String()
+func FindAllChargeRecord(ctx context.Context, header string) map[string]getcharge.ChargeRecordLoad {
 
+	key := fmt.Sprintf("%s-chargeRecord", header)
 	result, err := RedisClient.HGetAll(ctx, key).Result()
 	if err != nil {
 		fmt.Println(err)
 		return nil
 	}
-	return result
+	var resp = make(map[string]getcharge.ChargeRecordLoad)
+	for k, v := range result {
+		j := getcharge.ChargeRecordLoad{}
+		json.Unmarshal([]byte(v), &j)
+		resp[k] = j
+	}
+	return resp
+
 }
 
 func ReadOneChargeRecord(ctx context.Context, header, field string) string {

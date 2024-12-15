@@ -171,7 +171,7 @@ func GetChargeFromMonitorDefaultUsersDynamic() func() {
 			//  https://api.vc.bilibili.com/lottery_svr/v1/lottery_svr/lottery_notice?business_id=1006518945822277649&business_type=12
 			go func() {
 				if s := redis.ReadOneChargeRecord(ctx, ChargerUid, strconv.Itoa(int(data.Uid))); s != "" {
-					tr := chargeRecordLoad{}
+					tr := ChargeRecordLoad{}
 					err = json.Unmarshal([]byte(s), &tr)
 					if err == nil {
 						if tr.Expire_time < t.Unix() {
@@ -182,7 +182,7 @@ func GetChargeFromMonitorDefaultUsersDynamic() func() {
 						}
 					}
 				}
-				redis.AddCharge(ctx, "charge", data.EndTimeUnix, data)
+				redis.AddCharge(ctx, data.EndTimeUnix, data)
 			}()
 
 			fmt.Println(2, data)

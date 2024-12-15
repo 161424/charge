@@ -14,7 +14,7 @@ import (
 
 var chargeRecordUrl = "https://api.live.bilibili.com/xlive/revenue/v1/guard/getChargeRecord?type=1&page="
 
-type chargeRecordLoad struct {
+type ChargeRecordLoad struct {
 	UpUid        int    `json:"up_uid"`
 	UpName       string `json:"up_name"`
 	ChargerId    int    `json:"charger_id"`
@@ -26,7 +26,7 @@ type chargeRecordLoad struct {
 	Period       int    `json:"period"`
 }
 
-type chargeRecord struct {
+type ChargeRecord struct {
 	Code int    `json:"code"` // 正常是0
 	Msg  string `json:"message"`
 	Data struct {
@@ -57,7 +57,7 @@ func GetChargeRecordFromCharger() func() {
 		url := chargeRecordUrl + strconv.Itoa(page)
 		fmt.Println(url)
 		body := inet.DefaultClient.CheckOne(url)
-		record := chargeRecord{}
+		record := ChargeRecord{}
 		err := json.Unmarshal(body, &record)
 		if err != nil {
 			fmt.Println("json Unmarshal err:", err)
@@ -75,7 +75,7 @@ func GetChargeRecordFromCharger() func() {
 			if i != 1 {
 				url = chargeRecordUrl + strconv.Itoa(i)
 				body = inet.DefaultClient.CheckOne(url)
-				record = chargeRecord{}
+				record = ChargeRecord{}
 				err = json.Unmarshal(body, &record)
 				if err != nil {
 					fmt.Println("json Unmarshal err:", err)
@@ -84,7 +84,7 @@ func GetChargeRecordFromCharger() func() {
 			}
 			for j := 0; j < len(record.Data.List); j++ {
 				recd := record.Data.List[j]
-				chargeRecordData := chargeRecordLoad{}
+				chargeRecordData := ChargeRecordLoad{}
 				chargeRecordData.UpUid = recd.Up_uid
 				chargeRecordData.UpName = recd.User_name
 				chargeRecordData.Start = recd.Start
@@ -110,7 +110,48 @@ func GetChargeRecordFromCharger() func() {
 	}
 } // 初始化使用
 
-func (c chargeRecordLoad) String() string {
+type AJCharge struct {
+	Code    int
+	Message string
+	Data    struct{}
+}
+
+func AutoJoinCharge() func() {
+	return func() {
+		ctx := context.Background()
+		charges := redis.FindAllCharge(ctx, "")
+		chargeRecords := redis.FindAllChargeRecord(ctx, utils.DefaultUid)
+		for _, c := range charges {
+			uid := strconv.Itoa(int(c.Uid))
+			if v, ok := chargeRecords[uid]; ok { // 已冲电
+				// code:4420014,已冲电但是未关注
+				// code:4100001,参数错误
+				// code:-101,csrf校验失败
+				// code:-400,EOF
+				// 判断充电是否过期
+				if c.ChargerUid == uid {
+					if c.IsParticipants == "已参与" {
+						continue
+					}
+				}
+				resp := inet.DefaultClient.JoinChargeLottery("", c.BusinessId)
+				ajc := AJCharge{}
+				err := json.Unmarshal(resp, &ajc)
+				if err != nil {
+					fmt.Println("json Unmarshal err:", err)
+					continue
+				}
+				if ajc.Code != 0 {
+					fmt.Println("ajc.Code:", ajc.Code, v)
+				}
+
+			}
+		}
+
+	}
+}
+
+func (c ChargeRecordLoad) String() string {
 	js, _ := json.Marshal(c)
 	return string(js)
 }

@@ -26,6 +26,7 @@ type config struct {
 	LotteryUid     []string `yaml:"LotteryUid"`
 	FakeLotteryUid []string `yaml:"FakeLotteryUid"`
 	DaleyTime      int64    `yaml:"DaleyTime"`
+	Server3        string   `yaml:"Server3"`
 }
 
 var Cfg = &config{}
