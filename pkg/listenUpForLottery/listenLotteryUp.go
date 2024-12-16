@@ -147,7 +147,7 @@ func BalanceLottery() func() {
 		bl := &BLottery{}
 		bl.Official = make(map[string]Lottery)
 		ctx := context.Background()
-		tn := time.Now().Add(24 * time.Hour)
+		tn := time.Now()
 		t := tn.Format(time.DateOnly)
 		lr := redis.ReadLotteryRecord(ctx)
 		if lr == nil {
