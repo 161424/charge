@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
+	"regexp"
 	"strings"
 	"time"
 )
@@ -29,6 +30,7 @@ type UserSpace struct {
 func GetUserOpus(Uid []string) []string {
 	opus := map[string]struct{}{} // 去重使用
 	if len(Uid) != 0 {
+		re := regexp.MustCompile("[0-9]{18,}")
 		utils.Shuffle(Uid) // 打乱被监听者uid
 		for _, uid := range Uid {
 			url := DefaultUrl + uid
@@ -62,11 +64,10 @@ func GetUserOpus(Uid []string) []string {
 				doc.Find(".opus-module-content > p").Each(func(i int, s *goquery.Selection) {
 					//fmt.Println(1, s.Get(i), s.Text())
 					if v, ok := s.Find("a").Attr("href"); ok {
-						v = v[len(v)-19:]
-						if v[0] == '/' {
-							v = v[1:]
+						if re.MatchString(v) {
+							opus[v] = struct{}{}
 						}
-						opus[v] = struct{}{}
+
 					}
 				})
 				f()

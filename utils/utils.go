@@ -3,6 +3,7 @@ package utils
 import (
 	"charge/config"
 	"fmt"
+
 	"math/rand"
 	"regexp"
 	"strings"
@@ -47,3 +48,13 @@ func CutCsrf(s string) string {
 	nre = strings.Split(nre[0], "=")
 	return nre[1]
 }
+
+// 只能睡眠整数秒，放弃
+//func Sleep(t time.Duration) {
+//	rand.Seed(time.Now().Unix()) //Seed生成的随机数
+//	d := float64(1500+rand.Intn(1000)) / float64(2000)
+//	fmt.Println(d, t)
+//	fmt.Printf("Sleep %v seconds\n", time.Duration(d)*t)
+//	time.Sleep(2 * t)
+//
+//}

@@ -2,7 +2,6 @@ package redis
 
 import (
 	"charge/config"
-	"charge/pkg/getcharge"
 	utils2 "charge/pkg/utils"
 	"charge/router/types"
 	"charge/utils"
@@ -119,7 +118,7 @@ func AddChargeList(ctx context.Context, key, member string) {
 
 // chargeRecord
 // 数据类型：Hash。key：chargerUid_chargeRecord，(return) field:upuid，member：chargeRecordLoad.String()
-func FindAllChargeRecord(ctx context.Context, header string) map[string]getcharge.ChargeRecordLoad {
+func FindAllChargeRecord(ctx context.Context, header string) map[string]string {
 
 	key := fmt.Sprintf("%s-chargeRecord", header)
 	result, err := RedisClient.HGetAll(ctx, key).Result()
@@ -127,13 +126,8 @@ func FindAllChargeRecord(ctx context.Context, header string) map[string]getcharg
 		fmt.Println(err)
 		return nil
 	}
-	var resp = make(map[string]getcharge.ChargeRecordLoad)
-	for k, v := range result {
-		j := getcharge.ChargeRecordLoad{}
-		json.Unmarshal([]byte(v), &j)
-		resp[k] = j
-	}
-	return resp
+
+	return result
 
 }
 

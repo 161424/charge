@@ -39,5 +39,8 @@ func TestTime(t *testing.T) {
 	tn := time.Now()
 	tw := tn.Format(time.DateOnly)
 	fmt.Println(tw, tn)
-
 }
+
+//func TestSleep(t *testing.T) {
+//	utils.Sleep(2 * 1000 * time.Millisecond)
+//}

@@ -70,6 +70,8 @@ func init() {
 	//}()
 }
 
+var act = 0
+
 // 为ck[0]单独使用
 func (d *defaultClient) CheckOne(url string) []byte {
 	req, err := http.NewRequest(http.MethodGet, url, nil)
@@ -84,6 +86,8 @@ func (d *defaultClient) CheckOne(url string) []byte {
 	if err != nil {
 		return nil
 	}
+	act++
+	fmt.Println("访问次数：", act)
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	return body

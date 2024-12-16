@@ -121,6 +121,12 @@ func AutoJoinCharge() func() {
 		ctx := context.Background()
 		charges := redis.FindAllCharge(ctx, "")
 		chargeRecords := redis.FindAllChargeRecord(ctx, utils.DefaultUid)
+		//var resp = make(map[string]getcharge.ChargeRecordLoad)
+		//for k, v := range result {
+		//	j := getcharge.ChargeRecordLoad{}
+		//	json.Unmarshal([]byte(v), &j)
+		//	resp[k] = j
+		//}
 		for _, c := range charges {
 			uid := strconv.Itoa(int(c.Uid))
 			if v, ok := chargeRecords[uid]; ok { // 已冲电

@@ -4,6 +4,7 @@ import (
 	"charge/config"
 	"charge/dao/redis"
 	"charge/pkg/listenUpForLottery"
+	utils2 "charge/pkg/utils"
 	"charge/utils"
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
@@ -37,4 +38,17 @@ func TestListenLotteryUp(t *testing.T) {
 
 	f2 := listenUpForLottery.BalanceLottery()
 	f2()
+}
+
+func TestU(t *testing.T) {
+	config.Start()
+	lotterys := utils2.ListenupforLottery(config.Cfg.LotteryUid)
+
+	//opus := utils2.GetUserOpus(config.Cfg.ChargeUid)
+	fmt.Println(len(lotterys), lotterys)
+	v := map[string]int{}
+	for _, lottery := range lotterys {
+		v[lottery]++
+	}
+	fmt.Println(v)
 }

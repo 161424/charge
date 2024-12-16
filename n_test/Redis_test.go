@@ -46,6 +46,20 @@ func TestFindTimeCharge(t *testing.T) {
 	key := redis2.Month
 	ts := time.Now().Format(time.DateOnly)
 	tr, _ := time.Parse(time.DateOnly, ts)
-	resp := redis2.FindTimeCharge(context.Background(), "charge", key, tr)
+	resp := redis2.FindTimeCharge(context.Background(), key, tr)
 	fmt.Println(resp)
+}
+
+func TestLotteryTime(t *testing.T) {
+	redis2.Start()
+	k := map[string]int{}
+	for i := 0; i < 5; i++ {
+		tn := time.Now().Add(time.Duration(-i*24) * time.Hour).Format(time.DateOnly)
+		l := redis2.ReadLotteryDay(context.Background(), tn)
+		for _, v := range l {
+			k[v]++
+		}
+	}
+	fmt.Println(k)
+
 }

@@ -13,6 +13,10 @@ import (
 	"time"
 )
 
+var CU = "https://api.bilibili.com/x/polymer/web-dynamic/v1/detail?id="                                        // 获取动态创建时间
+var COU = "https://api.vc.bilibili.com/lottery_svr/v1/lottery_svr/lottery_notice?business_type=1&business_id=" // 非官抽是-9999
+var SleepStep = 0
+
 type Lottery struct {
 	AddTime        int64  `json:"start_time"`
 	CreateTime     int64  `json:"create_time"`
@@ -44,83 +48,19 @@ type BLottery struct {
 // 根据多ck监听其关注的up 或 将up进行列表统计然后多ck进行监听
 func ListenLotteryUp() func() {
 	lotterys := utils.ListenupforLottery(config.Cfg.LotteryUid)
-	time.Sleep(20 * time.Second)
+	time.Sleep(60 * time.Second)
 	fmt.Println(len(lotterys), lotterys)
 	return func() {
 		t := time.Now()
-		CU := "https://api.bilibili.com/x/polymer/web-dynamic/v1/detail?id="                                        // 获取动态创建时间
-		COU := "https://api.vc.bilibili.com/lottery_svr/v1/lottery_svr/lottery_notice?business_type=1&business_id=" // 非官抽是-9999
-		ctx := context.Background()
-		idx := 0
-		for _, lottery := range lotterys {
-			idx++
 
+		ctx := context.Background()
+		SleepStep = 0
+		for _, lottery := range lotterys {
+			SleepStep++
 			if redis.ExitLottery(ctx, lottery) {
 				continue
 			}
-			LotteryData := Lottery{}
-			LotteryData.AddTime = t.Unix()
-			LotteryData.BusinessId = lottery
-			_url := COU + lottery
-			time.Sleep(2 * time.Second)
-			body := inet.DefaultClient.RedundantDW(_url)
-			if body == nil {
-				fmt.Println("body is nil")
-				continue
-			}
-
-			// 过滤出有用信息
-			detail := LotteryBody{}
-			err := json.Unmarshal(body, &detail)
-			if err != nil {
-				fmt.Println(1, lottery, err, string(body))
-				// invalid character '{' after top-level value {"code":-400,"message":"strconv.ParseInt: parsing \"id_from=333.999.0.0\": invalid syntax","ttl":1}{"code":-9999,"data":{},"message":"服务系统错误","msg":"服务系统错误"}
-				continue
-			}
-			time.Sleep(2 * time.Second)
-			if detail.Code == -9999 {
-				fmt.Println("非官抽")
-				// 需要添加detail里面的pub_time，进行定期清除lotterylist
-				_url = CU + lottery
-				body = inet.DefaultClient.RedundantDW(_url)
-				if body == nil {
-					fmt.Println("body is nil")
-					continue
-				}
-				// 过滤出有用信息
-				_detail := getcharge.ChargeDetail{}
-				err = json.Unmarshal(body, &_detail)
-				if err != nil {
-					fmt.Println(2, err, string(body))
-					continue
-				}
-				if !(_detail.Code == 0 || _detail.Code == 200) {
-					fmt.Println(3, "5m大休息。err code: ", _detail.Code)
-					// 3 err code:  4101152
-					// 3 err code:  500
-					time.Sleep(5 * time.Minute)
-					continue
-				}
-				LotteryData.CreateTime = _detail.Data.Item.Modules.Module_author.Pub_ts
-			} else if detail.Code == 0 {
-				if detail.Data.Lottery_time < t.Unix() { // 管抽访问太频繁会风控
-					continue
-				}
-				LotteryData.IsOfficial = true
-				LotteryData.EndTime = detail.Data.Lottery_time
-				LotteryData.NumParticipate = detail.Data.Participants
-				LotteryData.NumPrizes = detail.Data.FirstPrize + detail.Data.SecondPrize + detail.Data.ThirdPrize
-				if idx/10 == 1 {
-					fmt.Println("20s小休息")
-					time.Sleep(time.Minute)
-					idx = 0
-				}
-			} else {
-				fmt.Println("other err code")
-				continue
-			}
-			fmt.Println(4, LotteryData)
-			redis.AddLotteryRecord(ctx, lottery, LotteryData.String())
+			LotteryDetail(ctx, lottery, t)
 
 		}
 		inet.DefaultClient.Lock()
@@ -130,9 +70,75 @@ func ListenLotteryUp() func() {
 	}
 }
 
+func LotteryDetail(ctx context.Context, lottery string, t time.Time) {
+
+	LotteryData := Lottery{}
+	LotteryData.AddTime = t.Unix()
+	LotteryData.BusinessId = lottery
+	_url := COU + lottery
+	time.Sleep(10 * time.Second)
+	body := inet.DefaultClient.RedundantDW(_url)
+	if body == nil {
+		fmt.Println("body is nil")
+		return
+	}
+
+	// 过滤出有用信息
+	detail := LotteryBody{}
+	err := json.Unmarshal(body, &detail)
+	if err != nil {
+		fmt.Println(1, lottery, err, string(body))
+		// invalid character '{' after top-level value {"code":-400,"message":"strconv.ParseInt: parsing \"id_from=333.999.0.0\": invalid syntax","ttl":1}{"code":-9999,"data":{},"message":"服务系统错误","msg":"服务系统错误"}
+		return
+	}
+	time.Sleep(10 * time.Second)
+	if detail.Code == -9999 {
+		fmt.Println("非官抽")
+		// 需要添加detail里面的pub_time，进行定期清除lotterylist
+		_url = CU + lottery
+		body = inet.DefaultClient.RedundantDW(_url)
+		if body == nil {
+			fmt.Println("body is nil")
+			return
+		}
+		// 过滤出有用信息
+		_detail := getcharge.ChargeDetail{}
+		err = json.Unmarshal(body, &_detail)
+		if err != nil {
+			fmt.Println(2, err, string(body))
+			return
+		}
+		if !(_detail.Code == 0 || _detail.Code == 200) {
+			fmt.Println(3, "5m大休息。err code: ", _detail.Code) // 管抽访问太频繁会风控
+			// 3 err code:  4101152
+			// 3 err code:  500
+			time.Sleep(10 * time.Minute)
+			return
+		}
+		LotteryData.CreateTime = _detail.Data.Item.Modules.Module_author.Pub_ts
+	} else if detail.Code == 0 {
+		if detail.Data.Lottery_time < t.Unix() { // 管抽有截止时间，忽略掉已经截止的
+			return
+		}
+		LotteryData.IsOfficial = true
+		LotteryData.EndTime = detail.Data.Lottery_time
+		LotteryData.NumParticipate = detail.Data.Participants
+		LotteryData.NumPrizes = detail.Data.FirstPrize + detail.Data.SecondPrize + detail.Data.ThirdPrize
+		if SleepStep/5 == 1 {
+			fmt.Println("20s小休息")
+			time.Sleep(time.Minute)
+			SleepStep = 0
+		}
+	} else {
+		fmt.Println("other err code")
+		return
+	}
+	fmt.Println(4, LotteryData)
+	redis.AddLotteryRecord(ctx, lottery, LotteryData.String())
+}
+
 func (l *Lottery) String() string {
 	str, _ := json.Marshal(l)
-
 	return string(str)
 }
 
@@ -141,14 +147,14 @@ func BalanceLottery() func() {
 		bl := &BLottery{}
 		bl.Official = make(map[string]Lottery)
 		ctx := context.Background()
-		tn := time.Now().Add(-6 * 24 * time.Hour)
+		tn := time.Now().Add(24 * time.Hour)
 		t := tn.Format(time.DateOnly)
 		lr := redis.ReadLotteryRecord(ctx)
 		if lr == nil {
 			fmt.Println("balance lottery err: redis.ReadLotteryRecord is nil")
 		}
-		tlk := []int64{}
-		tlv := []string{}
+		tlk := []int64{}  // 管抽发布时间
+		tlv := []string{} // 管抽id
 		shortL := Lottery{}
 		shortLL := map[string]Lottery{}
 		for k, v := range lr { // business_id:lottery
@@ -161,6 +167,7 @@ func BalanceLottery() func() {
 				// err nil
 				if shortL.EndTime < tn.Unix() { // 超时删除
 					redis.DelLotteryRecord(ctx, k)
+					continue
 				} else {
 					bl.Official[k] = shortL
 					tlk = append(tlk, shortL.EndTime)
@@ -169,8 +176,13 @@ func BalanceLottery() func() {
 			} else {
 				if shortL.CreateTime < tn.Add(-30*24*time.Hour).Unix() { //  删除距离动态发布时间超过一个月的数据
 					redis.DelLotteryRecord(ctx, k)
+					continue
 				} else {
-					bl.Common = append(bl.Common, k)
+					if shortL.Sent == false {
+						bl.Common = append(bl.Common, k)
+					} else {
+						continue
+					}
 				}
 			}
 			shortLL[k] = shortL
@@ -197,7 +209,7 @@ func BalanceLottery() func() {
 		}
 		cml := len(bl.Common)/30 + 1
 		sort.Strings(bl.Common)
-		_bid = append(_bid, bl.Common[:cml]...)
+		_bid = append(_bid, bl.Common[:cml]...) // 管抽+非管抽
 
 		for _, v := range _bid {
 			if redis.AddLotteryDay(ctx, t, v) {
