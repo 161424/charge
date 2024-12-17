@@ -18,8 +18,15 @@ var Month = time.Now().Month().String()
 
 // 启动redis，并做ping检查
 func Start() {
+	addr := config.Cfg.Redis.Addr
+	network := ""
+	if config.Cfg.Redis.IsIpv6 {
+		addr = "[" + config.Cfg.Redis.Ipv6Addr + "]"
+		network = "tcp6"
+	}
 	redisClient := redis.NewClient(&redis.Options{
-		Addr:     config.Cfg.Redis.Addr,
+		Addr:     addr + config.Cfg.Redis.Port,
+		Network:  network,
 		Password: config.Cfg.Redis.Password,
 	})
 	RedisClient = redisClient

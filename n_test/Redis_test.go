@@ -15,6 +15,29 @@ type U struct {
 	Age  int
 }
 
+func TestRedisIpv6(t *testing.T) {
+	addr := config.Cfg.Redis.Addr
+	network := ""
+	if config.Cfg.Redis.IsIpv6 {
+		w := "2408:8421:4b50:371:ea8f:b64d:594b:fa19"
+		addr = "[" + w + "]"
+		network = "tcp6"
+	}
+	redisClient := redis.NewClient(&redis.Options{
+		Addr:     addr + config.Cfg.Redis.Port,
+		Network:  network,
+		Password: config.Cfg.Redis.Password,
+	})
+
+	ok := redisClient.Ping(context.Background())
+	//fmt.Println(ok.Result())
+	if ok.Err() != nil {
+		fmt.Println(ok)
+		panic(ok.Err())
+	}
+	fmt.Println(ok)
+}
+
 func TestRedisZrang(t *testing.T) {
 
 	redisClient := redis.NewClient(&redis.Options{

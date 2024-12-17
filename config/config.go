@@ -14,7 +14,11 @@ type config struct {
 	Port  string `yaml:"Port"`
 	Redis struct {
 		Addr     string `yaml:"Addr"`
+		Port     string `yaml:"Port"`
 		Password string `yaml:"Password"`
+		IsIpv6   bool   `yaml:"IsIpv6"`
+		Ipv6Addr string `yaml:"Ipv6Addr"`
+		Id_rsa   string `yaml:"Id_rsa"`
 	}
 	Mongodb struct {
 		Addr     string `yaml:"Addr"`

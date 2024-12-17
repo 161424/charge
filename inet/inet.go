@@ -24,24 +24,24 @@ type Unav struct {
 type defaultClient struct {
 	sync.Mutex
 	Client      *http.Client
-	Tracker     time.Ticker
+	Tracker     <-chan time.Time
+	Idx         int
 	Cks         []ckStatus
-	AliveCkNum  int
-	AliveCh     chan struct{}
+	AliveNum    int
+	AliveCh     chan struct{} // 控制访问并发数量
 	ShuffleTime time.Time
 }
 
 type ckStatus struct {
 	Ck               string
-	Alive            bool        //		// 1表示存活
 	Status           atomic.Bool // true表示正在占用中
+	Alive            bool
 	DynamicSleep     bool
 	DynamicSleepTime time.Time
 	CkCheckTime      time.Time
 }
 
 var DefaultClient = &defaultClient{}
-var AliveCK []int
 
 func init() {
 	DefaultClient.Client = &http.Client{
@@ -55,24 +55,22 @@ func init() {
 	for i := 0; i < len(_u); i++ {
 		DefaultClient.Cks[i].Ck = _u[i]
 	}
-	//DefaultClient.CkCheckTime = make([]time.Time, len(_u))
-	DefaultClient.AliveCkNum = len(_u)
-	DefaultClient.AliveCh = make(chan struct{}, len(_u))
-
-	//go func() {
-	//	t := time.Tick(time.Hour * 24)
-	//	for {
-	//		select {
-	//		case <-t:
-	//			DefaultClient.CheckAliveCk()
-	//		}
-	//	}
-	//}()
+	DefaultClient.HandCheckAlive()
+	DefaultClient.Tracker = time.Tick(3 * 24 * time.Hour)
+	// 定期检查ck是否存活
+	go func() {
+		for {
+			select {
+			case <-DefaultClient.Tracker:
+				DefaultClient.HandCheckAlive()
+			}
+		}
+	}()
 }
 
 var act = 0
 
-// 为ck[0]单独使用
+// 支持ck[0]单独使用的get访问
 func (d *defaultClient) CheckOne(url string) []byte {
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
@@ -93,6 +91,7 @@ func (d *defaultClient) CheckOne(url string) []byte {
 	return body
 }
 
+// 支持多ck使用的get访问
 func (d *defaultClient) CheckSelect(url string, idx int) []byte {
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
@@ -111,37 +110,24 @@ func (d *defaultClient) CheckSelect(url string, idx int) []byte {
 	return body
 }
 
-func (d *defaultClient) RedundantDW(url string) (re []byte) {
-
-	l := len(config.Cfg.Cks)
+// 尽可能保证请求成功,应该尽可能保证返回结果，
+func (d *defaultClient) RedundantDW(url string, dyTime time.Duration) (re []byte) {
+	t := time.Now()
+	l := len(d.Cks)
 	if l == 1 {
 		re = d.CheckOne(url)
-		if utils.WebFilter(re) {
-			return re
-		}
+		time.Sleep(dyTime)
 	} else {
-		if d.AliveCh == nil {
-			d.AliveCh = make(chan struct{}, d.AliveCkNum)
-		}
-
+		AliveCkNum := d.AliveNum
 		d.AliveCh <- struct{}{}
-		t := time.Now()
-		idx := 0
 
-		moreSleepNeedToStop := 0
+		idx := d.Idx
 		for {
-			idx %= d.AliveCkNum
-			if t.Sub(d.Cks[idx].CkCheckTime) > time.Duration(3*24*time.Hour) { // 每3天自动检查一次是否过期
-				uid := utils.CutUid(d.Cks[idx].Ck)
-				re = d.CheckSelect(nUrl+uid, idx)
-				unav := &Unav{}
-				json.Unmarshal(re, unav)
-				d.Unav(unav, idx, t)
-			}
+			idx %= AliveCkNum
 			if d.Cks[idx].Alive {
 				// 检测是否在睡眠中,最好是动态睡眠吧
 				if d.Cks[idx].DynamicSleep {
-					if t.Sub(d.Cks[idx].DynamicSleepTime) > 1*time.Minute {
+					if t.Sub(d.Cks[idx].DynamicSleepTime) > 0 {
 						d.Cks[idx].DynamicSleep = false
 					}
 				}
@@ -149,54 +135,51 @@ func (d *defaultClient) RedundantDW(url string) (re []byte) {
 				if d.Cks[idx].Status.Load() == false && d.Cks[idx].DynamicSleep == false {
 					d.Cks[idx].Status.Store(true)
 					re = d.CheckSelect(url, idx)
-					<-d.AliveCh
 					d.Cks[idx].Status.Store(false)
-					if utils.WebFilter(re) {
-						d.Cks[idx].DynamicSleepTime = time.Time{}
-						d.Cks[idx].DynamicSleep = false
-						return re
-					} else {
-						d.Cks[idx].DynamicSleepTime = t
-						d.Cks[idx].DynamicSleep = true
-					}
-					moreSleepNeedToStop++
+					<-d.AliveCh
+					d.Cks[idx].DynamicSleepTime = t.Add(dyTime)
+					d.Cks[idx].DynamicSleep = true
+					return
+
 				}
 			}
-			idx++
-			if moreSleepNeedToStop > d.AliveCkNum*2 {
-				return
-			}
-
+			d.Idx++
 		}
 	}
 	return
 }
 
-func (d *defaultClient) Unav(unav *Unav, idx int, t time.Time) {
-	if unav.Code != 200 {
-		if d.Cks[idx].Alive != false {
-			d.Cks[idx].Alive = false
-			d.Cks[idx].CkCheckTime = t
-			d.AliveCkNum--
-		}
-	} else {
-		if d.Cks[idx].Alive != true {
-			d.Cks[idx].Alive = true
-			d.Cks[idx].CkCheckTime = t
-			d.AliveCkNum++
-		}
+// code:-101 未登录
+func (d *defaultClient) Unav(unav *Unav, idx int, t time.Time) (re bool) {
+	if unav.Code == 0 {
+		re = true
+		d.Cks[idx].Alive = true
+	} else if unav.Code == -101 {
+		d.Cks[idx].Alive = false
 	}
+	d.Cks[idx].CkCheckTime = t
 	time.Sleep(500 * time.Millisecond)
+	return
 }
 
 func (d *defaultClient) HandCheckAlive() {
+	d.Lock()
+	d.AliveNum = 0
+	d.AliveCh = nil
 	for idx := 0; idx < len(d.Cks); idx++ {
-		uid := utils.CutUid(d.Cks[idx].Ck)
-		re := d.CheckSelect(nUrl+uid, idx)
+		re := d.CheckSelect(nUrl, idx)
 		unav := &Unav{}
-		json.Unmarshal(re, unav)
-		d.Unav(unav, idx, time.Now())
+		err := json.Unmarshal(re, unav)
+		if err != nil {
+			d.Cks[idx].Alive = false
+			continue
+		}
+		if d.Unav(unav, idx, time.Now()) {
+			d.AliveNum++
+		}
 	}
+	d.AliveCh = make(chan struct{}, d.AliveNum)
+	d.Unlock()
 
 }
 
