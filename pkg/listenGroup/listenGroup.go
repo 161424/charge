@@ -37,7 +37,7 @@ type Group struct {
 func ListenDJLChannel() func() {
 	isFirst := true
 	return func() {
-		size := 100
+		size := 20
 		if isFirst {
 			isFirst = false
 		} else {
