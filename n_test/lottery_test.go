@@ -3,6 +3,7 @@ package n
 import (
 	"charge/config"
 	"charge/dao/redis"
+	"charge/pkg/listenGroup"
 	"charge/pkg/listenUpForLottery"
 	utils2 "charge/pkg/utils"
 	"charge/utils"
@@ -58,15 +59,15 @@ func TestAAL(t *testing.T) {
 	config.Start()
 	redis.Start()
 
-	//defer utils.Tracker(time.Now())
-	//f1 := listenUpForLottery.ListenLotteryUp()
-	//fmt.Println("开始f1")
-	//f1()
-	//time.Sleep(1 * time.Minute)
-	//f2 := listenGroup.ListenDJLChannel()
-	//fmt.Println("开始f2")
-	//f2()
-	//time.Sleep(1 * time.Minute)
+	defer utils.Tracker(time.Now())
+	f1 := listenUpForLottery.ListenLotteryUp()
+	fmt.Println("开始f1")
+	f1()
+	time.Sleep(1 * time.Minute)
+	f2 := listenGroup.ListenDJLChannel()
+	fmt.Println("开始f2")
+	f2()
+	time.Sleep(1 * time.Minute)
 	f3 := listenUpForLottery.BalanceLottery()
 	fmt.Println("开始f3")
 	f3()
@@ -87,4 +88,11 @@ func TestR(t *testing.T) {
 		}
 
 	}
+}
+
+func TestHget(t *testing.T) {
+	config.Start()
+	redis.Start()
+	n := redis.RedisClient.HGet(context.Background(), "up", "123").Val()
+	fmt.Println(n)
 }

@@ -77,6 +77,7 @@ func GetChargeFromMonitorDefaultUsersDynamic() func() {
 		PrePrizesUrl := "https://www.bilibili.com/h5/lottery/result?business_type=12&business_id="
 		re := regexp.MustCompile(`\d+`)
 		ctx := context.Background()
+		monitor := utils2.Monitor{}
 		addChargeList := true
 		t := time.Now()
 		for _, op := range opus {

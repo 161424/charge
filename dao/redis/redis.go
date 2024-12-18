@@ -21,13 +21,15 @@ func Start() {
 	network := ""
 	if config.Cfg.Redis.IsIpv6 {
 		addr = "[" + config.Cfg.Redis.Ipv6Addr + "]"
-		network = "tcp6"
+		network = "tcp"
 	}
 	redisClient := redis.NewClient(&redis.Options{
-		Addr:     addr + config.Cfg.Redis.Port,
-		Network:  network,
-		Password: config.Cfg.Redis.Password,
+		Addr:    addr + config.Cfg.Redis.Port,
+		Network: network,
+		//Password: config.Cfg.Redis.Password,
+		DialTimeout: time.Minute,
 	})
+	fmt.Println(redisClient)
 	RedisClient = redisClient
 	ok := RedisClient.Ping(context.Background())
 	//fmt.Println(ok.Result())
@@ -149,7 +151,8 @@ func AddChargeRecord(ctx context.Context, header string, key, member string) {
 }
 
 // up 数据
-func AddUp(ctx context.Context, key, member string) {
+// 数据类型：Hash。key：up，(return) field:upuid，member：FollowingData.String()
+func UpdateUp(ctx context.Context, key, member string) {
 	w := RedisClient.HSet(ctx, "up", key, member)
 	if w.Err() != nil {
 		fmt.Println(w.Err())
@@ -160,22 +163,20 @@ func ExitUp(ctx context.Context, key string) bool {
 	return RedisClient.HExists(ctx, "up", key).Val()
 }
 
+func FindUp(ctx context.Context, key string) string {
+	if ExitUp(ctx, key) {
+		return RedisClient.HGet(ctx, "up", key).Val()
+	}
+	return ""
+}
+
+func LenUp(ctx context.Context) int64 {
+	return RedisClient.HLen(ctx, "up").Val()
+}
+
 //func UpdateUp(ctx context.Context, key, tp string, member int) {
-//	n := RedisClient.HGet(ctx, "up", key).Val()
-//	up := utils2.Up{}
-//	json.Unmarshal([]byte(n), &up)
-//	switch tp {
-//	case "fans":
-//		up.Fans = member
-//	case "charge":
-//		up.ChargeLottery++
-//	case "ol":
-//		up.OfficialLottery++
-//	case "cl":
-//		up.CommonLottery++
-//	}
-//	w, _ := json.Marshal(up)
-//	AddUp(ctx, key, string(w))
+//	//n := RedisClient.HGet(ctx, "up", key).Val()
+//	//AddUp(ctx, key, string(w))
 //
 //}
 

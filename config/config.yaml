@@ -1,9 +1,9 @@
 redis:
-  Addr:  "127.0.0.1"
-  Password: ""
+  Addr:  "192.168.10.178"
+  Password: "chen"
   Port: ":6379"
-  IsIpv6: true
-  Ipv6Addr: "2409:8a44:4b12:fce0:8fdc:8ff2:65df:19cf"
+  IsIpv6: false
+  Ipv6Addr: "2409:8a44:4b12:c6e0:92bc:2bba:ec96:4424"
   Id_rsa: ""
 
 mongodb:
@@ -12,8 +12,7 @@ mongodb:
 
 Port: "127.0.0.1:2025"
 CKs:
-  - "buvid3=BD420DC9-1E50-8034-A85F-9DD26C0F170282921infoc; b_nut=1718953682; _uuid=7C114E66-831F-C8E3-35DD-910F325342D8883701infoc; enable_web_push=DISABLE; rpdid=|(umRR~|kJm|0J'u~u)mlRRRl; header_theme_version=CLOSE; LIVE_BUVID=AUTO6817258668713773; buvid4=A2EED5AE-F341-6341-0BAE-B4EB7782CDFF10251-023040919-yFM8A5Q5nEe3t1Sl1VHWJA%3D%3D; buvid_fp_plain=undefined; CURRENT_BLACKGAP=0; hit-dyn-v2=1; DedeUserID=74199115; DedeUserID__ckMd5=8d1ad2254e14c603; CURRENT_QUALITY=116; PVID=4; fingerprint=d2bb79ad289465b816cc4c155fc421db; buvid_fp=d2bb79ad289465b816cc4c155fc421db; home_feed_column=5; browser_resolution=2040-996; bili_ticket=eyJhbGciOiJIUzI1NiIsImtpZCI6InMwMyIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzQ1MzEwMjgsImlhdCI6MTczNDI3MTc2OCwicGx0IjotMX0.cLBjLWQjHOCufHvDoP9Dpfg4bxF43ZthDI_K4aoMCgs; bili_ticket_expires=1734530968; SESSDATA=64f7cb97%2C1749823828%2Ceb67b%2Ac1CjD4JV8MYm3hq3PRKsY74sUe0W50mtCyoZW3fGAXuL6kGBPXQmkUxrV-0KgcQJfgZj8SVnpvX04yMWxLMWozSmlZbk1qYUdhMXJHNGhiaUROVElwM3Q0QXR4eUVOb3hkanZPZE1zR1pwRXhuMTJNLWtERkprYzVjRXBJVkdNclBFbHdqQ1RwV0Z3IIEC; bili_jct=85e7dd720c2a8d2defa6f116fb13dd6f; sid=6n1y99gx; bp_t_offset_74199115=1011183907346841600; CURRENT_FNVAL=4048; b_lsid=DB943637_193CB0CCA11"
-
+  - "buvid3=BD420DC9-1E50-8034-A85F-9DD26C0F170282921infoc; b_nut=1718953682; _uuid=7C114E66-831F-C8E3-35DD-910F325342D8883701infoc; enable_web_push=DISABLE; rpdid=|(umRR~|kJm|0J'u~u)mlRRRl; header_theme_version=CLOSE; LIVE_BUVID=AUTO6817258668713773; buvid4=A2EED5AE-F341-6341-0BAE-B4EB7782CDFF10251-023040919-yFM8A5Q5nEe3t1Sl1VHWJA%3D%3D; buvid_fp_plain=undefined; CURRENT_BLACKGAP=0; hit-dyn-v2=1; DedeUserID=74199115; DedeUserID__ckMd5=8d1ad2254e14c603; CURRENT_QUALITY=116; fingerprint=d2bb79ad289465b816cc4c155fc421db; PVID=1; bsource=search_bing; bp_t_offset_74199115=1012197820276408320; SESSDATA=fd1b8049%2C1750085196%2C5126d%2Ac1CjAeISIDvbExkUGKZ70MSw90ulFK0T5NpMHxGmbvorTZKwnsvVa8bedZO7nIDD38lJ0SVmlvazBqNnJuVmsyRHdMOHBPYUllNmd6UTBYUVFnVUctRDNnVE5vNm5hMGpIeFAzU3FMRVdpa1c2NDB0eHN6N1BpTUdNVjE0LTlMQ3BRYWFhczdyWk9BIIEC; bili_jct=f8eb4c45f314c7c88539facb7e077c55; sid=85kbw1fu; b_lsid=610D310659_193DAD21B46; CURRENT_FNVAL=4048; buvid_fp=d2bb79ad289465b816cc4c155fc421db; bili_ticket=eyJhbGciOiJIUzI1NiIsImtpZCI6InMwMyIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzQ4MDI4MTEsImlhdCI6MTczNDU0MzU1MSwicGx0IjotMX0.cZfiX5cuhN3gU7T8h-vQ5cZpx1suMKDwPqRUhDpcHLY; bili_ticket_expires=1734802751; home_feed_column=4; browser_resolution=612-996"
 
 UserAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0"
 ChargeUid:
