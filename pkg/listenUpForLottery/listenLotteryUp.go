@@ -48,18 +48,15 @@ type BLottery struct {
 // 根据多ck监听其关注的up 或 将up进行列表统计然后多ck进行监听
 func ListenLotteryUp() func() {
 	lotterys := utils.ListenupforLottery(config.Cfg.LotteryUid)
-	time.Sleep(60 * time.Second)
+	time.Sleep(20 * time.Second)
 	fmt.Println(len(lotterys), lotterys)
 	return func() {
 		t := time.Now()
-
 		ctx := context.Background()
 		SleepStep = 0
 		for _, lottery := range lotterys {
 			SleepStep++
-			if redis.ExitLottery(ctx, lottery) {
-				continue
-			}
+
 			LotteryDetail(ctx, lottery, t)
 
 		}
@@ -71,13 +68,15 @@ func ListenLotteryUp() func() {
 }
 
 func LotteryDetail(ctx context.Context, lottery string, t time.Time) {
-
+	if redis.ExitLottery(ctx, lottery) {
+		fmt.Printf("%s is exit", lottery)
+		return
+	}
 	LotteryData := Lottery{}
 	LotteryData.AddTime = t.Unix()
 	LotteryData.BusinessId = lottery
 	_url := COU + lottery
-	time.Sleep(10 * time.Second)
-	body := inet.DefaultClient.RedundantDW(_url)
+	body := inet.DefaultClient.RedundantDW(_url, 10*time.Second)
 	if body == nil {
 		fmt.Println("body is nil")
 		return
@@ -96,7 +95,7 @@ func LotteryDetail(ctx context.Context, lottery string, t time.Time) {
 		fmt.Println("非官抽")
 		// 需要添加detail里面的pub_time，进行定期清除lotterylist
 		_url = CU + lottery
-		body = inet.DefaultClient.RedundantDW(_url)
+		body = inet.DefaultClient.RedundantDW(_url, 10*time.Second)
 		if body == nil {
 			fmt.Println("body is nil")
 			return

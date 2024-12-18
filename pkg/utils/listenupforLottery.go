@@ -13,14 +13,16 @@ import (
 
 // 获取uname最近的几个动态dity
 func ListenupforLottery(Uid []string) []string {
-	opus := map[string]struct{}{} // 去重使用
+	opus := map[string]int{} // 去重使用
 	if len(Uid) != 0 {
 		utils.Shuffle(Uid) // 打乱被监听者uid
 		re := regexp.MustCompile("[0-9]{18,}")
+		fmt.Println(Uid)
 		for _, uid := range Uid {
 			fmt.Printf("查看用户uid：%s", uid)
 			url := DefaultUrl + uid
-			body := inet.DefaultClient.RedundantDW(url)
+			//fmt.Println(inet.DefaultClient)
+			body := inet.DefaultClient.RedundantDW(url, time.Second*5)
 			userSpace := UserSpace{}
 			err := json.Unmarshal(body, &userSpace)
 			if err != nil {
@@ -31,13 +33,15 @@ func ListenupforLottery(Uid []string) []string {
 			// 只获取前五个图文数据
 			counter := 0
 			for _, item := range userSpace.Data.Items {
+				op := map[string]int{}
+				fmt.Printf("正在查看第%d页内容", counter+1)
 				// https://www.bilibili.com/opus/1009676614375571474
 				if counter == 5 { //
 					break
 				}
 				f := DaleyTime(time.Now()) // 做个延时，减少风控几率
 				_url := SpaceUrl + item.OpusID
-				ibody := inet.DefaultClient.RedundantDW(_url)
+				ibody := inet.DefaultClient.RedundantDW(_url, 0)
 
 				doc, err := goquery.NewDocumentFromReader(bytes.NewReader(ibody))
 				if err != nil {
@@ -48,7 +52,8 @@ func ListenupforLottery(Uid []string) []string {
 					//fmt.Println(1, s.Get(i), s.Text())
 					if v := s.Find("span").Text(); v != "" { // 文字内容
 						if re.MatchString(v) {
-							opus[re.FindString(v)] = struct{}{}
+							opus[re.FindString(v)]++
+							op[re.FindString(v)]++
 						}
 					}
 
@@ -58,13 +63,17 @@ func ListenupforLottery(Uid []string) []string {
 						//	v = v[1:]
 						//}
 						if re.MatchString(v) {
-							opus[re.FindString(v)] = struct{}{}
+							opus[re.FindString(v)]++
+							op[re.FindString(v)]++
 						}
 						//opus[v] = struct{}{}
 					}
 				})
 				f()
 				counter++
+				fmt.Println("长度", len(op), len(opus))
+				fmt.Println(op)
+				fmt.Println(opus)
 			}
 			if len(opus) == 0 {
 				fmt.Println(string(body))

@@ -86,3 +86,9 @@ func TestLotteryTime(t *testing.T) {
 	fmt.Println(k)
 
 }
+
+func TestExitH(t *testing.T) {
+	redis2.Start()
+	n := redis2.ExitLottery(context.Background(), "1007779282486820868")
+	fmt.Println(n)
+}

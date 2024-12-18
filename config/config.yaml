@@ -1,9 +1,9 @@
 redis:
-  Addr:  "127.0.0.1:"
+  Addr:  "127.0.0.1"
   Password: ""
-  Port: "6379"
+  Port: ":6379"
   IsIpv6: true
-  Ipv6Addr: "2408:8421:4b50:371:964f:a816:68fb:a342"
+  Ipv6Addr: "2409:8a44:4b12:fce0:8fdc:8ff2:65df:19cf"
   Id_rsa: ""
 
 mongodb:

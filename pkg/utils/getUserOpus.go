@@ -34,7 +34,7 @@ func GetUserOpus(Uid []string) []string {
 		utils.Shuffle(Uid) // 打乱被监听者uid
 		for _, uid := range Uid {
 			url := DefaultUrl + uid
-			body := inet.DefaultClient.RedundantDW(url)
+			body := inet.DefaultClient.RedundantDW(url, time.Second*5)
 			userSpace := UserSpace{}
 			err := json.Unmarshal(body, &userSpace)
 			if err != nil {
@@ -54,7 +54,7 @@ func GetUserOpus(Uid []string) []string {
 				}
 				f := DaleyTime(time.Now()) // 做个延时，减少风控几率
 				_url := SpaceUrl + item.OpusID
-				ibody := inet.DefaultClient.RedundantDW(_url)
+				ibody := inet.DefaultClient.RedundantDW(_url, time.Second*5)
 
 				doc, err := goquery.NewDocumentFromReader(bytes.NewReader(ibody))
 				if err != nil {

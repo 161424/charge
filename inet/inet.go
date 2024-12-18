@@ -55,7 +55,9 @@ func init() {
 	for i := 0; i < len(_u); i++ {
 		DefaultClient.Cks[i].Ck = _u[i]
 	}
+
 	DefaultClient.HandCheckAlive()
+	fmt.Println(DefaultClient.Cks)
 	DefaultClient.Tracker = time.Tick(3 * 24 * time.Hour)
 	// 定期检查ck是否存活
 	go func() {
@@ -166,12 +168,15 @@ func (d *defaultClient) HandCheckAlive() {
 	d.Lock()
 	d.AliveNum = 0
 	d.AliveCh = nil
+	fmt.Println(d.Cks)
 	for idx := 0; idx < len(d.Cks); idx++ {
+		fmt.Println(d.Cks[idx].Ck)
 		re := d.CheckSelect(nUrl, idx)
 		unav := &Unav{}
 		err := json.Unmarshal(re, unav)
 		if err != nil {
 			d.Cks[idx].Alive = false
+			fmt.Println(err, string(re))
 			continue
 		}
 		if d.Unav(unav, idx, time.Now()) {

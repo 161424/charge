@@ -18,7 +18,7 @@ import (
 func TestChargeInfo(t *testing.T) {
 	config.Start()
 	_url := "https://api.bilibili.com/x/polymer/web-dynamic/v1/detail?id=1006518945822277649"
-	body := inet.DefaultClient.RedundantDW(_url)
+	body := inet.DefaultClient.RedundantDW(_url, time.Second*5)
 	data := types.FormResp{}
 	re := regexp.MustCompile(`\d+`)
 	// 过滤出有用信息
@@ -49,7 +49,7 @@ func TestChargeInfo(t *testing.T) {
 func TestChargeOtherInfo(t *testing.T) {
 	config.Start()
 	_url := "https://api.vc.bilibili.com/lottery_svr/v1/lottery_svr/lottery_notice?business_id=1006518945822277649&business_type=12"
-	body := inet.DefaultClient.RedundantDW(_url)
+	body := inet.DefaultClient.RedundantDW(_url, time.Second*5)
 	detail := getcharge.ChargeOtherInfo{}
 	err := json.Unmarshal(body, &detail)
 	fmt.Println(err, detail)

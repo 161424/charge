@@ -79,22 +79,13 @@ func GetChargeFromMonitorDefaultUsersDynamic() func() {
 		ctx := context.Background()
 		addChargeList := true
 		t := time.Now()
-		//idx := 0
-
 		for _, op := range opus {
-			//idx++
-			//if idx == 10 {
-			//	return
-			//}
 			if redis.ExitCharge(ctx, op) == true {
 				continue
 			}
-
-			data := types.FormResp{}
-
-			time.Sleep(500 * time.Millisecond)
 			_url := COU + op
-			oBody := inet.DefaultClient.RedundantDW(_url)
+			data := types.FormResp{}
+			oBody := inet.DefaultClient.RedundantDW(_url, 500*time.Millisecond)
 			if oBody == nil {
 				fmt.Println("body is nil")
 				continue
@@ -122,7 +113,7 @@ func GetChargeFromMonitorDefaultUsersDynamic() func() {
 			data.BusinessId = op
 
 			_url = CU + op
-			body := inet.DefaultClient.RedundantDW(_url)
+			body := inet.DefaultClient.RedundantDW(_url, 500*time.Millisecond)
 			if body == nil {
 				fmt.Println("body is nil")
 				continue
@@ -185,7 +176,7 @@ func GetChargeFromMonitorDefaultUsersDynamic() func() {
 				redis.AddCharge(ctx, data.EndTimeUnix, data)
 			}()
 
-			fmt.Println(2, data)
+			fmt.Println("getCharge data: ", data)
 			time.Sleep(500 * time.Millisecond)
 			if addChargeList {
 				redis.AddChargeList(ctx, op, data.String())

@@ -2,7 +2,6 @@ package redis
 
 import (
 	"charge/config"
-	utils2 "charge/pkg/utils"
 	"charge/router/types"
 	"charge/utils"
 	"context"
@@ -98,16 +97,10 @@ func FindTimeCharge(ctx context.Context, key string, t time.Time) []types.FormRe
 
 // 添加信息
 func AddCharge(ctx context.Context, score int64, member types.FormResp) {
-
 	w := RedisClient.ZAdd(ctx, fmt.Sprintf("charge-%s", Month), redis.Z{Score: float64(score), Member: member.String()})
-
 	if w.Err() != nil {
 		fmt.Println(w.Err())
 	}
-	//
-	//fmt.Println(w.Result())
-	//
-	//fmt.Println(w.Err())
 }
 
 // 数据类型：hash。key：business_id，member：types.FormResp.String()
@@ -167,24 +160,24 @@ func ExitUp(ctx context.Context, key string) bool {
 	return RedisClient.HExists(ctx, "up", key).Val()
 }
 
-func UpdateUp(ctx context.Context, key, tp string, member int) {
-	n := RedisClient.HGet(ctx, "up", key).Val()
-	up := utils2.Up{}
-	json.Unmarshal([]byte(n), &up)
-	switch tp {
-	case "fans":
-		up.Fans = member
-	case "charge":
-		up.ChargeLottery++
-	case "ol":
-		up.OfficialLottery++
-	case "cl":
-		up.CommonLottery++
-	}
-	w, _ := json.Marshal(up)
-	AddUp(ctx, key, string(w))
-
-}
+//func UpdateUp(ctx context.Context, key, tp string, member int) {
+//	n := RedisClient.HGet(ctx, "up", key).Val()
+//	up := utils2.Up{}
+//	json.Unmarshal([]byte(n), &up)
+//	switch tp {
+//	case "fans":
+//		up.Fans = member
+//	case "charge":
+//		up.ChargeLottery++
+//	case "ol":
+//		up.OfficialLottery++
+//	case "cl":
+//		up.CommonLottery++
+//	}
+//	w, _ := json.Marshal(up)
+//	AddUp(ctx, key, string(w))
+//
+//}
 
 func DeleteUp(ctx context.Context, key string) bool {
 	return true

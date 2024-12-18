@@ -4,10 +4,9 @@ import (
 	"fmt"
 	"gopkg.in/yaml.v3"
 	"io"
-	"strings"
-
 	"log"
 	"os"
+	"strings"
 )
 
 type config struct {
@@ -35,7 +34,7 @@ type config struct {
 
 var Cfg = &config{}
 
-func Start() {
+func init() {
 	// 读取 YAML 文件
 	path, _ := os.Getwd()
 	npath := strings.Split(path, "\\")
@@ -59,5 +58,8 @@ func Start() {
 		log.Fatalf("解析 YAML 失败: %v", err)
 	}
 	fmt.Println(Cfg)
+}
+
+func Start() {
 
 }
