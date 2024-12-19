@@ -12,12 +12,13 @@ import (
 type config struct {
 	Port  string `yaml:"Port"`
 	Redis struct {
-		Addr     string `yaml:"Addr"`
-		Port     string `yaml:"Port"`
-		Password string `yaml:"Password"`
-		IsIpv6   bool   `yaml:"IsIpv6"`
-		Ipv6Addr string `yaml:"Ipv6Addr"`
-		Id_rsa   string `yaml:"Id_rsa"`
+		Addr           string `yaml:"Addr"`
+		Port           string `yaml:"Port"`
+		Password       string `yaml:"Password"`
+		IsIpv6         bool   `yaml:"IsIpv6"`
+		StaticIpv6Addr string `yaml:"StaticIpv6Addr"`
+		DynamicIpv6    string `yaml:"DynamicIpv6"`
+		Id_rsa         string `yaml:"Id_rsa"`
 	}
 	Mongodb struct {
 		Addr     string `yaml:"Addr"`
@@ -28,8 +29,17 @@ type config struct {
 	ChargeUid      []string `yaml:"ChargeUid"`
 	LotteryUid     []string `yaml:"LotteryUid"`
 	FakeLotteryUid []string `yaml:"FakeLotteryUid"`
-	DaleyTime      int64    `yaml:"DaleyTime"`
-	Server3        string   `yaml:"Server3"`
+
+	DDNS struct {
+		ZoneID      string `yaml:"ZoneID"`
+		DnsRecordId string `yaml:"DnsRecordId"`
+		ApiToken    string `yaml:"ApiToken"`
+		Type        string `yaml:"Type"`
+		Name        string `yaml:"Name"`
+	}
+
+	DaleyTime int64  `yaml:"DaleyTime"`
+	Server3   string `yaml:"Server3"`
 }
 
 var Cfg = &config{}

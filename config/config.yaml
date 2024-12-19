@@ -2,8 +2,9 @@ redis:
   Addr:  "192.168.10.178"
   Password: "chen"
   Port: ":6379"
-  IsIpv6: false
-  Ipv6Addr: "2409:8a44:4b12:c6e0:92bc:2bba:ec96:4424"
+  IsIpv6: true
+  StaticIpv6Addr: "2409:8a44:4b12:c6e0:92bc:2bba:ec96:4424"
+  DynamicIpv6: "like.151580.xyz"
   Id_rsa: ""
 
 mongodb:
@@ -26,7 +27,12 @@ FakeLotteryUid:
   - "1619305144"
   - "1713150198"
 
-
+DDNS:
+  ZoneID: "f460ccc93a56c41d9b52de75087dca75"          # Cloudflare域名的Zone ID
+  DnsRecordId: "3a72b0ea38ec3da31ee10d3b6068c5c1"     #DNS记录的ID
+  ApiToken: "qGM46X4qxqnts6WCq-lJg3rIaCrx3IXCC-3hhpTr" # Cloudflare的API Token
+  Type: "AAAA"
+  Name: "like.151580.xyz"
 
 DelayTime: 20000
-Server3: "sctp3776tdvvefnyamdjc7g51zvprjn"
+Server3: "sctp3776tdvvefnyamdjc7g51zvprjn"  # server3酱的秘钥

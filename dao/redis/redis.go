@@ -2,6 +2,7 @@ package redis
 
 import (
 	"charge/config"
+	utils2 "charge/pkg/utils"
 	"charge/router/types"
 	"charge/utils"
 	"context"
@@ -18,26 +19,45 @@ var Month = time.Now().Month().String()
 // 启动redis，并做ping检查
 func Start() {
 	addr := config.Cfg.Redis.Addr
-	network := ""
+	var redisClient *redis.Client
+	//confusion
+	// 当使用ipv6访问本机wsl中redis时，会访问失败，但是远程客户端使用ipv6访问本机redis服务器时，就能访问成功
 	if config.Cfg.Redis.IsIpv6 {
-		addr = "[" + config.Cfg.Redis.Ipv6Addr + "]"
-		network = "tcp"
-	}
-	redisClient := redis.NewClient(&redis.Options{
-		Addr:    addr + config.Cfg.Redis.Port,
-		Network: network,
-		//Password: config.Cfg.Redis.Password,
-		DialTimeout: time.Minute,
-	})
-	fmt.Println(redisClient)
-	RedisClient = redisClient
-	ok := RedisClient.Ping(context.Background())
-	//fmt.Println(ok.Result())
-	if ok.Err() != nil {
-		fmt.Println(ok)
-		panic(ok.Err())
+		addr = "[" + config.Cfg.Redis.StaticIpv6Addr + "]"
+		redisClient = start(addr)
+	} else {
+		redisClient = start(config.Cfg.Redis.Addr)
 	}
 
+	ok := redisClient.Ping(context.Background())
+
+	if ok.Err() == nil {
+		RedisClient = redisClient
+		fmt.Println("redis 访问 StaticIpv6Addr 成功！")
+		return
+	}
+	fmt.Println("redis 访问不到 StaticIpv6Addr")
+
+	redisClient = start(config.Cfg.Redis.DynamicIpv6)
+	ok = redisClient.Ping(context.Background())
+	if ok.Err() != nil {
+		panic(ok.Err())
+	}
+	RedisClient = redisClient
+	fmt.Println("redis 访问 DynamicIpv6 成功！", utils2.DDNSCheck(config.Cfg.Redis.DynamicIpv6))
+
+}
+
+func start(addr string) *redis.Client {
+	return redis.NewClient(&redis.Options{
+		Addr:    addr + config.Cfg.Redis.Port,
+		Network: "tcp",
+	})
+}
+
+func GetAllKey(ctx context.Context) []string {
+	re := RedisClient.Keys(ctx, "*")
+	return re.Val()
 }
 
 // 用Zset保存charge信息
