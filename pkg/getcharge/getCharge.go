@@ -6,6 +6,7 @@ import (
 	"charge/inet"
 	"charge/pkg/utils"
 	"charge/router/types"
+	"charge/sender"
 	utils2 "charge/utils"
 	"context"
 	"encoding/json"
@@ -77,7 +78,7 @@ func GetChargeFromMonitorDefaultUsersDynamic() func() {
 		PrePrizesUrl := "https://www.bilibili.com/h5/lottery/result?business_type=12&business_id="
 		re := regexp.MustCompile(`\d+`)
 		ctx := context.Background()
-		monitor := utils.Monitor{}
+		monitor := sender.Monitor{}
 		monitor.Tag = "Charge"
 		monitor.Title = ""
 		addChargeList := true

@@ -6,6 +6,7 @@ import (
 	"charge/inet"
 	"charge/pkg/getcharge"
 	"charge/pkg/utils"
+	"charge/sender"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -21,6 +22,7 @@ type Lottery struct {
 	AddTime        int64  `json:"start_time"`
 	CreateTime     int64  `json:"create_time"`
 	BusinessId     string `json:"business_id"`
+	Mid            string `json:"mid"`
 	IsOfficial     bool   `json:"is_official"`
 	EndTime        int64  `json:"end_time"`       // 对与官方的，在超过结束时间就会删除，非官方的根据CreateTime时间，两个月删除
 	IsParticipate  string `json:"is_participate"` // 已成功参与
@@ -47,29 +49,34 @@ type BLottery struct {
 
 // 根据多ck监听其关注的up 或 将up进行列表统计然后多ck进行监听
 func ListenLotteryUp() func() {
-	lotterys := utils.ListenupforLottery(config.Cfg.LotteryUid)
-	time.Sleep(20 * time.Second)
-	fmt.Println(len(lotterys), lotterys)
 	return func() {
+		monitor := sender.Monitor{}
+		monitor.Tag = "lottery"
+		monitor.Title = "每日lottery监控——1(LotteryUp)"
+		lotterys := utils.ListenupforLottery(config.Cfg.LotteryUid)
+		time.Sleep(20 * time.Second)
+		fmt.Println(len(lotterys), lotterys)
 		t := time.Now()
 		ctx := context.Background()
 		SleepStep = 0
+		ExecFreq := 0
 		for _, lottery := range lotterys {
-			SleepStep++
-
-			LotteryDetail(ctx, lottery, t)
-
+			if LotteryDetail(ctx, lottery, t) {
+				ExecFreq++
+			}
 		}
 		inet.DefaultClient.Lock()
 		inet.DefaultClient.AliveCh = nil
 		defer inet.DefaultClient.Unlock()
 		fmt.Println("ListenLotteryUp complete")
+		monitor.Desp = fmt.Sprintf("%s新增lottery数量%d", t.Format("2006-01-02"), ExecFreq)
+		monitor.PushS()
 	}
 }
 
-func LotteryDetail(ctx context.Context, lottery string, t time.Time) {
+func LotteryDetail(ctx context.Context, lottery string, t time.Time) (re bool) {
 	if redis.ExitLottery(ctx, lottery) {
-		fmt.Printf("%s is exit", lottery)
+		fmt.Printf("%s is exit\n", lottery)
 		return
 	}
 	LotteryData := Lottery{}
@@ -123,17 +130,25 @@ func LotteryDetail(ctx context.Context, lottery string, t time.Time) {
 		LotteryData.EndTime = detail.Data.Lottery_time
 		LotteryData.NumParticipate = detail.Data.Participants
 		LotteryData.NumPrizes = detail.Data.FirstPrize + detail.Data.SecondPrize + detail.Data.ThirdPrize
+		SleepStep++
 		if SleepStep/5 == 1 {
 			fmt.Println("20s小休息")
 			time.Sleep(time.Minute)
 			SleepStep = 0
 		}
+
 	} else {
 		fmt.Println("other err code")
 		return
 	}
 	fmt.Println(4, LotteryData)
-	redis.AddLotteryRecord(ctx, lottery, LotteryData.String())
+	redis.AddLotteryRecord(ctx, lottery, LotteryData.String()) // 添加到总的lottery中
+	// 监听up均为隔日，无法进行多日均衡
+	notBalance := true
+	if notBalance {
+		redis.AddLotteryDay(ctx, time.Now().Format(time.DateOnly), LotteryData.BusinessId)
+	}
+	return true
 }
 
 func (l *Lottery) String() string {

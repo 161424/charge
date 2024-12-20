@@ -2,7 +2,7 @@ redis:
   Addr:  "192.168.10.178"
   Password: "chen"
   Port: ":6379"
-  IsIpv6: true
+  IsIpv6: false
   StaticIpv6Addr: "2409:8a44:4b12:c6e0:92bc:2bba:ec96:4424"
   DynamicIpv6: "like.151580.xyz"
   Id_rsa: ""

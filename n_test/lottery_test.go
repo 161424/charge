@@ -68,9 +68,11 @@ func TestAAL(t *testing.T) {
 	fmt.Println("开始f2")
 	f2()
 	time.Sleep(1 * time.Minute)
-	f3 := listenUpForLottery.BalanceLottery()
-	fmt.Println("开始f3")
-	f3()
+	//f3 := listenUpForLottery.BalanceLottery()
+	//fmt.Println("开始f3")
+	//f3()
+	m := redis.GetAllLUpHistory(context.Background())
+	fmt.Println(m)
 }
 
 func TestR(t *testing.T) {

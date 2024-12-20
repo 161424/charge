@@ -1,7 +1,7 @@
 package n
 
 import (
-	"charge/pkg/utils"
+	"charge/utils"
 	"fmt"
 	"net"
 	"net/url"

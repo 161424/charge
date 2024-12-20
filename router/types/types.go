@@ -7,7 +7,7 @@ type FormReq struct {
 }
 
 type FormResp struct {
-	Id              int    `json:"id"` // 默认id
+	Id              string `json:"id"` // 默认id
 	BusinessId      string `json:"business_id"`
 	UName           string `json:"name"`        // 抽奖者名字
 	UFans           string `json:"fans"`        // 抽奖者粉丝数

@@ -3,6 +3,7 @@ package listenGroup
 import (
 	"charge/inet"
 	"charge/pkg/listenUpForLottery"
+	"charge/sender"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -49,6 +50,9 @@ func ListenDJLChannel() func() {
 }
 
 func ReadGroup(size int) {
+	monitor := sender.Monitor{}
+	monitor.Tag = "lottery"
+	monitor.Title = "每日lottery监控——3(Group)"
 	var groupUrl = "https://api.vc.bilibili.com/svr_sync/v1/svr_sync/fetch_session_msgs?talker_id=221094376&session_type=2&size="
 	_groupUrl := groupUrl + strconv.Itoa(size)
 	responders := inet.DefaultClient.CheckOne(_groupUrl)
@@ -69,14 +73,19 @@ func ReadGroup(size int) {
 	groupContent := group.Data.Messages
 	fmt.Println("groupContent长度", len(groupContent))
 	re := regexp.MustCompile(`[0-9]{18,}`)
-
+	ExecFreq := 0
 	for i := 0; i < len(groupContent); i++ {
 		cbody := groupContent[i]
 		res := re.FindAllString(cbody.Content, -1)
 		for j := 0; j < len(res); j++ {
 			msg = append(msg, res[j])
-			listenUpForLottery.LotteryDetail(ctx, res[j], t)
+			if listenUpForLottery.LotteryDetail(ctx, res[j], t) {
+				ExecFreq++
+			}
 		}
 	}
 	fmt.Println("从group获取到的信息数:", len(msg), msg)
+	monitor.Desp = fmt.Sprintf("从group获的lottery的个数%d", len(msg))
+	monitor.PushS()
+
 }

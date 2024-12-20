@@ -3,7 +3,7 @@ package listenFollowUp
 import (
 	"charge/dao/redis"
 	"charge/inet"
-	utils2 "charge/pkg/utils"
+	"charge/sender"
 	"charge/utils"
 	"context"
 	"encoding/json"
@@ -43,7 +43,7 @@ func ListenFollowUp() func() {
 		cks := inet.DefaultClient.Cks
 		ctx := context.Background()
 		//followingData := []string{}
-		monitor := utils2.Monitor{}
+		monitor := sender.Monitor{}
 		t := time.Now().Format(time.DateOnly)
 		monitor.Title = fmt.Sprintf("%s完成监控关注任务", t)
 		monitor.Tag = "listenFollowUp"

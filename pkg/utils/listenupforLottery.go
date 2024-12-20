@@ -2,18 +2,22 @@ package utils
 
 import (
 	"bytes"
+	"charge/dao/redis"
 	"charge/inet"
 	"charge/utils"
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"regexp"
+	"strings"
 	"time"
 )
 
 // 获取uname最近的几个动态dity
 func ListenupforLottery(Uid []string) []string {
 	opus := map[string]int{} // 去重使用
+	ctx := context.Background()
 	if len(Uid) != 0 {
 		utils.Shuffle(Uid) // 打乱被监听者uid
 		re := regexp.MustCompile("[0-9]{18,}")
@@ -29,15 +33,19 @@ func ListenupforLottery(Uid []string) []string {
 				fmt.Println(err)
 				continue
 			}
+			his := redis.ListenUpHistory(ctx, uid)
 			// 获取uid用户的space_opus
 			// 只获取前五个图文数据
 			counter := 0
 			for _, item := range userSpace.Data.Items {
 				op := map[string]int{}
-				fmt.Printf("正在查看第%d页内容", counter+1)
 				// https://www.bilibili.com/opus/1009676614375571474
-				if counter == 5 { //
+				if counter == 3 { //
 					break
+				}
+				fmt.Printf("正在查看第%d页内容", counter+1)
+				if strings.Contains(his, item.OpusID) {
+					continue
 				}
 				f := DaleyTime(time.Now()) // 做个延时，减少风控几率
 				_url := SpaceUrl + item.OpusID
@@ -71,14 +79,19 @@ func ListenupforLottery(Uid []string) []string {
 				})
 				f()
 				counter++
-				fmt.Println("长度", len(op), len(opus))
-				fmt.Println(op)
-				fmt.Println(opus)
+				if his != "" {
+					his += "&" + item.OpusID
+				} else {
+					his = item.OpusID
+				}
+
 			}
 			if len(opus) == 0 {
 				fmt.Println(string(body))
 			}
 			fmt.Println("    目前有数据：", len(opus))
+			fmt.Println(his)
+			redis.UpdateLUpHistory(ctx, uid, his)
 
 		}
 	}

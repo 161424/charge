@@ -3,6 +3,7 @@ package utils
 import (
 	"bytes"
 	"charge/config"
+	"charge/sender"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -54,7 +55,7 @@ func UpdateDnsRecode(ip string) {
 	//zone_id:"f460ccc93a56c41d9b52de75087dca75"
 	//zone_name:"151580.xyz"
 	ddns := config.Cfg.DDNS
-	monitor := Monitor{}
+	monitor := sender.Monitor{}
 	monitor.Tag = "DDNS"
 	monitor.Title = "Ipv6"
 	data := map[string]interface{}{

@@ -2,7 +2,6 @@ package redis
 
 import (
 	"charge/config"
-	utils2 "charge/pkg/utils"
 	"charge/router/types"
 	"charge/utils"
 	"context"
@@ -44,7 +43,7 @@ func Start() {
 		panic(ok.Err())
 	}
 	RedisClient = redisClient
-	fmt.Println("redis 访问 DynamicIpv6 成功！", utils2.DDNSCheck(config.Cfg.Redis.DynamicIpv6))
+	fmt.Println("redis 访问 DynamicIpv6 成功！", utils.DDNSCheck(config.Cfg.Redis.DynamicIpv6))
 
 }
 
@@ -251,4 +250,19 @@ func ReadLotteryDay(ctx context.Context, header string) []string {
 		fmt.Println(w.Err())
 	}
 	return w.Val()
+}
+
+func GetAllLUpHistory(ctx context.Context) map[string]string {
+	return RedisClient.HGetAll(ctx, "lottery-up").Val()
+}
+
+func ListenUpHistory(ctx context.Context, key string) string {
+	return RedisClient.HGet(ctx, "lottery-up", key).Val()
+}
+
+func UpdateLUpHistory(ctx context.Context, key, val string) {
+	w := RedisClient.HSet(ctx, "lottery-up", key, val)
+	if w.Err() != nil {
+		fmt.Println(w.Err())
+	}
 }
