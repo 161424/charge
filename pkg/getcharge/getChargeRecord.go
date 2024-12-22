@@ -4,6 +4,7 @@ import (
 	"charge/config"
 	"charge/dao/redis"
 	"charge/inet"
+	"charge/sender"
 	"charge/utils"
 	"context"
 	"encoding/json"
@@ -53,6 +54,9 @@ type ChargeRecord struct {
 
 func GetChargeRecordFromCharger() func() {
 	return func() {
+		monitor := sender.Monitor{}
+		monitor.Tag = "Charge"
+		monitor.Title = "Charge——2（ChargeRecord）"
 		page := 1
 		url := chargeRecordUrl + strconv.Itoa(page)
 		fmt.Println(url)
@@ -107,6 +111,8 @@ func GetChargeRecordFromCharger() func() {
 				redis.AddChargeRecord(context.Background(), header, key, member)
 			}
 		}
+		monitor.Desp = "charge"
+		monitor.PushS()
 	}
 } // 初始化使用
 

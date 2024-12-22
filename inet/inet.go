@@ -111,6 +111,27 @@ func (d *defaultClient) CheckSelect(url string, idx int) []byte {
 	return body
 }
 
+func (d *defaultClient) CheckSelectPost(url string, contentType string, idx int, rbody io.Reader) []byte {
+	req, err := http.NewRequest(http.MethodPost, url, rbody)
+	if err != nil {
+		return nil
+	}
+	if contentType != "" {
+		req.Header.Set("Content-Type", contentType)
+	}
+	req.Header.Set("User-Agent", config.Cfg.User_Agent)
+	req.Header.Set("Connection", "keep-alive")
+	req.Header.Set("Cookie", d.Cks[idx].Ck)
+
+	resp, err := d.Client.Do(req)
+	if err != nil {
+		return nil
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	return body
+}
+
 // 尽可能保证请求成功,应该尽可能保证返回结果，
 func (d *defaultClient) RedundantDW(url string, dyTime time.Duration) (re []byte) {
 	t := time.Now()

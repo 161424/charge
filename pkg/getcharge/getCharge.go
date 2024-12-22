@@ -80,7 +80,7 @@ func GetChargeFromMonitorDefaultUsersDynamic() func() {
 		ctx := context.Background()
 		monitor := sender.Monitor{}
 		monitor.Tag = "Charge"
-		monitor.Title = ""
+		monitor.Title = "充电监听——1（ChargeUp）"
 		addChargeList := true
 		t := time.Now()
 		for _, op := range opus {
@@ -189,6 +189,9 @@ func GetChargeFromMonitorDefaultUsersDynamic() func() {
 		inet.DefaultClient.Lock()
 		inet.DefaultClient.AliveCh = nil
 		defer inet.DefaultClient.Unlock()
+		monitor.Desp = "Charge"
+		monitor.PushS()
+
 	}
 }
 
