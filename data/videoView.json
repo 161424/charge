@@ -1,0 +1,602 @@
+{
+  "code": 0,
+  "message": "0",
+  "ttl": 1,
+  "data": {
+    "bvid": "BV1MLkSYNELP",
+    "aid": 113685854949209,
+    "videos": 1,
+    "tid": 182, 
+    "tname": "影视杂谈",
+    "copyright": 1,
+    "pic": "http://i1.hdslb.com/bfs/archive/7d2022441513ef8aa079638e21acf26885daf640.jpg",
+    "title": "九头蛇的终极理念是什么？ 为什么它才是队长的死敌？神盾局被九头蛇卧底为什么是必然结果？万字细读《美队2》（四）",
+    "pubdate": 1734710204,
+    "ctime": 1734709336,
+    "desc": "万字细读《美队2》（四）",
+    "desc_v2": [
+      {
+        "raw_text": "万字细读《美队2》（四）",
+        "type": 1,
+        "biz_id": 0
+      }
+    ],
+    "state": 0,
+    "duration": 2341,
+    "mission_id": 4026406,
+    "rights": {
+      "bp": 0,
+      "elec": 0,
+      "download": 1,
+      "movie": 0,
+      "pay": 0,
+      "hd5": 1,
+      "no_reprint": 1,
+      "autoplay": 1,
+      "ugc_pay": 0,
+      "is_cooperation": 0,
+      "ugc_pay_preview": 0,
+      "no_background": 0,
+      "clean_mode": 0,
+      "is_stein_gate": 0,
+      "is_360": 0,
+      "no_share": 0,
+      "arc_pay": 0,
+      "free_watch": 0
+    },
+    "owner": {
+      "mid": 319303007,
+      "name": "王全行",
+      "face": "https://i2.hdslb.com/bfs/face/19d9f3fdf2b737882a8df133288d0ac2701d7b5f.jpg"
+    },
+    "stat": {
+      "aid": 113685854949209,
+      "view": 138482,
+      "danmaku": 1389,
+      "reply": 312,
+      "favorite": 1771,
+      "coin": 3267,
+      "share": 84,
+      "now_rank": 0,
+      "his_rank": 0,
+      "like": 6189,
+      "dislike": 0,
+      "evaluation": "",
+      "vt": 0
+    },
+    "argue_info": {
+      "argue_msg": "",
+      "argue_type": 0,
+      "argue_link": ""
+    },
+    "dynamic": "各位久等，万字细度《美队2》（四）来了！\n本期我们聊极端自由和极端秩序所导致的相同危害，以及由此推导出的九头蛇的终极理念！\n系列长视频更新不易，完全仰仗各位的三连支持！\n谢谢大家了！",
+    "cid": 27443792300,
+    "dimension": {
+      "width": 1920,
+      "height": 1080,
+      "rotate": 0
+    },
+    "season_id": 4332946,
+    "premiere": null,
+    "teenage_mode": 0,
+    "is_chargeable_season": false,
+    "is_story": false,
+    "is_upower_exclusive": false,
+    "is_upower_play": false,
+    "is_upower_preview": false,
+    "enable_vt": 0,
+    "vt_display": "",
+    "no_cache": false,
+    "pages": [
+      {
+        "cid": 27443792300,
+        "page": 1,
+        "from": "vupload",
+        "part": "九头蛇的终极理念是什么？ 为什么它才是队长的死敌？神盾局被九头蛇卧底为什么是必然结果？万字细读《美队2》（四）",
+        "duration": 2341,
+        "vid": "",
+        "weblink": "",
+        "dimension": {
+          "width": 1920,
+          "height": 1080,
+          "rotate": 0
+        },
+        "first_frame": "http://i0.hdslb.com/bfs/storyff/n241220sa37q7cqcq2zjwb2jzwudl6ea_firsti.jpg"
+      }
+    ],
+    "subtitle": {
+      "allow_submit": false,
+      "list": [
+        {
+          "id": 1648853185240034816,
+          "lan": "ai-zh",
+          "lan_doc": "中文（自动生成）",
+          "is_lock": false,
+          "subtitle_url": "",
+          "type": 1,
+          "id_str": "1648853185240034816",
+          "ai_type": 0,
+          "ai_status": 2,
+          "author": {
+            "mid": 0,
+            "name": "",
+            "sex": "",
+            "face": "",
+            "sign": "",
+            "rank": 0,
+            "birthday": 0,
+            "is_fake_account": 0,
+            "is_deleted": 0,
+            "in_reg_audit": 0,
+            "is_senior_member": 0,
+            "name_render": null
+          }
+        }
+      ]
+    },
+    "ugc_season": {
+      "id": 4332946,
+      "title": "万字细读美队2",
+      "cover": "https://archive.biliimg.com/bfs/archive/d0a743cc5d609f8e29443d23804e71c68323020f.jpg",
+      "mid": 319303007,
+      "intro": "万字细读美队2",
+      "sign_state": 0,
+      "attribute": 140,
+      "sections": [
+        {
+          "season_id": 4332946,
+          "id": 4821455,
+          "title": "正片",
+          "type": 1,
+          "episodes": [
+            {
+              "season_id": 4332946,
+              "section_id": 4821455,
+              "id": 97548970,
+              "aid": 113644633460673,
+              "cid": 27319144071,
+              "title": "如何理解队长捍卫的有序自由？九头蛇是如何利用尼克弗瑞的死的？电梯大战的精彩博弈！万字细读《美队2》（三）",
+              "attribute": 0,
+              "arc": {
+                "aid": 113644633460673,
+                "videos": 0,
+                "type_id": 0,
+                "type_name": "",
+                "copyright": 0,
+                "pic": "http://i1.hdslb.com/bfs/archive/45e4e861a9067425081e46b05d9a69c31c040493.jpg",
+                "title": "如何理解队长捍卫的有序自由？九头蛇是如何利用尼克弗瑞的死的？电梯大战的精彩博弈！万字细读《美队2》（三）",
+                "pubdate": 1734080689,
+                "ctime": 1734080689,
+                "desc": "",
+                "state": 0,
+                "duration": 1842,
+                "rights": {
+                  "bp": 0,
+                  "elec": 0,
+                  "download": 0,
+                  "movie": 0,
+                  "pay": 0,
+                  "hd5": 0,
+                  "no_reprint": 0,
+                  "autoplay": 0,
+                  "ugc_pay": 0,
+                  "is_cooperation": 0,
+                  "ugc_pay_preview": 0,
+                  "arc_pay": 0,
+                  "free_watch": 0
+                },
+                "author": {
+                  "mid": 0,
+                  "name": "",
+                  "face": ""
+                },
+                "stat": {
+                  "aid": 113644633460673,
+                  "view": 153134,
+                  "danmaku": 1161,
+                  "reply": 199,
+                  "fav": 1352,
+                  "coin": 2443,
+                  "share": 85,
+                  "now_rank": 0,
+                  "his_rank": 0,
+                  "like": 5956,
+                  "dislike": 0,
+                  "evaluation": "",
+                  "argue_msg": "",
+                  "vt": 1572852,
+                  "vv": 153134
+                },
+                "dynamic": "",
+                "dimension": {
+                  "width": 0,
+                  "height": 0,
+                  "rotate": 0
+                },
+                "desc_v2": null,
+                "is_chargeable_season": false,
+                "is_blooper": false,
+                "enable_vt": 0,
+                "vt_display": ""
+              },
+              "page": {
+                "cid": 27319144071,
+                "page": 1,
+                "from": "vupload",
+                "part": "如何理解队长捍卫的有序自由？九头蛇是如何利用尼克弗瑞的死的？电梯大战的精彩博弈！万字细读《美队2》（三）",
+                "duration": 1842,
+                "vid": "",
+                "weblink": "",
+                "dimension": {
+                  "width": 1920,
+                  "height": 1080,
+                  "rotate": 0
+                }
+              },
+              "bvid": "BV1htqBYfEuY",
+              "pages": [
+                {
+                  "cid": 27319144071,
+                  "page": 1,
+                  "from": "vupload",
+                  "part": "如何理解队长捍卫的有序自由？九头蛇是如何利用尼克弗瑞的死的？电梯大战的精彩博弈！万字细读《美队2》（三）",
+                  "duration": 1842,
+                  "vid": "",
+                  "weblink": "",
+                  "dimension": {
+                    "width": 1920,
+                    "height": 1080,
+                    "rotate": 0
+                  }
+                }
+              ]
+            },
+            {
+              "season_id": 4332946,
+              "section_id": 4821455,
+              "id": 97548971,
+              "aid": 113565109387846,
+              "cid": 27088650542,
+              "title": "队长为什么不相信亚历山大皮尔斯？九头蛇第一人是如何忽悠队长的？万字细读《美队2》（二）",
+              "attribute": 0,
+              "arc": {
+                "aid": 113565109387846,
+                "videos": 0,
+                "type_id": 0,
+                "type_name": "",
+                "copyright": 0,
+                "pic": "http://i0.hdslb.com/bfs/archive/3fb5ff301237d094174f1097ae0384a1917738cb.jpg",
+                "title": "队长为什么不相信亚历山大皮尔斯？九头蛇第一人是如何忽悠队长的？万字细读《美队2》（二）",
+                "pubdate": 1732874400,
+                "ctime": 1732874400,
+                "desc": "",
+                "state": 0,
+                "duration": 2199,
+                "rights": {
+                  "bp": 0,
+                  "elec": 0,
+                  "download": 0,
+                  "movie": 0,
+                  "pay": 0,
+                  "hd5": 0,
+                  "no_reprint": 0,
+                  "autoplay": 0,
+                  "ugc_pay": 0,
+                  "is_cooperation": 0,
+                  "ugc_pay_preview": 0,
+                  "arc_pay": 0,
+                  "free_watch": 0
+                },
+                "author": {
+                  "mid": 0,
+                  "name": "",
+                  "face": ""
+                },
+                "stat": {
+                  "aid": 113565109387846,
+                  "view": 320610,
+                  "danmaku": 1481,
+                  "reply": 422,
+                  "fav": 2208,
+                  "coin": 2399,
+                  "share": 128,
+                  "now_rank": 0,
+                  "his_rank": 0,
+                  "like": 7959,
+                  "dislike": 0,
+                  "evaluation": "",
+                  "argue_msg": "",
+                  "vt": 2756403,
+                  "vv": 320610
+                },
+                "dynamic": "",
+                "dimension": {
+                  "width": 0,
+                  "height": 0,
+                  "rotate": 0
+                },
+                "desc_v2": null,
+                "is_chargeable_season": false,
+                "is_blooper": false,
+                "enable_vt": 0,
+                "vt_display": ""
+              },
+              "page": {
+                "cid": 27088650542,
+                "page": 1,
+                "from": "vupload",
+                "part": "队长为什么不相信亚历山大皮尔斯？九头蛇第一人是如何忽悠队长的？万字细读《美队2》（二）",
+                "duration": 2199,
+                "vid": "",
+                "weblink": "",
+                "dimension": {
+                  "width": 1920,
+                  "height": 1080,
+                  "rotate": 0
+                }
+              },
+              "bvid": "BV16NzqYkEgB",
+              "pages": [
+                {
+                  "cid": 27088650542,
+                  "page": 1,
+                  "from": "vupload",
+                  "part": "队长为什么不相信亚历山大皮尔斯？九头蛇第一人是如何忽悠队长的？万字细读《美队2》（二）",
+                  "duration": 2199,
+                  "vid": "",
+                  "weblink": "",
+                  "dimension": {
+                    "width": 1920,
+                    "height": 1080,
+                    "rotate": 0
+                  }
+                }
+              ]
+            },
+            {
+              "season_id": 4332946,
+              "section_id": 4821455,
+              "id": 97548972,
+              "aid": 113526202959442,
+              "cid": 26904102656,
+              "title": "队长为什么反对洞察计划？没有九头蛇这个计划就没问题吗？万字细读《美队2》（一）",
+              "attribute": 0,
+              "arc": {
+                "aid": 113526202959442,
+                "videos": 0,
+                "type_id": 0,
+                "type_name": "",
+                "copyright": 0,
+                "pic": "http://i2.hdslb.com/bfs/archive/9dd60270fb4e6d60d34295cb460c5c0d36896673.jpg",
+                "title": "队长为什么反对洞察计划？没有九头蛇这个计划就没问题吗？万字细读《美队2》（一）",
+                "pubdate": 1732273233,
+                "ctime": 1732273233,
+                "desc": "",
+                "state": 0,
+                "duration": 2008,
+                "rights": {
+                  "bp": 0,
+                  "elec": 0,
+                  "download": 0,
+                  "movie": 0,
+                  "pay": 0,
+                  "hd5": 0,
+                  "no_reprint": 0,
+                  "autoplay": 0,
+                  "ugc_pay": 0,
+                  "is_cooperation": 0,
+                  "ugc_pay_preview": 0,
+                  "arc_pay": 0,
+                  "free_watch": 0
+                },
+                "author": {
+                  "mid": 0,
+                  "name": "",
+                  "face": ""
+                },
+                "stat": {
+                  "aid": 113526202959442,
+                  "view": 444480,
+                  "danmaku": 2405,
+                  "reply": 760,
+                  "fav": 3721,
+                  "coin": 3597,
+                  "share": 270,
+                  "now_rank": 0,
+                  "his_rank": 0,
+                  "like": 10917,
+                  "dislike": 0,
+                  "evaluation": "",
+                  "argue_msg": "",
+                  "vt": 3763699,
+                  "vv": 444480
+                },
+                "dynamic": "",
+                "dimension": {
+                  "width": 0,
+                  "height": 0,
+                  "rotate": 0
+                },
+                "desc_v2": null,
+                "is_chargeable_season": false,
+                "is_blooper": false,
+                "enable_vt": 0,
+                "vt_display": ""
+              },
+              "page": {
+                "cid": 26904102656,
+                "page": 1,
+                "from": "vupload",
+                "part": "队长为什么反对洞察计划？没有九头蛇这个计划就没问题吗？万字细读《美队2》（一）",
+                "duration": 2008,
+                "vid": "",
+                "weblink": "",
+                "dimension": {
+                  "width": 1920,
+                  "height": 1080,
+                  "rotate": 0
+                }
+              },
+              "bvid": "BV16vBiYuEJW",
+              "pages": [
+                {
+                  "cid": 26904102656,
+                  "page": 1,
+                  "from": "vupload",
+                  "part": "队长为什么反对洞察计划？没有九头蛇这个计划就没问题吗？万字细读《美队2》（一）",
+                  "duration": 2008,
+                  "vid": "",
+                  "weblink": "",
+                  "dimension": {
+                    "width": 1920,
+                    "height": 1080,
+                    "rotate": 0
+                  }
+                }
+              ]
+            },
+            {
+              "season_id": 4332946,
+              "section_id": 4821455,
+              "id": 98973094,
+              "aid": 113685854949209,
+              "cid": 27443792300,
+              "title": "九头蛇的终极理念是什么？ 为什么它才是队长的死敌？神盾局被九头蛇卧底为什么是必然结果？万字细读《美队2》（四）",
+              "attribute": 2,
+              "arc": {
+                "aid": 113685854949209,
+                "videos": 0,
+                "type_id": 0,
+                "type_name": "",
+                "copyright": 0,
+                "pic": "http://i1.hdslb.com/bfs/archive/7d2022441513ef8aa079638e21acf26885daf640.jpg",
+                "title": "九头蛇的终极理念是什么？ 为什么它才是队长的死敌？神盾局被九头蛇卧底为什么是必然结果？万字细读《美队2》（四）",
+                "pubdate": 1734710204,
+                "ctime": 1734710204,
+                "desc": "",
+                "state": 0,
+                "duration": 2341,
+                "rights": {
+                  "bp": 0,
+                  "elec": 0,
+                  "download": 0,
+                  "movie": 0,
+                  "pay": 0,
+                  "hd5": 0,
+                  "no_reprint": 0,
+                  "autoplay": 0,
+                  "ugc_pay": 0,
+                  "is_cooperation": 0,
+                  "ugc_pay_preview": 0,
+                  "arc_pay": 0,
+                  "free_watch": 0
+                },
+                "author": {
+                  "mid": 0,
+                  "name": "",
+                  "face": ""
+                },
+                "stat": {
+                  "aid": 113685854949209,
+                  "view": 138482,
+                  "danmaku": 1389,
+                  "reply": 312,
+                  "fav": 1771,
+                  "coin": 3267,
+                  "share": 84,
+                  "now_rank": 0,
+                  "his_rank": 0,
+                  "like": 6189,
+                  "dislike": 0,
+                  "evaluation": "",
+                  "argue_msg": "",
+                  "vt": 1525613,
+                  "vv": 138482
+                },
+                "dynamic": "",
+                "dimension": {
+                  "width": 0,
+                  "height": 0,
+                  "rotate": 0
+                },
+                "desc_v2": null,
+                "is_chargeable_season": false,
+                "is_blooper": false,
+                "enable_vt": 0,
+                "vt_display": ""
+              },
+              "page": {
+                "cid": 27443792300,
+                "page": 1,
+                "from": "vupload",
+                "part": "九头蛇的终极理念是什么？ 为什么它才是队长的死敌？神盾局被九头蛇卧底为什么是必然结果？万字细读《美队2》（四）",
+                "duration": 2341,
+                "vid": "",
+                "weblink": "",
+                "dimension": {
+                  "width": 1920,
+                  "height": 1080,
+                  "rotate": 0
+                }
+              },
+              "bvid": "BV1MLkSYNELP",
+              "pages": [
+                {
+                  "cid": 27443792300,
+                  "page": 1,
+                  "from": "vupload",
+                  "part": "九头蛇的终极理念是什么？ 为什么它才是队长的死敌？神盾局被九头蛇卧底为什么是必然结果？万字细读《美队2》（四）",
+                  "duration": 2341,
+                  "vid": "",
+                  "weblink": "",
+                  "dimension": {
+                    "width": 1920,
+                    "height": 1080,
+                    "rotate": 0
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "stat": {
+        "season_id": 4332946,
+        "view": 1056706,
+        "danmaku": 6436,
+        "reply": 1693,
+        "fav": 9052,
+        "coin": 11706,
+        "share": 567,
+        "now_rank": 0,
+        "his_rank": 0,
+        "like": 31021,
+        "vt": 0,
+        "vv": 0
+      },
+      "ep_count": 4,
+      "season_type": 1,
+      "is_pay_season": false,
+      "enable_vt": 0
+    },
+    "is_season_display": true,
+    "user_garb": {
+      "url_image_ani_cut": ""
+    },
+    "honor_reply": {
+      "honor": [
+        {
+          "aid": 113685854949209,
+          "type": 7,
+          "desc": "热门收录",
+          "weekly_recommend_num": 0
+        }
+      ]
+    },
+    "like_icon": "",
+    "need_jump_bv": false,
+    "disable_show_up_info": false,
+    "is_story_play": 1,
+    "is_view_self": false
+  }
+}

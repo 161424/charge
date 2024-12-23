@@ -2,6 +2,7 @@ package common
 
 import (
 	"charge/inet"
+	"charge/utils"
 	"encoding/json"
 	"fmt"
 	url2 "net/url"
@@ -13,6 +14,16 @@ type body struct {
 	Code    int
 	Message string
 	Data    int
+}
+
+type gainCoin struct {
+	Code    int
+	Message string
+	Data    []struct {
+		Time   string `json:"time"`
+		Delta  int    `json:"delta"`
+		Reason string `json:"reason"`
+	}
 }
 
 type account struct {
@@ -36,6 +47,7 @@ type recommend struct {
 	Data    struct {
 		Item []struct {
 			Id    int
+			Bvid  string
 			Title string
 			Owner struct {
 				Mid  int
@@ -55,9 +67,22 @@ type addCoin struct {
 }
 
 func GainCoin(idx int) {
-
+	url := "https://api.bilibili.com/x/member/web/coin/log?jsonp=jsonp"
+	resp := inet.DefaultClient.CheckSelect(url, idx)
+	gc := &gainCoin{}
+	err := json.Unmarshal(resp, gc)
+	if err != nil {
+		return
+	}
+	if gc.Code != 0 {
+		return
+	}
 }
 
+// 1. 获取今日已投币经验，获取推荐列表，查看是否投币
+// 2. 查看账号硬币个数
+// 3. 对列表视频进行投币
+// 4. 观看投币视频
 func SpendCoin(idx int) {
 
 	urlAccount := "https://account.bilibili.com/site/getCoin"
@@ -107,7 +132,7 @@ func getAidByRecommend(idx int) {
 		return
 	}
 
-	state := 0
+	state := 5
 	for _, item := range r.Data.Item {
 		// 获取稿件投币数量
 		url = "https://api.bilibili.com/x/web-interface/archive/relation?aid="
@@ -134,27 +159,36 @@ func getAidByRecommend(idx int) {
 		//ga: 1
 		//csrf: f8eb4c45f314c7c88539facb7e077c55
 		// 进行投币
+		ct := 1 // 投币数量
+		if state > 1 {
+			ct = 2
+		}
 		url = "https://api.bilibili.com/x/web-interface/coin/add" // 正文参数（ application/x-www-form-urlencoded ）
 		postData := url2.Values{}
-		postData.Add("aid", "113672986822554")
-		postData.Add("multiply", "2")
-		postData.Add("csrf", "583fcc54c6e06e6220657ee0b29c9470")
-		postData.Add("select_like", "1") // 进行点赞
-		resp = inet.DefaultClient.CheckSelectPost(url, "application/x-www-form-urlencoded", idx, strings.NewReader(postData.Encode()))
+		postData.Add("aid", strconv.Itoa(item.Id))
+		postData.Add("multiply", strconv.Itoa(ct))                          // 投币数量
+		postData.Add("csrf", utils.CutCsrf(inet.DefaultClient.Cks[idx].Ck)) // 必要
+		postData.Add("select_like", "1")                                    // 进行点赞
+		resp = inet.DefaultClient.CheckSelectPost(url, "application/x-www-form-urlencoded", "", idx, strings.NewReader(postData.Encode()))
 		aC := &addCoin{}
 		err = json.Unmarshal(resp, aC)
 		if err != nil {
 			continue
 		}
+		fmt.Println("ac", aC, string(resp), item)
 		if aC.Code == 0 {
 			fmt.Println("点赞成功")
-			state += 2
+			state -= 2
 		} else if aC.Code == 34005 {
 			fmt.Println("点赞已达到上限")
 		} else {
 			fmt.Println("点赞失败：", aC.Message)
 		}
-		if state >= 5 {
+
+		// 观看任务
+		watchTargetVideoCommon(idx, item.Bvid)
+
+		if state <= 0 {
 			return
 		}
 	}

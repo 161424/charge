@@ -111,7 +111,7 @@ func (d *defaultClient) CheckSelect(url string, idx int) []byte {
 	return body
 }
 
-func (d *defaultClient) CheckSelectPost(url string, contentType string, idx int, rbody io.Reader) []byte {
+func (d *defaultClient) CheckSelectPost(url string, contentType, referer string, idx int, rbody io.Reader) []byte {
 	req, err := http.NewRequest(http.MethodPost, url, rbody)
 	if err != nil {
 		return nil
@@ -119,6 +119,10 @@ func (d *defaultClient) CheckSelectPost(url string, contentType string, idx int,
 	if contentType != "" {
 		req.Header.Set("Content-Type", contentType)
 	}
+	if referer == "" {
+		referer = "https://www.bilibili.com/"
+	}
+	req.Header.Set("Referer", referer)
 	req.Header.Set("User-Agent", config.Cfg.User_Agent)
 	req.Header.Set("Connection", "keep-alive")
 	req.Header.Set("Cookie", d.Cks[idx].Ck)

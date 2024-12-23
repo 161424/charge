@@ -16,8 +16,10 @@ func DailyTask() func() {
 			}
 
 			// coin
-			GainCoin(idx)
-			SpendCoin(idx)
+			GainCoin(idx)  //  查看硬币使用历史，暂未找到获得硬币api
+			SpendCoin(idx) //  观看推荐视频，并点赞投币
+			// 银瓜子兑换硬币？
+
 			// shareAndWatch
 
 			// like
@@ -26,9 +28,11 @@ func DailyTask() func() {
 
 			// Expire
 
-			//  大会员积分
+			// 大会员积分
 
 			// 会员BB券提醒
+
+			// 大会员线下活动监听
 
 		}
 

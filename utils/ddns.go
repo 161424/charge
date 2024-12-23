@@ -14,9 +14,9 @@ import (
 
 // Cloudflare API的设置
 // dns_record_id 抓取url https://dash.cloudflare.com/api/v4/zones/{zone_id}/dns_records?per_page=200&order=type&direction=asc
-//var zone_id = ""           //Cloudflare域名的Zone ID
-//var dns_record_id = ""     //DNS记录的ID
-//var api_token = "" // Cloudflare的API Token
+// var zone_id = ""           //Cloudflare域名的Zone ID
+// var dns_record_id = ""     //DNS记录的ID
+// var api_token = "" // Cloudflare的API Token
 
 type GCI struct {
 	Result    bool
