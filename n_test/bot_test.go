@@ -2,17 +2,10 @@ package n
 
 // go get github.com/tencent-connect/botgo@42cb5b8  安装git最新版本
 import (
-	"bytes"
 	"context"
-	"crypto/ed25519"
-	"encoding/hex"
-	"encoding/json"
 	"fmt"
 	"github.com/tencent-connect/botgo"
 	"github.com/tencent-connect/botgo/dto"
-	"io"
-	"strings"
-
 	"github.com/tencent-connect/botgo/event"
 	"github.com/tencent-connect/botgo/interaction/webhook"
 	"github.com/tencent-connect/botgo/openapi"
@@ -68,52 +61,4 @@ func C2CMessageEventHandler() event.C2CMessageEventHandler {
 		fmt.Println(mg, err)
 		return nil
 	}
-}
-
-func handleValidation(rw http.ResponseWriter, r *http.Request, botSecret string) {
-	httpBody, err := io.ReadAll(r.Body)
-	if err != nil {
-		log.Println("read http body err", err)
-		return
-	}
-	payload := &Payload{}
-	if err = json.Unmarshal(httpBody, payload); err != nil {
-		log.Println("parse http payload err", err)
-		return
-	}
-	validationPayload := &ValidationRequest{}
-	if err = json.Unmarshal(payload.Data, validationPayload); err != nil {
-		log.Println("parse http payload failed:", err)
-		return
-	}
-	seed := botSecret
-	for len(seed) < ed25519.SeedSize {
-		seed = strings.Repeat(seed, 2)
-	}
-	seed = seed[:ed25519.SeedSize]
-	reader := strings.NewReader(seed)
-	// GenerateKey 方法会返回公钥、私钥，这里只需要私钥进行签名生成不需要返回公钥
-	_, privateKey, err := ed25519.GenerateKey(reader)
-	if err != nil {
-		log.Println("ed25519 generate key failed:", err)
-		return
-	}
-	var msg bytes.Buffer
-	msg.WriteString(validationPayload.EventTs)
-	msg.WriteString(validationPayload.PlainToken)
-	signature := hex.EncodeToString(ed25519.Sign(privateKey, msg.Bytes()))
-	if err != nil {
-		log.Println("generate signature failed:", err)
-		return
-	}
-	rspBytes, err := json.Marshal(
-		&ValidationResponse{
-			PlainToken: validationPayload.PlainToken,
-			Signature:  signature,
-		})
-	if err != nil {
-		log.Println("handle validation failed:", err)
-		return
-	}
-	rw.Write(rspBytes)
 }

@@ -169,7 +169,7 @@ func getAidByRecommend(idx int) {
 		postData.Add("multiply", strconv.Itoa(ct))                          // 投币数量
 		postData.Add("csrf", utils.CutCsrf(inet.DefaultClient.Cks[idx].Ck)) // 必要
 		postData.Add("select_like", "1")                                    // 进行点赞
-		resp = inet.DefaultClient.CheckSelectPost(url, "application/x-www-form-urlencoded", "", idx, strings.NewReader(postData.Encode()))
+		resp = inet.DefaultClient.CheckSelectPost(url, "application/x-www-form-urlencoded", "", "", idx, strings.NewReader(postData.Encode()))
 		aC := &addCoin{}
 		err = json.Unmarshal(resp, aC)
 		if err != nil {
