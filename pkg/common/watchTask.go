@@ -70,7 +70,8 @@ func watchTargetVideoCommon(idx int, bvid string) {
 		reqBody.Set("played_time", strconv.Itoa(t))
 		reqBody.Set("realtime", strconv.Itoa(t))
 		time.Sleep(time.Duration(t) * time.Second)
-		resp = inet.DefaultClient.CheckSelectPost(_url, "application/x-www-form-urlencoded", "", idx, strings.NewReader(reqBody.Encode()))
+		resp = inet.DefaultClient.CheckSelectPost(_url, "application/x-www-form-urlencoded", "", "", idx, strings.NewReader(reqBody.Encode()))
+
 		err = json.Unmarshal(resp, rh)
 		if err != nil {
 			return
@@ -90,4 +91,32 @@ func RandomTime() (re []int) {
 	}
 	re = append(re, t2)
 	return
+}
+
+// 不知道干咩用的
+func watchRandomEp(idx int) int {
+	url := "https://api.bilibili.com/pgc/activity/deliver/material/receive"
+	referer := "https://big.bilibili.com/mobile/bigPoint"
+	b := BangumiList.Random()
+	reqBody := url2.Values{}
+	reqBody.Set("spmid", "united.player-video-detail.0.0")
+	reqBody.Set("season_id", strconv.Itoa(BangumiList.Season))
+	reqBody.Set("activity_code", "")
+	reqBody.Set("ep_id", strconv.Itoa(b.Id))
+	reqBody.Set("from_spmid", "search.search-result.0.0")
+	resp := inet.DefaultClient.CheckSelectPost(url, "application/x-www-form-urlencoded", referer, "", idx, strings.NewReader(reqBody.Encode()))
+	fmt.Printf("正在观看:%s·《%s》\n", BangumiList.Name, b.Show_title)
+	reS := &reSign{}
+	err := json.Unmarshal(resp, &reS)
+	if err != nil {
+		fmt.Println(err)
+		return -1
+	}
+	if reS.Code != 0 {
+		fmt.Printf("观看视频%s失败.res Code:%d,res Message:%s", BangumiList.Name, reS.Code, reS.Message)
+		return reS.Code
+	}
+
+	return 0
+
 }

@@ -9,6 +9,7 @@ import (
 	"time"
 )
 
+// 大会员积分项目的请求内容，需要对app进行抓包获取。
 // 1. 获得大会员积分
 // 2. 积分兑换
 
@@ -33,12 +34,12 @@ type VipTask struct {
 			Modules []struct {
 				Module_title     string
 				Common_task_item []struct {
-					Task_code      string
-					State          int
+					Task_code      string // 任务代码
+					State          int    // 0表示未接受任务，1表示已经接受任务，3表示任务已经完成
 					Title          string
 					Link           string
-					Complete_times int
-					Max_times      int
+					Complete_times int // 执行次数
+					Max_times      int // 最大执行次数
 				}
 			}
 			Sing_task_item struct {
@@ -48,7 +49,7 @@ type VipTask struct {
 					Score    int
 					Is_today bool
 				}
-				Count int
+				Count int // 连续签到次数
 			}
 		}
 	}
@@ -104,7 +105,7 @@ func BigPoint(idx int) {
 			}
 		}
 	}
-	complateTask := 0
+
 	// 领取任务
 	for _, taskList := range vTask.Data.Task_info.Modules {
 		if len(taskList.Common_task_item) == 1 {
@@ -118,15 +119,35 @@ func BigPoint(idx int) {
 				if _, ok := task_code[task.Task_code]; ok {
 					if task.Complete_times == task.Max_times {
 						// 任务已经完成
-						complateTask++
 						continue
 					}
-					if task.State == 1 {
+					if task.State == 1 { //
 						code := receiveTask(idx, task.Task_code)
 						if code == 0 {
-							if true {
+							// 执行任务
+							if task.Task_code == "ogvwatchnew" {
+								// 10分钟观影任务
+								if watchRandomEp(idx) == 0 {
+									go func() {
+										time.Sleep(10 * time.Minute)
+									}()
+								}
+							} else if task.Task_code == "vipmallview" {
+								// 会员购
+								if vipMallView(idx) == 0 {
+									fmt.Println("浏览会员购每日任务 ✓")
+								}
+							} else if task.Task_code == "dress-view" {
+								// 装扮商城
+								if completeTaskV2(idx, task.Task_code) == 0 {
+									fmt.Printf("[%s]任务完成 ✓\n", task_code[task.Task_code])
+								}
+							} else {
+								if completeTask(idx, task.Task_code) == 0 {
+									// 影视、番剧10s
+									fmt.Printf("[%s]任务完成 ✓\n", task_code[task.Task_code])
+								}
 							}
-							completeTask(idx, task.Task_code)
 						}
 					}
 
@@ -134,10 +155,7 @@ func BigPoint(idx int) {
 			}
 		}
 	}
-	if complateTask >= len(task_code) {
-		fmt.Println("任务都执行完毕，无可执行任务")
-		return
-	}
+	// jp_channel任务 不在task目录中，奇怪
 
 	// 任务执行
 
@@ -161,6 +179,7 @@ func vSign(idx int) int {
 
 }
 
+// 接受任务
 func receiveTask(idx int, taskCode string) int {
 	os := "android"
 	channel := "xiaomi"
@@ -179,7 +198,7 @@ func receiveTask(idx int, taskCode string) int {
 		return -1
 	}
 	if reS.Code != 0 {
-		fmt.Printf("接受任务%s失败.res Code:%d,res Message:%s", task_code, reS.Code, reS.Message)
+		fmt.Printf("接受任务%s失败.res Code:%d,res Message:%s", task_code[taskCode], reS.Code, reS.Message)
 		return reS.Code
 	}
 	fmt.Printf("领取[%s]任务完成", task_code[taskCode])
@@ -187,7 +206,10 @@ func receiveTask(idx int, taskCode string) int {
 
 }
 
-//  观看剧集10分钟
+// 观看剧集10分钟
+func completeWatch(idx int, taskCode string) int {
+	return 0
+}
 
 // 浏览追番页面10s
 // 浏览影视界面10s
@@ -205,15 +227,58 @@ func completeTask(idx int, taskCode string) int {
 		return -1
 	}
 	if reS.Code != 0 {
-		fmt.Printf("完成任务%s失败.res Code:%d,res Message:%s", task_code, reS.Code, reS.Message)
+		fmt.Printf("完成任务%s失败.res Code:%d,res Message:%s\n", task_code, reS.Code, reS.Message)
 		return reS.Code
 	}
-	fmt.Printf("完成[%s]任务完成", task_code[taskCode])
 	return 0
 
 }
 
-//  浏览装扮商城e
-//  浏览会员购
+// 浏览装扮商城e
+func completeTaskV2(idx int, taskCode string) int {
+	url := "https://api.bilibili.com/pgc/activity/deliver/task/complete/2"
+	refer := "https://big.bilibili.com/mobile/bigPoint/task"
+	reqBody := url2.Values{}
+	//reqBody.Add("csrf", taskCode)
+	reqBody.Add("taskCode", taskCode)
+	resp := inet.DefaultClient.CheckSelectPost(url, "application/x-www-form-urlencoded", refer, "", idx, strings.NewReader(reqBody.Encode()))
+	reS := &reSign{}
+	err := json.Unmarshal(resp, &reS)
+	if err != nil {
+		fmt.Println(err)
+		return -1
+	}
+	if reS.Code != 0 {
+		fmt.Printf("完成任务%s失败.res Code:%d,res Message:%s\n", task_code, reS.Code, reS.Message)
+		return reS.Code
+	}
+	return 0
+
+}
+
+// 浏览会员购
+func vipMallView(idx int) int {
+	_url := "https://show.bilibili.com/api/activity/fire/common/event/dispatch"
+	reqBody := `{"eventId":"hevent_oy4b7h3epeb"}`
+	resp := inet.DefaultClient.CheckSelectPost(_url, "", "", "", idx, strings.NewReader(reqBody))
+	//"code": 0,
+	//	"message": "SUCCESS",
+	//	"data": null,
+	//	"errtag": 0,
+	//	"ttl": 1735110697189"
+	reS := &reSign{}
+	err := json.Unmarshal(resp, reS)
+	if err != nil {
+		fmt.Println(err)
+		return -1
+	}
+	if reS.Code != 0 {
+		fmt.Println("浏览会员购失败:", reS.Code, reS.Message)
+		return reS.Code
+
+	}
+	return 0
+
+}
 
 //  兑换礼品

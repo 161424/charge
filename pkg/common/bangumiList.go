@@ -1,19 +1,13 @@
-package n
+package common
 
 import (
 	"encoding/json"
 	"fmt"
+	"log"
+	"math/rand"
 	"os"
 	"strings"
-	"testing"
 )
-
-func TestTask(t *testing.T) {
-	os := "android"
-	channel := "xiaomi"
-	mobileUA := fmt.Sprintf("Mozilla/5.0 BiliDroid/%s (bbcallen@gmail.com) os/%s model/%s mobi_app/%s build/%s channel/%s innerVer/%s osVer/%s network/2", "7.72.0", os, "MI 11 Ulter", os, "7720210", channel, channel, "10")
-	fmt.Println(mobileUA)
-}
 
 type Bangumi struct {
 	Id         int
@@ -38,22 +32,37 @@ type bangumiBody struct {
 
 var BangumiList = &bangumiList{}
 
-func TestTask2(t *testing.T) {
+func init() {
+	//GET https://api.bilibili.com/pgc/review/user?media_id=28229051
+	BangumiList.Md = 28229051
+	// GET https://api.bilibili.com/pgc/view/web/ep/list?season_id=33622
+	BangumiList.Season = 33622
+	BangumiList.Type = 3
+
 	path, _ := os.Getwd()
 	npath := strings.Split(path, "\\")
 	if npath[len(npath)-1] != "charge" {
 		npath = npath[:len(npath)-1]
 	}
 	path = strings.Join(npath, "/")
-	f, err := os.Open(path + "/data/243343066.json")
+
+	fmt.Println(path)
+	f, err := os.OpenFile(path+"/data/243343066.json", os.O_RDWR, 777)
 	if err != nil {
-		panic(err)
+		log.Fatalf("读取文件失败: %v", err)
 	}
+
 	bangumibody := &bangumiBody{}
 	defer f.Close()
 	err = json.NewDecoder(f).Decode(&bangumibody)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(bangumibody)
+	BangumiList.List = bangumibody.Result.Episodes
+	//
+	bangumibody = nil
+}
+
+func (b bangumiList) Random() Bangumi {
+	return b.List[rand.Intn(len(b.List))]
 }
