@@ -42,10 +42,12 @@ func Run() {
 	})
 	//fmt.Println(config.Cfg.Port)
 	//fmt.Println(config.Cfg)
-	err := g.Run(config.Cfg.Port)
-	if err != nil {
-		fmt.Println(err)
-		panic(err)
-	}
+	go func() {
+		err := g.Run(config.Cfg.Port)
+		if err != nil {
+			fmt.Println(err)
+			panic(err)
+		}
+	}()
 
 }

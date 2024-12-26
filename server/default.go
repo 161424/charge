@@ -87,7 +87,7 @@ func (tw *TimingWheel) AddTimer(duration time.Duration, execType, circleType int
 	}
 
 	// 将定时任务添加到对应槽的末尾
-	fmt.Printf("%s已经添加到格子%d，可能在%d:%d执行\n", desp, position, position/60, position%60)
+	fmt.Printf("[%s]已经添加到格子%d，可能在%d:%d执行\n", desp, position, position/60, position%60)
 	tw.buckets[position].PushBack(timer)
 
 	// 如果任务即将到期（在当前槽或下一个槽），则立即处理，否则等待时间轮转动到该槽
@@ -102,7 +102,6 @@ func (tw *TimingWheel) run() {
 		select {
 		case <-tw.ticker.C:
 			tw.current = (tw.current + 1) % wheelSize
-			fmt.Printf("正在运行第%d个格子的任务/n", tw.current)
 			tw.processTimersAtPosition(tw.current)
 		case <-tw.stop:
 			return
@@ -112,7 +111,9 @@ func (tw *TimingWheel) run() {
 
 // processTimersAtPosition 处理指定位置的定时任务
 func (tw *TimingWheel) processTimersAtPosition(position int) {
-	//fmt.Println(tw.buckets[position].Len(), tw.buckets[position])
+	if tw.buckets[position].Len() != 0 {
+		fmt.Printf("正在运行第%d个格子的任务", position)
+	}
 	for e := tw.buckets[position].Front(); e != nil; {
 		timer := e.Value.(*Timer)
 		if time.Now().Minute()+time.Now().Hour()*60 >= timer.expiry {

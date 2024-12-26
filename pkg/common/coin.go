@@ -92,14 +92,17 @@ func SpendCoin(idx int) {
 	b := &body{}
 	err := json.Unmarshal(resp, b)
 	if err != nil {
+		fmt.Println(err)
 		return
 	}
 	if b.Code != 0 {
+		fmt.Println(b.Code, b.Message)
 		return
 	}
 	if b.Data >= 50 { //  已经通过硬币获得50经验
 		// 获取账号硬币数量
 		// earn expire
+		fmt.Printf("已获得经验：%d", b.Data)
 		return
 	}
 	resp = inet.DefaultClient.CheckSelect(urlAccount, idx)
@@ -116,6 +119,16 @@ func SpendCoin(idx int) {
 		return
 	}
 	getAidByRecommend(idx)
+	resp = inet.DefaultClient.CheckSelect(urlCoinExp, idx)
+	b = &body{}
+	err = json.Unmarshal(resp, b)
+	if err != nil {
+		return
+	}
+	if b.Code != 0 {
+		return
+	}
+	fmt.Printf("已获得经验：%d", b.Data)
 
 }
 

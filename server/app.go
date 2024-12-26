@@ -9,6 +9,7 @@ import (
 	"charge/pkg/listenUpForLottery"
 	"charge/router"
 	"charge/utils"
+	"fmt"
 	"time"
 )
 
@@ -37,6 +38,7 @@ func Run() error {
 	//tw.AddTimer(8*60*time.Minute, 2, listenUpForLottery.BalanceLottery()) // 设置每日转发lottery (会删除，因此要最后进行)
 	//todo 多账号监听up充电
 	//todo
+	fmt.Println("执行AddTimer")
 	for {
 		select {}
 	}
