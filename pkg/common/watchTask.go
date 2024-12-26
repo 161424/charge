@@ -79,7 +79,6 @@ func watchTargetVideoCommon(idx int, bvid string) {
 		if rh.Code != 0 {
 			return
 		}
-		fmt.Println(rh, reqBody, string(resp), t)
 	}
 }
 

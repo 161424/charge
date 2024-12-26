@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	url2 "net/url"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -208,6 +209,15 @@ func receiveTask(idx int, taskCode string) int {
 
 // 观看剧集10分钟
 func completeWatch(idx int, taskCode string) int {
+	g1 := strconv.Itoa(int(time.Now().Unix()))
+	g1 = g1 + "#df2a46fd53&"
+	//m := md5.New()
+	//m.Write([]byte(text))
+	//
+	//hashBytes := m.Sum(nil)
+	//
+	//hashString := hex.EncodeToString(hashBytes)
+
 	return 0
 }
 
