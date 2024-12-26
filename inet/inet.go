@@ -118,6 +118,8 @@ func (d *defaultClient) CheckSelectPost(url string, contentType, referer, ua str
 	}
 	if contentType != "" {
 		req.Header.Set("Content-Type", contentType)
+	} else {
+		req.Header.Set("Content-Type", "application/json")
 	}
 	if referer == "" {
 		referer = "https://www.bilibili.com/"

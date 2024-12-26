@@ -18,8 +18,9 @@ var task_code = map[string]string{"dress-view": "浏览装扮商城主页", "vip
 var free_point = 75
 
 type VipTask struct {
-	Code int
-	Data struct {
+	Code    int
+	Message string
+	Data    struct {
 		Vip_info struct {
 			Type   int // 0 普通 1 月度 2 年度
 			Status int // 0 不存在 1 存在
@@ -68,6 +69,17 @@ type PointInfo struct {
 	ExpireDays  int
 }
 
+type PointList struct {
+	Code    int
+	Message string
+	Data    struct {
+		Big_point_list []struct {
+			Point       int
+			Change_time int64
+		}
+	}
+}
+
 func BigPoint(idx int) {
 	url := "https://api.bilibili.com/x/vip_point/task/combine"
 	vTask := &VipTask{}
@@ -78,7 +90,7 @@ func BigPoint(idx int) {
 		return
 	}
 	if vTask.Code != 0 {
-		fmt.Println("vip task err code:", vTask.Code)
+		fmt.Println("vip task err code:", vTask.Code, vTask.Message)
 		return
 	}
 	if len(vTask.Data.Task_info.Modules) == 0 {
@@ -86,14 +98,14 @@ func BigPoint(idx int) {
 		return
 	}
 	fmt.Println("当前积分：", vTask.Data.Point_info.Point)
-	fmt.Printf("%d积分即将过期，剩余%d天/n", vTask.Data.Point_info.Expire_point, vTask.Data.Point_info.Expire_time)
+	fmt.Printf("%d积分即将过期，剩余%d天\n", vTask.Data.Point_info.Expire_point, vTask.Data.Point_info.Expire_days)
 	if vTask.Data.Vip_info.Status == 0 || vTask.Data.Vip_info.Type == 0 {
 		fmt.Println("当前无大会员，无法继续执行任务")
 	}
 	day := time.Now().Format("2006-01-02")
 	for _, d := range vTask.Data.Task_info.Sing_task_item.Histories {
 		if d.Day == day {
-			if d.Signed {
+			if d.Signed == false {
 				if code := vSign(idx); code == 0 {
 					fmt.Println("签到成功 ✓")
 				} else if code == -401 {
@@ -122,28 +134,29 @@ func BigPoint(idx int) {
 						continue
 					}
 					if task.State == 1 { //
-						code := receiveTask(idx, task.Task_code)
+						code := ReceiveTask(idx, task.Task_code)
 						if code == 0 {
 							// 执行任务
 							if task.Task_code == "ogvwatchnew" {
 								// 10分钟观影任务
 								if watchRandomEp(idx) == 0 {
+									continue
 									go func() {
 										time.Sleep(10 * time.Minute)
 									}()
 								}
 							} else if task.Task_code == "vipmallview" {
 								// 会员购
-								if vipMallView(idx) == 0 {
+								if VipMallView(idx) == 0 {
 									fmt.Println("浏览会员购每日任务 ✓")
 								}
 							} else if task.Task_code == "dress-view" {
 								// 装扮商城
-								if completeTaskV2(idx, task.Task_code) == 0 {
+								if CompleteTaskV2(idx, task.Task_code) == 0 {
 									fmt.Printf("[%s]任务完成 ✓\n", task_code[task.Task_code])
 								}
 							} else {
-								if completeTask(idx, task.Task_code) == 0 {
+								if CompleteTask(idx, task.Task_code) == 0 {
 									// 影视、番剧10s
 									fmt.Printf("[%s]任务完成 ✓\n", task_code[task.Task_code])
 								}
@@ -153,9 +166,13 @@ func BigPoint(idx int) {
 
 				}
 			}
+			// jp_channel任务 不在task目录中，奇怪
+			if CompleteTask(idx, "jp_channel") == 0 {
+				// 影视、番剧10s
+				fmt.Printf("[%s]任务完成 ✓\n", "jp_channel")
+			}
 		}
 	}
-	// jp_channel任务 不在task目录中，奇怪
 
 	// 任务执行
 
@@ -180,7 +197,7 @@ func vSign(idx int) int {
 }
 
 // 接受任务
-func receiveTask(idx int, taskCode string) int {
+func ReceiveTask(idx int, taskCode string) int {
 	os := "android"
 	channel := "xiaomi"
 	mobileUA := fmt.Sprintf("Mozilla/5.0 BiliDroid/%s (bbcallen@gmail.com) os/%s model/%s mobi_app/%s build/%s channel/%s innerVer/%s osVer/%s network/2", "7.72.0", os, "MI 11 Ulter", os, "7720210", channel, channel, "10")
@@ -193,15 +210,16 @@ func receiveTask(idx int, taskCode string) int {
 	resp := inet.DefaultClient.CheckSelectPost(url, "application/x-www-form-urlencoded", refer, mobileUA, idx, strings.NewReader(reqBody.Encode()))
 	reS := &reSign{}
 	err := json.Unmarshal(resp, &reS)
+	fmt.Println(string(resp), reS)
 	if err != nil {
 		fmt.Println(err)
 		return -1
 	}
 	if reS.Code != 0 {
-		fmt.Printf("接受任务%s失败.res Code:%d,res Message:%s", task_code[taskCode], reS.Code, reS.Message)
+		fmt.Printf("领取任务%s失败.res Code:%d,res Message:%s\n", task_code[taskCode], reS.Code, reS.Message)
 		return reS.Code
 	}
-	fmt.Printf("领取[%s]任务完成", task_code[taskCode])
+	fmt.Printf("领取任务[%s]成功\n", task_code[taskCode])
 	return 0
 
 }
@@ -211,9 +229,9 @@ func completeWatch(idx int, taskCode string) int {
 	return 0
 }
 
-// 浏览追番页面10s
-// 浏览影视界面10s
-func completeTask(idx int, taskCode string) int {
+// 浏览追番页面10s    jp_channel
+// 浏览影视界面10s    tv_channel
+func CompleteTask(idx int, taskCode string) int {
 	url := "https://api.bilibili.com/pgc/activity/deliver/task/complete"
 	refer := "https://big.bilibili.com/mobile/bigPoint"
 	reqBody := url2.Values{}
@@ -222,12 +240,13 @@ func completeTask(idx int, taskCode string) int {
 	resp := inet.DefaultClient.CheckSelectPost(url, "application/x-www-form-urlencoded", refer, "", idx, strings.NewReader(reqBody.Encode()))
 	reS := &reSign{}
 	err := json.Unmarshal(resp, &reS)
+	//fmt.Println(string(resp), reS)
 	if err != nil {
 		fmt.Println(err)
 		return -1
 	}
 	if reS.Code != 0 {
-		fmt.Printf("完成任务%s失败.res Code:%d,res Message:%s\n", task_code, reS.Code, reS.Message)
+		fmt.Printf("任务[%s]完成失败.res Code:%d,res Message:%s\n", task_code[taskCode], reS.Code, reS.Message)
 		return reS.Code
 	}
 	return 0
@@ -235,8 +254,8 @@ func completeTask(idx int, taskCode string) int {
 }
 
 // 浏览装扮商城e
-func completeTaskV2(idx int, taskCode string) int {
-	url := "https://api.bilibili.com/pgc/activity/deliver/task/complete/2"
+func CompleteTaskV2(idx int, taskCode string) int {
+	url := "https://api.bilibili.com/pgc/activity/score/task/complete/v2"
 	refer := "https://big.bilibili.com/mobile/bigPoint/task"
 	reqBody := url2.Values{}
 	//reqBody.Add("csrf", taskCode)
@@ -244,12 +263,13 @@ func completeTaskV2(idx int, taskCode string) int {
 	resp := inet.DefaultClient.CheckSelectPost(url, "application/x-www-form-urlencoded", refer, "", idx, strings.NewReader(reqBody.Encode()))
 	reS := &reSign{}
 	err := json.Unmarshal(resp, &reS)
+	//fmt.Println(string(resp), reS)
 	if err != nil {
 		fmt.Println(err)
 		return -1
 	}
 	if reS.Code != 0 {
-		fmt.Printf("完成任务%s失败.res Code:%d,res Message:%s\n", task_code, reS.Code, reS.Message)
+		fmt.Printf("任务[%s]完成失败.res Code:%d,res Message:%s\n", task_code, reS.Code, reS.Message)
 		return reS.Code
 	}
 	return 0
@@ -257,7 +277,7 @@ func completeTaskV2(idx int, taskCode string) int {
 }
 
 // 浏览会员购
-func vipMallView(idx int) int {
+func VipMallView(idx int) int {
 	_url := "https://show.bilibili.com/api/activity/fire/common/event/dispatch"
 	reqBody := `{"eventId":"hevent_oy4b7h3epeb"}`
 	resp := inet.DefaultClient.CheckSelectPost(_url, "", "", "", idx, strings.NewReader(reqBody))
@@ -267,6 +287,7 @@ func vipMallView(idx int) int {
 	//	"errtag": 0,
 	//	"ttl": 1735110697189"
 	reS := &reSign{}
+	fmt.Println(string(resp), reS)
 	err := json.Unmarshal(resp, reS)
 	if err != nil {
 		fmt.Println(err)
@@ -281,4 +302,38 @@ func vipMallView(idx int) int {
 
 }
 
+func GetTodayPoint(idx int) int {
+	url := "https://api.bilibili.com/x/vip_point/list"
+	pointList := PointList{}
+	resp := inet.DefaultClient.CheckSelect(url, idx)
+	err := json.Unmarshal(resp, &pointList)
+	if err != nil {
+		fmt.Println(err)
+		return -1
+	}
+	if pointList.Code != 0 {
+		fmt.Printf("获取积分列表失败，res.Code：%d，res.Message：%s\n", pointList.Code, pointList.Message)
+		return -1
+	}
+
+	point := 0
+	todayStart := time.Now().Truncate(24 * time.Hour)
+	todayEnd := todayStart.Add(24 * time.Hour)
+	for _, l := range pointList.Data.Big_point_list {
+		// 判断时间戳是否在今天的范围内
+		t := time.Unix(l.Change_time, 0)
+		if t.After(todayStart) && t.Before(todayEnd) {
+			point += l.Point
+		} else {
+			return point
+		}
+	}
+	return point
+
+}
+
 //  兑换礼品
+
+func CostPointForTarget(idx int) {
+
+}
