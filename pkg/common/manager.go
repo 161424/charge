@@ -29,7 +29,7 @@ func DailyTask() func() {
 			// Expire
 
 			// 大会员积分
-
+			BigPoint(idx)
 			// 会员BB券提醒
 
 			// 大会员线下活动监听

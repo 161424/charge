@@ -107,7 +107,7 @@ func BigPoint(idx int) {
 	for _, d := range vTask.Data.Task_info.Sing_task_item.Histories {
 		if d.Day == day {
 			if d.Signed == false {
-				if code := vSign(idx); code == 0 {
+				if code := VSign(idx); code == 0 {
 					fmt.Println("签到成功 ✓")
 				} else if code == -401 {
 					fmt.Println("出现非法访问异常，可能账号存在异常，放弃大积分任务")
@@ -170,7 +170,7 @@ func BigPoint(idx int) {
 			// jp_channel任务 不在task目录中，奇怪
 			if CompleteTask(idx, "jp_channel") == 0 {
 				// 影视、番剧10s
-				fmt.Printf("[%s]任务完成 ✓\n", "jp_channel")
+				fmt.Printf("任务[%s]完成 ✓\n", "jp_channel")
 			}
 		}
 	}
@@ -180,11 +180,12 @@ func BigPoint(idx int) {
 }
 
 // 签到
-func vSign(idx int) int {
+func VSign(idx int) int {
 	url := "https://api.bilibili.com/pgc/activity/score/task/sign"
-	resp := inet.DefaultClient.CheckSelect(url, idx)
+	resp := inet.DefaultClient.CheckSelectPost(url, "", "", "", idx, nil)
 	reS := &reSign{}
 	err := json.Unmarshal(resp, reS)
+	//fmt.Println(string(resp), reS)
 	if err != nil {
 		fmt.Println("签到失败:", err)
 		return -1
@@ -211,7 +212,7 @@ func ReceiveTask(idx int, taskCode string) int {
 	resp := inet.DefaultClient.CheckSelectPost(url, "application/x-www-form-urlencoded", refer, mobileUA, idx, strings.NewReader(reqBody.Encode()))
 	reS := &reSign{}
 	err := json.Unmarshal(resp, &reS)
-	fmt.Println(string(resp), reS)
+	//fmt.Println(string(resp), reS)
 	if err != nil {
 		fmt.Println(err)
 		return -1
@@ -327,12 +328,11 @@ func GetTodayPoint(idx int) int {
 	}
 
 	point := 0
-	todayStart := time.Now().Truncate(24 * time.Hour)
-	todayEnd := todayStart.Add(24 * time.Hour)
+	todayStart := time.Now().Day()
 	for _, l := range pointList.Data.Big_point_list {
 		// 判断时间戳是否在今天的范围内
-		t := time.Unix(l.Change_time, 0)
-		if t.After(todayStart) && t.Before(todayEnd) {
+		t := time.Unix(l.Change_time, 0).Day()
+		if t == todayStart {
 			point += l.Point
 		} else {
 			return point

@@ -5,6 +5,7 @@ import (
 	"charge/dao/redis"
 	"charge/log"
 	"charge/pkg"
+	"charge/pkg/common"
 	"charge/pkg/listenGroup"
 	"charge/pkg/listenUpForLottery"
 	"charge/router"
@@ -36,6 +37,9 @@ func Run() error {
 	tw.AddTimer(2*60*time.Minute, 1, 0, "ListenDJLChannel", listenGroup.ListenDJLChannel()) // 监听lottery group
 	// 15点钟  过期
 	//tw.AddTimer(8*60*time.Minute, 2, listenUpForLottery.BalanceLottery()) // 设置每日转发lottery (会删除，因此要最后进行)
+
+	// DailyTask
+	tw.AddTimer(0, 0, 1, "", common.DailyTask())
 	//todo 多账号监听up充电
 	//todo
 	fmt.Println("执行AddTimer")

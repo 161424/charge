@@ -18,7 +18,7 @@ const (
 type Timer struct {
 	callback   func()
 	expiry     int // 到期时间（以tick为单位）
-	execType   int //  时间添加类型，0表示定点执行，1表示延时执行
+	execType   int //  时间添加类型，0表示定点执行，1表示延时执行  不好记，要换成字符串
 	circle     int //  循环类型  0表示延时循环 1表示延时24小时
 	circleTime time.Duration
 	desp       string
@@ -114,6 +114,10 @@ func (tw *TimingWheel) processTimersAtPosition(position int) {
 	if tw.buckets[position].Len() != 0 {
 		fmt.Printf("正在运行第%d个格子的任务", position)
 	}
+	if position == 0 {
+		fmt.Printf("欢迎来到%d，又是充满希望的一天", time.Now().Format("2006-01-02"))
+	}
+
 	for e := tw.buckets[position].Front(); e != nil; {
 		timer := e.Value.(*Timer)
 		if time.Now().Minute()+time.Now().Hour()*60 >= timer.expiry {

@@ -16,7 +16,7 @@ func TestCompleteTaskV2(t *testing.T) {
 }
 
 func TestCompleteTask(t *testing.T) {
-	n := common.CompleteTask(0, "jp_channel")
+	n := common.CompleteTask(0, "tv_channel")
 	fmt.Println(n)
 }
 
@@ -32,5 +32,10 @@ func TestReceiveTask(t *testing.T) {
 
 func TestGetTodayPoint(t *testing.T) {
 	n := common.GetTodayPoint(0)
+	fmt.Println(n)
+}
+
+func TestVSign(t *testing.T) {
+	n := common.VSign(0)
 	fmt.Println(n)
 }
