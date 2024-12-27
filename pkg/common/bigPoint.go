@@ -135,6 +135,7 @@ func BigPoint(idx int) {
 						continue
 					}
 					if task.State == 1 { //
+						time.Sleep(500 * time.Millisecond)
 						code := ReceiveTask(idx, task.Task_code)
 						if code == 0 {
 							// 执行任务
@@ -174,8 +175,18 @@ func BigPoint(idx int) {
 			}
 		}
 	}
+	// 积分查询任务
+	todayPoint := GetTodayPoint(idx)
+	if todayPoint == 45 || todayPoint == 50 {
+		fmt.Printf("今日获取积分【%d】，由于您开启了异步观看，所以跳过检测观看结果\n", todayPoint)
 
-	// 任务执行
+	} else if todayPoint == 0 {
+		fmt.Printf("今日获取积分【%d】, 部分任务未成功 ×", todayPoint)
+		fmt.Printf("可能是完成获取，但是接口数据延迟。")
+
+	} else {
+		fmt.Printf("今日获取积分【%d】, 未达到预期 ×", todayPoint)
+	}
 
 }
 
