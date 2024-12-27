@@ -188,7 +188,7 @@ func getAidByRecommend(idx int) {
 		if err != nil {
 			continue
 		}
-		fmt.Println("ac", aC, string(resp), item)
+		//fmt.Println("ac", aC, string(resp), item)
 		if aC.Code == 0 {
 			fmt.Println("点赞成功")
 			state -= 2
