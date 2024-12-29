@@ -5,6 +5,11 @@ import (
 	"charge/sender"
 )
 
+var contentType = map[string]string{
+	"x":    "application/x-www-form-urlencoded",
+	"json": "application/json",
+}
+
 func DailyTask() func() {
 	return func() {
 		mointer := sender.Monitor{}
@@ -29,7 +34,8 @@ func DailyTask() func() {
 			// Expire
 
 			// 大会员积分
-			BigPoint(idx)
+			BigPoint(idx) // 每日积分签到，保底45~50。最少1350，最多2700
+			// ExchangePoint(idx) // 月兑换10天大会员，需要2400积分
 			// 会员BB券提醒
 
 			// 大会员线下活动监听

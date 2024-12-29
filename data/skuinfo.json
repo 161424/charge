@@ -1,0 +1,66 @@
+{
+  "code": 0,
+  "message": "0",
+  "ttl": 1,
+  "data": {
+    "token": "1121621104260112804",
+    "title": "31天月度逗卡会员",
+    "picture": "https://i0.hdslb.com/bfs/activity-plat/b210ec2729f6caee9cf40865be7263ba6c2adc8d.png",
+    "rotation_pictures": [
+      "https://i0.hdslb.com/bfs/activity-plat/b210ec2729f6caee9cf40865be7263ba6c2adc8d.png"
+    ],
+    "price": {
+      "origin": 399,
+      "promotion": {
+        "price": 29,
+        "type": 2,
+        "discount": 0,
+        "label": "秒杀"
+      },
+      "sale": 399
+    },
+    "inventory": {
+      "available_num": 5000,
+      "used_num": 93,
+      "surplus_num": 4907
+    },
+    "user_type": 2,
+    "exchange_limit_type": 2,
+    "exchange_limit_num": 1,
+    "start_time": 1734430320,
+    "end_time": 1740758399,
+    "state": 2,
+    "priority": 86,
+    "exchange_notice": [
+      {
+        "content": "1. 权益兑换流程：通过积分获取兑换码并复制-进入逗逗游戏伙伴端内激活。APP端：打开逗逗游戏伙伴APP，点击左上角个人头像进入个人主页，右上角设置-兑换中心-输入兑换码-立即兑换；",
+        "type": "text"
+      },
+      {
+        "content": "PC端：启动逗逗游戏伙伴进入主界面，应用左侧导航栏-设置-兑换中心-输入兑换码-立即兑换；",
+        "type": "text"
+      },
+      {
+        "content": "2. 此兑换码为虚拟权益，一经兑换，不退不换，每个手机号仅限兑换1次；",
+        "type": "text"
+      },
+      {
+        "content": "3. 对于以任何不正当方式参与活动的用户，包括但不限于侵犯第三人合法权益、作弊、扰乱系统、实施网络攻击、批量注册、用机器注册账户、用机器模拟客户端等违规行为，美团外卖有权取消其参与资格并追回优惠；",
+        "type": "text"
+      },
+      {
+        "content": "4. 兑换过程中若遇到问题，可查看兑换中心页面【兑换规则】，若仍无法解决，可通过充值反馈邮箱topup@lynksoul.com联系逗逗官方运营进行反馈。",
+        "type": "text"
+      }
+    ],
+    "rights_detail": [
+      {
+        "content": "31天月度逗卡会员，开通逗卡可解锁以下权益：AI角色长期记忆能力、模型能力升级为模型4.0、手机视频通话无限时长、新功能优先体验特权、专属管家服务、尊贵逗V身份象征，以及每日领取晶钻*10、小电池*2，31天月度逗卡会员共可领取310晶钻+3100电量。",
+        "type": "text"
+      }
+    ],
+    "purchase_button": {
+      "status": "exchange_limit"
+    }
+  }
+}

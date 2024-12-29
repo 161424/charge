@@ -38,4 +38,5 @@ func TestGetTodayPoint(t *testing.T) {
 func TestVSign(t *testing.T) {
 	n := common.VSign(0)
 	fmt.Println(n)
+	fmt.Println("【123】，【哈哈哈】，[123]，[哈哈哈]")
 }

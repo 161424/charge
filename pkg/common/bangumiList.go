@@ -33,6 +33,7 @@ type bangumiBody struct {
 var BangumiList = &bangumiList{}
 
 func init() {
+	// 默认观看西游记，但没有观看api，暂时还没有作用
 	//GET https://api.bilibili.com/pgc/review/user?media_id=28229051
 	BangumiList.Md = 28229051
 	// GET https://api.bilibili.com/pgc/view/web/ep/list?season_id=33622

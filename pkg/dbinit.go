@@ -3,6 +3,7 @@ package pkg
 import (
 	"charge/config"
 	redis2 "charge/dao/redis"
+	"charge/pkg/common"
 	"charge/pkg/getcharge"
 	"charge/pkg/listenUpForLottery"
 	"charge/utils"
@@ -49,7 +50,7 @@ func Start() {
 			lf = append(lf, f2)
 		}
 	}
-
+	lf = append(lf, common.DailyTask())
 	if len(lf) > 0 {
 		for _, f := range lf {
 			f()

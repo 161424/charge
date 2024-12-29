@@ -112,10 +112,10 @@ func (tw *TimingWheel) run() {
 // processTimersAtPosition 处理指定位置的定时任务
 func (tw *TimingWheel) processTimersAtPosition(position int) {
 	if tw.buckets[position].Len() != 0 {
-		fmt.Printf("正在运行第%d个格子的任务", position)
+		fmt.Printf("正在运行第%d个格子的任务\n", position)
 	}
 	if position == 0 {
-		fmt.Printf("欢迎来到%d，又是充满希望的一天", time.Now().Format("2006-01-02"))
+		fmt.Printf("欢迎来到%s，又是充满希望的一天\n", time.Now().Format("2006-01-02"))
 	}
 
 	for e := tw.buckets[position].Front(); e != nil; {

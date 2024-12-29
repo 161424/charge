@@ -55,7 +55,9 @@ func ListenLotteryUp() func() {
 		monitor.Title = "每日lottery监控——1(LotteryUp)"
 		lotterys := utils.ListenupforLottery(config.Cfg.LotteryUid)
 		time.Sleep(20 * time.Second)
-		fmt.Println(len(lotterys), lotterys)
+		if len(lotterys) == 0 {
+			return
+		}
 		t := time.Now()
 		ctx := context.Background()
 		SleepStep = 0
@@ -69,14 +71,16 @@ func ListenLotteryUp() func() {
 		inet.DefaultClient.AliveCh = nil
 		defer inet.DefaultClient.Unlock()
 		fmt.Println("ListenLotteryUp complete")
-		monitor.Desp = fmt.Sprintf("%s新增lottery数量%d", t.Format("2006-01-02"), ExecFreq)
-		monitor.PushS()
+		if ExecFreq != 0 {
+			monitor.Desp = fmt.Sprintf("%s新增lottery数量%d", t.Format("2006-01-02"), ExecFreq)
+			monitor.PushS()
+		}
+
 	}
 }
 
 func LotteryDetail(ctx context.Context, lottery string, t time.Time) (re bool) {
 	if redis.ExitLottery(ctx, lottery) {
-		fmt.Printf("%s is exit\n", lottery)
 		return
 	}
 	LotteryData := Lottery{}
@@ -99,7 +103,7 @@ func LotteryDetail(ctx context.Context, lottery string, t time.Time) (re bool) {
 	}
 	time.Sleep(10 * time.Second)
 	if detail.Code == -9999 {
-		fmt.Println("非官抽")
+		//fmt.Println("非官抽")
 		// 需要添加detail里面的pub_time，进行定期清除lotterylist
 		_url = CU + lottery
 		body = inet.DefaultClient.RedundantDW(_url, 10*time.Second)
@@ -141,7 +145,7 @@ func LotteryDetail(ctx context.Context, lottery string, t time.Time) (re bool) {
 		fmt.Println("other err code")
 		return
 	}
-	fmt.Println(4, LotteryData)
+	//fmt.Println(4, LotteryData)
 	redis.AddLotteryRecord(ctx, lottery, LotteryData.String()) // 添加到总的lottery中
 	// 监听up均为隔日，无法进行多日均衡
 	notBalance := true

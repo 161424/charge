@@ -43,10 +43,12 @@ func ListenupforLottery(Uid []string) []string {
 				if counter == 3 { //
 					break
 				}
-				fmt.Printf("正在查看第%d页内容", counter+1)
+				counter++
+				fmt.Printf("正在查看第【%d】页内容\n", counter+1)
 				if strings.Contains(his, item.OpusID) {
 					continue
 				}
+
 				f := DaleyTime(time.Now()) // 做个延时，减少风控几率
 				_url := SpaceUrl + item.OpusID
 				ibody := inet.DefaultClient.RedundantDW(_url, 0)
@@ -78,7 +80,7 @@ func ListenupforLottery(Uid []string) []string {
 					}
 				})
 				f()
-				counter++
+
 				if his != "" {
 					his += "&" + item.OpusID
 				} else {
@@ -86,11 +88,10 @@ func ListenupforLottery(Uid []string) []string {
 				}
 
 			}
-			if len(opus) == 0 {
-				fmt.Println(string(body))
-			}
-			fmt.Println("    目前有数据：", len(opus))
-			fmt.Println(his)
+			//if len(opus) == 0 {
+			//	fmt.Println(string(body))
+			//}
+			fmt.Println("获取到数据：", len(opus))
 			redis.UpdateLUpHistory(ctx, uid, his)
 
 		}

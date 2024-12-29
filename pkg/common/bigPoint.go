@@ -14,7 +14,6 @@ import (
 // 1. 获得大会员积分
 // 2. 积分兑换
 
-var goods = map[string]int{"大会员3天卡": 720, "大会员7天卡": 1680}
 var task_code = map[string]string{"dress-view": "浏览装扮商城主页", "vipmallview": "浏览会员购页面10秒", "filmtab": "浏览影视频道页10秒", "ogvwatchnew": "观看剧集内容"}
 var free_point = 75
 
@@ -134,7 +133,7 @@ func BigPoint(idx int) {
 						// 任务已经完成
 						continue
 					}
-					if task.State == 1 { //
+					if task.State != 3 { //
 						time.Sleep(500 * time.Millisecond)
 						code := ReceiveTask(idx, task.Task_code)
 						if code == 0 {
@@ -155,12 +154,12 @@ func BigPoint(idx int) {
 							} else if task.Task_code == "dress-view" {
 								// 装扮商城
 								if CompleteTaskV2(idx, task.Task_code) == 0 {
-									fmt.Printf("[%s]任务完成 ✓\n", task_code[task.Task_code])
+									fmt.Printf("【%s】任务完成 ✓\n", task_code[task.Task_code])
 								}
 							} else {
 								if CompleteTask(idx, task.Task_code) == 0 {
 									// 影视、番剧10s
-									fmt.Printf("[%s]任务完成 ✓\n", task_code[task.Task_code])
+									fmt.Printf("【%s】任务完成 ✓\n", task_code[task.Task_code])
 								}
 							}
 						}
@@ -171,11 +170,12 @@ func BigPoint(idx int) {
 			// jp_channel任务 不在task目录中，奇怪
 			if CompleteTask(idx, "jp_channel") == 0 {
 				// 影视、番剧10s
-				fmt.Printf("任务[%s]完成 ✓\n", "jp_channel")
+				fmt.Printf("任务【%s】完成 ✓\n", "jp_channel")
 			}
 		}
 	}
 	// 积分查询任务
+	time.Sleep(2 * time.Second)
 	todayPoint := GetTodayPoint(idx)
 	if todayPoint == 45 || todayPoint == 50 {
 		fmt.Printf("今日获取积分【%d】，由于您开启了异步观看，所以跳过检测观看结果\n", todayPoint)
@@ -232,13 +232,15 @@ func ReceiveTask(idx int, taskCode string) int {
 		fmt.Printf("领取任务%s失败.res Code:%d,res Message:%s\n", task_code[taskCode], reS.Code, reS.Message)
 		return reS.Code
 	}
-	fmt.Printf("领取任务[%s]成功\n", task_code[taskCode])
+	fmt.Printf("领取任务【%s】成功\n", task_code[taskCode])
 	return 0
 
 }
 
+// 不知道api，先放弃
 // 观看剧集10分钟
 func completeWatch(idx int, taskCode string) int {
+	// access_key=88b1b9650860fe65157260671b4a08c1CjDoqALz57SiAU1mVyrqM2_RVbMsf1CKqStfqdV6YaKuDs-PLS6SIaLlMU9W5CIE5cwSVmJOUE5sbHE0OWxIVHB3ZmVTbzJsQ0V0dmVZLVRkYkFWLWhOSlVUWW1aN2F4ZnpCRWhRYkFNbi1DZmRhX3Yyd1dpMXJYaVFvU3hZZnEzaW5rV0hJLU1nIIEC&appkey=1d8b6e7d45233436&build=8020300&c_locale=zh_CN&channel=yingyongbao&disable_rcmd=0&mobi_app=android&platform=android&s_locale=zh_CN&statistics=%7B%22appId%22%3A1%2C%22platform%22%3A3%2C%22version%22%3A%228.2.0%22%2C%22abtest%22%3A%22%22%7D&task_id=4320003&task_sign=c84a181f1d444de9aae5e997d97fa608&timestamp=1735336015845&token=87fae0a447&ts=1735336015&sign=de689ce6002440a7b47cd130a37b53df
 	g1 := strconv.Itoa(int(time.Now().Unix()))
 	g1 = g1 + "#df2a46fd53&"
 	//m := md5.New()
@@ -258,11 +260,14 @@ func CompleteTask(idx int, taskCode string) int {
 	refer := "https://big.bilibili.com/mobile/bigPoint"
 	reqBody := url2.Values{}
 	//reqBody.Add("csrf", taskCode)
+	if taskCode == "filmtab" {
+		taskCode = "tv_channel"
+	}
 	reqBody.Add("position", taskCode)
 	resp := inet.DefaultClient.CheckSelectPost(url, "application/x-www-form-urlencoded", refer, "", idx, strings.NewReader(reqBody.Encode()))
 	reS := &reSign{}
 	err := json.Unmarshal(resp, &reS)
-	//fmt.Println(string(resp), reS)
+	//fmt.Println(string(resp), reS, idx, taskCode)
 	if err != nil {
 		fmt.Println(err)
 		return -1

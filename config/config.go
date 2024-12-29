@@ -25,6 +25,7 @@ type config struct {
 		Password string `yaml:"Password"`
 	}
 	Cks            []string `yaml:"CKs"`
+	Access_key     []string `yaml:"Access_key"`
 	User_Agent     string   `yaml:"UserAgent"`
 	ChargeUid      []string `yaml:"ChargeUid"`
 	LotteryUid     []string `yaml:"LotteryUid"`

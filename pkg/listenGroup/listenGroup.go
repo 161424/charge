@@ -29,21 +29,18 @@ type Group struct {
 			Msg_seqno  int
 			Timestamp  int64
 		}
+		Timestamp int64
 		Min_seqno int
 		Max_seqno int
 	}
 }
 
+var lastTime int64 = 0
+
 // 监听大锦鲤频道
 func ListenDJLChannel() func() {
-	isFirst := true
 	return func() {
 		size := 20
-		if isFirst {
-			isFirst = false
-		} else {
-			size = 20
-		}
 		ReadGroup(size)
 	}
 
@@ -53,6 +50,7 @@ func ReadGroup(size int) {
 	monitor := sender.Monitor{}
 	monitor.Tag = "lottery"
 	monitor.Title = "每日lottery监控——3(Group)"
+	re := regexp.MustCompile(`[0-9]{18,}`)
 	var groupUrl = "https://api.vc.bilibili.com/svr_sync/v1/svr_sync/fetch_session_msgs?talker_id=221094376&session_type=2&size="
 	_groupUrl := groupUrl + strconv.Itoa(size)
 	responders := inet.DefaultClient.CheckOne(_groupUrl)
@@ -70,12 +68,15 @@ func ReadGroup(size int) {
 		fmt.Println("ReadGroup err code:", group.Code, group)
 		return
 	}
-	groupContent := group.Data.Messages
-	fmt.Println("groupContent长度", len(groupContent))
-	re := regexp.MustCompile(`[0-9]{18,}`)
+
 	ExecFreq := 0
+	groupContent := group.Data.Messages
+
 	for i := 0; i < len(groupContent); i++ {
 		cbody := groupContent[i]
+		if cbody.Timestamp <= lastTime {
+			continue
+		}
 		res := re.FindAllString(cbody.Content, -1)
 		for j := 0; j < len(res); j++ {
 			msg = append(msg, res[j])
@@ -84,8 +85,11 @@ func ReadGroup(size int) {
 			}
 		}
 	}
-	fmt.Println("从group获取到的信息数:", len(msg), msg)
-	monitor.Desp = fmt.Sprintf("从group获的lottery的个数%d", len(msg))
-	monitor.PushS()
+	lastTime = groupContent[0].Timestamp
+	fmt.Println("从group获取到的信息数:", ExecFreq)
+	if ExecFreq > 0 {
+		monitor.Desp = fmt.Sprintf("从group获的lottery的个数%d", ExecFreq)
+		monitor.PushS()
+	}
 
 }
