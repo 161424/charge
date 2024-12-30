@@ -1,0 +1,293 @@
+{
+  "code": 0,
+  "message": "0",
+  "ttl": 1,
+  "data": {
+    "list": [
+      {
+        "type": 1,
+        "state": 1,
+        "expire_time": 1737561600,
+        "vip_type": 2,
+        "next_receive_days": 19,
+        "period_end_unix": 1737129600,
+        "is_count": true,
+        "name": "",
+        "coupon_code": "",
+        "app_describe": "",
+        "recive_state": 2,
+        "salary_type": 0,
+        "exp_params": {
+          "exp_group_tag": "45476",
+          "hit_value": 2
+        },
+        "extra_params": null
+      },
+      {
+        "type": 2,
+        "state": 1,
+        "expire_time": 0,
+        "vip_type": 2,
+        "next_receive_days": 19,
+        "period_end_unix": 1737129600,
+        "is_count": true,
+        "name": "",
+        "coupon_code": "",
+        "app_describe": "",
+        "recive_state": 2,
+        "salary_type": 0,
+        "exp_params": {
+          "exp_group_tag": "",
+          "hit_value": 0
+        },
+        "extra_params": null
+      },
+      {
+        "type": 3,
+        "state": 1,
+        "expire_time": 0,
+        "vip_type": 2,
+        "next_receive_days": 19,
+        "period_end_unix": 1737129600,
+        "is_count": true,
+        "name": "",
+        "coupon_code": "",
+        "app_describe": "",
+        "recive_state": 2,
+        "salary_type": 0,
+        "exp_params": {
+          "exp_group_tag": "",
+          "hit_value": 0
+        },
+        "extra_params": null
+      },
+      {
+        "type": 4,
+        "state": 0,
+        "expire_time": 0,
+        "vip_type": 2,
+        "next_receive_days": 19,
+        "period_end_unix": 1737129600,
+        "is_count": true,
+        "name": "",
+        "coupon_code": "",
+        "app_describe": "",
+        "recive_state": 1,
+        "salary_type": 0,
+        "exp_params": {
+          "exp_group_tag": "",
+          "hit_value": 0
+        },
+        "extra_params": null
+      },
+      {
+        "type": 5,
+        "state": 1,
+        "expire_time": 0,
+        "vip_type": 2,
+        "next_receive_days": 19,
+        "period_end_unix": 1737129600,
+        "is_count": true,
+        "name": "",
+        "coupon_code": "",
+        "app_describe": "",
+        "recive_state": 2,
+        "salary_type": 0,
+        "exp_params": {
+          "exp_group_tag": "",
+          "hit_value": 0
+        },
+        "extra_params": null
+      },
+      {
+        "type": 6,
+        "state": 1,
+        "expire_time": 0,
+        "vip_type": 2,
+        "next_receive_days": 19,
+        "period_end_unix": 1737129600,
+        "is_count": true,
+        "name": "",
+        "coupon_code": "",
+        "app_describe": "",
+        "recive_state": 2,
+        "salary_type": 0,
+        "exp_params": {
+          "exp_group_tag": "",
+          "hit_value": 0
+        },
+        "extra_params": null
+      },
+      {
+        "type": 7,
+        "state": 0,
+        "expire_time": 0,
+        "vip_type": 2,
+        "next_receive_days": 19,
+        "period_end_unix": 1737129600,
+        "is_count": true,
+        "name": "",
+        "coupon_code": "",
+        "app_describe": "",
+        "recive_state": 1,
+        "salary_type": 0,
+        "exp_params": {
+          "exp_group_tag": "",
+          "hit_value": 0
+        },
+        "extra_params": null
+      },
+      {
+        "type": 14,
+        "state": 0,
+        "expire_time": 0,
+        "vip_type": 2,
+        "next_receive_days": 19,
+        "period_end_unix": 1737129600,
+        "is_count": true,
+        "name": "",
+        "coupon_code": "",
+        "app_describe": "",
+        "recive_state": 1,
+        "salary_type": 0,
+        "exp_params": {
+          "exp_group_tag": "45476",
+          "hit_value": 2
+        },
+        "extra_params": null
+      },
+      {
+        "type": 15,
+        "state": 0,
+        "expire_time": 0,
+        "vip_type": 2,
+        "next_receive_days": 19,
+        "period_end_unix": 1737129600,
+        "is_count": true,
+        "name": "",
+        "coupon_code": "",
+        "app_describe": "",
+        "recive_state": 1,
+        "salary_type": 0,
+        "exp_params": {
+          "exp_group_tag": "",
+          "hit_value": 0
+        },
+        "extra_params": null
+      },
+      {
+        "type": 16,
+        "state": 0,
+        "expire_time": 0,
+        "vip_type": 2,
+        "next_receive_days": 19,
+        "period_end_unix": 1737129600,
+        "is_count": true,
+        "name": "",
+        "coupon_code": "",
+        "app_describe": "",
+        "recive_state": 1,
+        "salary_type": 0,
+        "exp_params": {
+          "exp_group_tag": "",
+          "hit_value": 0
+        },
+        "extra_params": null
+      },
+      {
+        "type": 17,
+        "state": 0,
+        "expire_time": 0,
+        "vip_type": 2,
+        "next_receive_days": 19,
+        "period_end_unix": 1737129600,
+        "is_count": true,
+        "name": "",
+        "coupon_code": "",
+        "app_describe": "",
+        "recive_state": 1,
+        "salary_type": 0,
+        "exp_params": {
+          "exp_group_tag": "",
+          "hit_value": 0
+        },
+        "extra_params": null
+      },
+      {
+        "type": 18,
+        "state": 0,
+        "expire_time": 0,
+        "vip_type": 2,
+        "next_receive_days": 0,
+        "period_end_unix": 0,
+        "is_count": true,
+        "name": "",
+        "coupon_code": "",
+        "app_describe": "",
+        "recive_state": 1,
+        "salary_type": 1,
+        "exp_params": {
+          "exp_group_tag": "",
+          "hit_value": 0
+        },
+        "extra_params": null
+      },
+      {
+        "type": 8,
+        "state": 1,
+        "expire_time": 1735574400,
+        "vip_type": 2,
+        "next_receive_days": 1,
+        "period_end_unix": 1735574400,
+        "is_count": true,
+        "name": "",
+        "coupon_code": "",
+        "app_describe": "",
+        "recive_state": 2,
+        "salary_type": 1,
+        "exp_params": {
+          "exp_group_tag": "",
+          "hit_value": 0
+        },
+        "extra_params": null
+      },
+      {
+        "type": 9,
+        "state": 1,
+        "expire_time": 1735574400,
+        "vip_type": 2,
+        "next_receive_days": 1,
+        "period_end_unix": 1735574400,
+        "is_count": false,
+        "name": "",
+        "coupon_code": "",
+        "app_describe": "",
+        "recive_state": 2,
+        "salary_type": 0,
+        "exp_params": {
+          "exp_group_tag": "",
+          "hit_value": 0
+        },
+        "extra_params": null
+      }
+    ],
+    "is_short_vip": false,
+    "is_freight_open": true,
+    "level": 6,
+    "cur_exp": 44862,
+    "next_exp": -1,
+    "is_vip": true,
+    "is_senior_member": 1,
+    "format060102": 241218,
+    "is_overdue_vip": false,
+    "vip_status": 1,
+    "vip_type": 2,
+    "keeptime_end": 1737129600,
+    "vip_due_date": 1857830400,
+    "vip_is_annual": true,
+    "vip_is_month": false,
+    "vip_is_new_user": false,
+    "bind_phone": "135****1667",
+    "taobao_account": null
+  }
+}

@@ -97,23 +97,24 @@ func BigPoint(idx int) {
 		fmt.Println("获取任务列表失败，列表为空")
 		return
 	}
-	fmt.Println("当前积分：", vTask.Data.Point_info.Point)
+	fmt.Printf("当前大会员积分：%d。其中", vTask.Data.Point_info.Point)
 	fmt.Printf("%d积分即将过期，剩余%d天\n", vTask.Data.Point_info.Expire_point, vTask.Data.Point_info.Expire_days)
 	if vTask.Data.Vip_info.Status == 0 || vTask.Data.Vip_info.Type == 0 {
 		fmt.Println("当前无大会员，无法继续执行任务")
+		return
 	}
 	day := time.Now().Format("2006-01-02")
 	for _, d := range vTask.Data.Task_info.Sing_task_item.Histories {
 		if d.Day == day {
 			if d.Signed == false {
 				if code := VSign(idx); code == 0 {
-					fmt.Println("签到成功 ✓")
+					fmt.Println("今日份大会员签到成功 ✓")
 				} else if code == -401 {
 					fmt.Println("出现非法访问异常，可能账号存在异常，放弃大积分任务")
 					return
 				}
 			} else {
-				fmt.Println("今日已签到 ✓")
+				fmt.Println("今日份大会员已签到 ✓")
 			}
 		}
 	}
@@ -167,7 +168,7 @@ func BigPoint(idx int) {
 
 				}
 			}
-			// jp_channel任务 不在task目录中，奇怪
+			// jp_channel任务 不在task目录中，奇怪  需要修改位置
 			if CompleteTask(idx, "jp_channel") == 0 {
 				// 影视、番剧10s
 				fmt.Printf("任务【%s】完成 ✓\n", "jp_channel")
@@ -314,7 +315,7 @@ func VipMallView(idx int) int {
 	//	"errtag": 0,
 	//	"ttl": 1735110697189"
 	reS := &reSign{}
-	fmt.Println(string(resp), reS)
+	//fmt.Println(string(resp), reS)
 	err := json.Unmarshal(resp, reS)
 	if err != nil {
 		fmt.Println(err)

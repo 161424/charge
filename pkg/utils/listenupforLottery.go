@@ -21,9 +21,9 @@ func ListenupforLottery(Uid []string) []string {
 	if len(Uid) != 0 {
 		utils.Shuffle(Uid) // 打乱被监听者uid
 		re := regexp.MustCompile("[0-9]{18,}")
-		fmt.Println(Uid)
+		//fmt.Println(Uid)
 		for _, uid := range Uid {
-			fmt.Printf("查看用户uid：%s", uid)
+			fmt.Printf("查看用户uid：%s。", uid)
 			url := DefaultUrl + uid
 			//fmt.Println(inet.DefaultClient)
 			body := inet.DefaultClient.RedundantDW(url, time.Second*5)
@@ -44,7 +44,7 @@ func ListenupforLottery(Uid []string) []string {
 					break
 				}
 				counter++
-				fmt.Printf("正在查看第【%d】页内容\n", counter+1)
+				fmt.Printf("正在查看第【%d】页内容；", counter)
 				if strings.Contains(his, item.OpusID) {
 					continue
 				}

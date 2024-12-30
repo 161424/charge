@@ -3,6 +3,7 @@ package common
 import (
 	"charge/inet"
 	"charge/sender"
+	"fmt"
 )
 
 var contentType = map[string]string{
@@ -16,6 +17,7 @@ func DailyTask() func() {
 		mointer.Tag = "Daily Tasks"
 		cks := inet.DefaultClient.Cks
 		for idx := range len(cks) {
+			fmt.Printf("正在执行第【%d】个账号的每日任务\n", idx+1)
 			if cks[idx].Alive == false {
 				continue
 			}
