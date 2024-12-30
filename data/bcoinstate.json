@@ -1,0 +1,297 @@
+{
+  "code": 0,
+  "errno": 0,
+  "msg": "SUCCESS",
+  "showMsg": "交易成功",
+  "data": {
+    "page": {
+      "currentPage": 1,
+      "pageSize": 20,
+      "totalCount": 45,
+      "totalPage": 3
+    },
+    "result": [
+      {
+        "activityId": 142,
+        "activityName": "年费大会员返B币",
+        "couponToken": "F84B9CBF8C5F2E733792512DB2CF1B42",
+        "couponMoney": 5.00,
+        "couponBalance": 5.00,
+        "status": 0,
+        "couponDueTime": 1737561600000,
+        "receiveTime": 1734938657000,
+        "ruleMsgs": [
+          "使用范围:限付费OGV影片、个性装扮、必火推广、自定义充电、直播换电池、漫画App积分指定场景使用"
+        ],
+        "expireAlert": false
+      },
+      {
+        "activityId": 142,
+        "activityName": "年费大会员返B币",
+        "couponToken": "41244FB5F963224652B580DB0912EDAB",
+        "couponMoney": 5.00,
+        "couponBalance": 0,
+        "status": 2,
+        "couponDueTime": 1734710400000,
+        "receiveTime": 1732091016000,
+        "ruleMsgs": [
+          "使用范围:限付费OGV影片、个性装扮、必火推广、自定义充电、直播换电池、漫画App积分指定场景使用"
+        ],
+        "expireAlert": false
+      },
+      {
+        "activityId": 142,
+        "activityName": "年费大会员返B币",
+        "couponToken": "C5C529BAA0103A380A673F9F46A346A2",
+        "couponMoney": 5.00,
+        "couponBalance": 0,
+        "status": 2,
+        "couponDueTime": 1731772800000,
+        "receiveTime": 1729134064000,
+        "ruleMsgs": [
+          "使用范围:限付费OGV影片、个性装扮、必火推广、自定义充电、直播换电池、漫画App积分指定场景使用"
+        ],
+        "expireAlert": false
+      },
+      {
+        "activityId": 142,
+        "activityName": "年费大会员返B币",
+        "couponToken": "ED3903B569BD1D611CB64EAB81349F0F",
+        "couponMoney": 5.00,
+        "couponBalance": 0,
+        "status": 2,
+        "couponDueTime": 1729440000000,
+        "receiveTime": 1726834954000,
+        "ruleMsgs": [
+          "使用范围:限付费OGV影片、个性装扮、必火推广、自定义充电、直播换电池、漫画App积分指定场景使用"
+        ],
+        "expireAlert": false
+      },
+      {
+        "activityId": 142,
+        "activityName": "年费大会员返B币",
+        "couponToken": "FE74717C48071DB87779C1F298790AD3",
+        "couponMoney": 5.00,
+        "couponBalance": 0,
+        "status": 2,
+        "couponDueTime": 1728489600000,
+        "receiveTime": 1725823186000,
+        "ruleMsgs": [
+          "使用范围:限付费OGV影片、个性装扮、必火推广、自定义充电、直播换电池、漫画App积分指定场景使用"
+        ],
+        "expireAlert": false
+      },
+      {
+        "activityId": 142,
+        "activityName": "年费大会员返B币",
+        "couponToken": "E55E393D96299F14F1A2A6D9246D9A96",
+        "couponMoney": 5.00,
+        "couponBalance": 0,
+        "status": 2,
+        "couponDueTime": 1724515200000,
+        "receiveTime": 1721878457000,
+        "ruleMsgs": [
+          "使用范围:限付费OGV影片、个性装扮、必火推广、自定义充电、直播换电池、漫画App积分指定场景使用"
+        ],
+        "expireAlert": false
+      },
+      {
+        "activityId": 142,
+        "activityName": "年费大会员返B币",
+        "couponToken": "76FA6FFD04A48134D9C274B23384BCF0",
+        "couponMoney": 5.00,
+        "couponBalance": 0,
+        "status": 2,
+        "couponDueTime": 1722096000000,
+        "receiveTime": 1719449657000,
+        "ruleMsgs": [
+          "使用范围:限付费OGV影片、个性装扮、必火推广、自定义充电、直播换电池、漫画App积分指定场景使用"
+        ],
+        "expireAlert": false
+      },
+      {
+        "activityId": 142,
+        "activityName": "年费大会员返B币",
+        "couponToken": "7865E00A1B1D11AA427B3147CA5286FB",
+        "couponMoney": 5.00,
+        "couponBalance": 5.00,
+        "status": 3,
+        "couponDueTime": 1712246400000,
+        "receiveTime": 1709619328000,
+        "ruleMsgs": [
+          "使用范围:限付费OGV影片、个性装扮、必火推广、自定义充电、直播换电池、漫画App积分指定场景使用"
+        ],
+        "expireAlert": false
+      },
+      {
+        "activityId": 142,
+        "activityName": "年费大会员返B币",
+        "couponToken": "48267C1A8B56ED5578DD42F0F1FF586F",
+        "couponMoney": 5.00,
+        "couponBalance": 0,
+        "status": 2,
+        "couponDueTime": 1707667200000,
+        "receiveTime": 1705053733000,
+        "ruleMsgs": [
+          "使用范围:限付费OGV影片、个性装扮、必火推广、自定义充电、直播换电池、漫画App积分指定场景使用"
+        ],
+        "expireAlert": false
+      },
+      {
+        "activityId": 142,
+        "activityName": "年费大会员返B币",
+        "couponToken": "277786D663AA8631E7C8CC52B96D8522",
+        "couponMoney": 5.00,
+        "couponBalance": 0,
+        "status": 2,
+        "couponDueTime": 1704988800000,
+        "receiveTime": 1702375315000,
+        "ruleMsgs": [
+          "使用范围:限付费OGV影片、个性装扮、必火推广、自定义充电、直播换电池、漫画App积分指定场景使用"
+        ],
+        "expireAlert": false
+      },
+      {
+        "activityId": 142,
+        "activityName": "年费大会员返B币",
+        "couponToken": "68F30A0DD5536E3A154D6025907ED03B",
+        "couponMoney": 5.00,
+        "couponBalance": 0,
+        "status": 2,
+        "couponDueTime": 1702310400000,
+        "receiveTime": 1699696893000,
+        "ruleMsgs": [
+          "使用范围:限付费OGV影片、个性装扮、必火推广、自定义充电、直播换电池、漫画App积分指定场景使用"
+        ],
+        "expireAlert": false
+      },
+      {
+        "activityId": 142,
+        "activityName": "年费大会员返B币",
+        "couponToken": "8D3A164F6E69419279D9834133204713",
+        "couponMoney": 5.00,
+        "couponBalance": 0,
+        "status": 2,
+        "couponDueTime": 1700064000000,
+        "receiveTime": 1697459752000,
+        "ruleMsgs": [
+          "使用范围:限付费OGV影片、个性装扮、必火推广、自定义充电、直播换电池、漫画App积分指定场景使用"
+        ],
+        "expireAlert": false
+      },
+      {
+        "activityId": 142,
+        "activityName": "年费大会员返B币",
+        "couponToken": "2862BD8CBEBDD4D00DFD10173DDAEE7E",
+        "couponMoney": 5.00,
+        "couponBalance": 5.00,
+        "status": 3,
+        "couponDueTime": 1690128000000,
+        "receiveTime": 1687485532000,
+        "ruleMsgs": [
+          "使用范围:限付费OGV影片、个性装扮、必火推广、自定义充电、直播换电池、漫画App积分指定场景使用"
+        ],
+        "expireAlert": false
+      },
+      {
+        "activityId": 142,
+        "activityName": "年费大会员返B币",
+        "couponToken": "1ACCBBF4D35008D4B93F16FCB54CB76E",
+        "couponMoney": 5.00,
+        "couponBalance": 5.00,
+        "status": 3,
+        "couponDueTime": 1684425600000,
+        "receiveTime": 1681779942000,
+        "ruleMsgs": [
+          "使用范围:限付费OGV影片、个性装扮、必火推广、自定义充电、直播换电池、漫画App积分指定场景使用"
+        ],
+        "expireAlert": false
+      },
+      {
+        "activityId": 142,
+        "activityName": "年费大会员返B币",
+        "couponToken": "AC26DBFF41D6D5CA499E912A865C76B3",
+        "couponMoney": 5.00,
+        "couponBalance": 0,
+        "status": 2,
+        "couponDueTime": 1681056000000,
+        "receiveTime": 1678461018000,
+        "ruleMsgs": [
+          "使用范围:限付费OGV影片、个性装扮、必火推广、自定义充电、直播换电池、漫画App积分指定场景使用"
+        ],
+        "expireAlert": false
+      },
+      {
+        "activityId": 142,
+        "activityName": "年费大会员返B币",
+        "couponToken": "897CA9EA768C0E25DD291053CB0653A1",
+        "couponMoney": 5.00,
+        "couponBalance": 5.00,
+        "status": 3,
+        "couponDueTime": 1678291200000,
+        "receiveTime": 1675628265000,
+        "ruleMsgs": [
+          "使用范围:限付费OGV影片、个性装扮、必火推广、自定义充电、直播换电池、漫画App积分指定场景使用"
+        ],
+        "expireAlert": false
+      },
+      {
+        "activityId": 142,
+        "activityName": "年费大会员返B币",
+        "couponToken": "F7103FEB53BBFFABEA8B7CFB5642D433",
+        "couponMoney": 5.00,
+        "couponBalance": 5.00,
+        "status": 3,
+        "couponDueTime": 1675612800000,
+        "receiveTime": 1672990538000,
+        "ruleMsgs": [
+          "使用范围:限付费OGV影片、个性装扮、必火推广、自定义充电、直播换电池、漫画App积分指定场景使用"
+        ],
+        "expireAlert": false
+      },
+      {
+        "activityId": 142,
+        "activityName": "年费大会员返B币",
+        "couponToken": "8EF65FA01BEC633D45E6B6B6CA2E28DA",
+        "couponMoney": 5.00,
+        "couponBalance": 5.00,
+        "status": 3,
+        "couponDueTime": 1672934400000,
+        "receiveTime": 1670333858000,
+        "ruleMsgs": [
+          "使用范围:限付费OGV影片、个性装扮、必火推广、自定义充电、直播换电池、漫画App积分指定场景使用"
+        ],
+        "expireAlert": false
+      },
+      {
+        "activityId": 142,
+        "activityName": "年费大会员返B币",
+        "couponToken": "432DF8B96E938C00BD0BC114F7FA15D8",
+        "couponMoney": 5.00,
+        "couponBalance": 3.00,
+        "status": 3,
+        "couponDueTime": 1670169600000,
+        "receiveTime": 1667493038000,
+        "ruleMsgs": [
+          "使用范围:限付费OGV影片、个性装扮、必火推广、自定义充电、直播换电池、漫画App积分指定场景使用"
+        ],
+        "expireAlert": false
+      },
+      {
+        "activityId": 142,
+        "activityName": "年费大会员返B币",
+        "couponToken": "5903AA3E234C7615A32769D8BAE47E2B",
+        "couponMoney": 5.00,
+        "couponBalance": 3.00,
+        "status": 3,
+        "couponDueTime": 1667750400000,
+        "receiveTime": 1665132632000,
+        "ruleMsgs": [
+          "使用范围:限付费OGV影片、个性装扮、必火推广、自定义充电、直播换电池、漫画App积分指定场景使用"
+        ],
+        "expireAlert": false
+      }
+    ]
+  },
+  "success": true
+}

@@ -100,7 +100,7 @@ func GetChargeRecordFromCharger() func() {
 					chargeRecordData.Period = recd.Item[0].Renew.Period
 					chargeRecordData.Signed_price = recd.Item[0].Renew.Signed_price
 				} else {
-					chargeRecordData.ChargerId, err = strconv.Atoi(utils.CutUid(config.Cfg.Cks[0]))
+					chargeRecordData.ChargerId, err = strconv.Atoi(utils.CutUid(config.Cfg.BUserCk[0].Ck))
 					if err != nil {
 						continue
 					}

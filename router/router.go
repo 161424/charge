@@ -40,10 +40,10 @@ func Run() {
 
 		c.JSON(200, rr)
 	})
-	//fmt.Println(config.Cfg.Port)
+	//fmt.Println(config.Cfg.WebPort)
 	//fmt.Println(config.Cfg)
 	go func() {
-		err := g.Run(config.Cfg.Port)
+		err := g.Run(config.Cfg.WebPort)
 		if err != nil {
 			fmt.Println(err)
 			panic(err)

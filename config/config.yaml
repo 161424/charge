@@ -11,26 +11,35 @@ mongodb:
   Addr:     ""
   Password: ""
 
-Port: "127.0.0.1:2025"
-CKs:
-  - "buvid4=BCBBE5DD-DA08-3323-C879-3B8B4181302D07932-023072221-u3CRc4RDNboKQbEiVxyj1w%3D%3D; header_theme_version=CLOSE; DedeUserID=74199115; DedeUserID__ckMd5=8d1ad2254e14c603; buvid_fp_plain=undefined; enable_web_push=DISABLE; is-2022-channel=1; hit-dyn-v2=1; CURRENT_BLACKGAP=0; FEED_LIVE_VERSION=V_WATCHLATER_PIP_WINDOW; buvid3=10783F3E-F0BB-478C-A9DD-C86A50E920B990117infoc; b_nut=1721570090; _uuid=2E2104DB3-C461-722A-10E5E-49D7B829823C96320infoc; rpdid=|(J~R~kJku|~0J'u~kRY~uk|u; fingerprint=93f22076a6f2434d8f425b61a1b95706; LIVE_BUVID=AUTO8517339017486916; home_feed_column=5; browser_resolution=1897-1013; CURRENT_QUALITY=80; PVID=5; buvid_fp=93f22076a6f2434d8f425b61a1b95706; bili_ticket=eyJhbGciOiJIUzI1NiIsImtpZCI6InMwMyIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzUzNjczMjksImlhdCI6MTczNTEwODA2OSwicGx0IjotMX0.qlnnEwKpqpSb50ZqKQd3GE2wAmW4WnlOfKKkOStGYg4; bili_ticket_expires=1735367269; SESSDATA=5d99d58b%2C1750669329%2Cba5f9%2Ac1CjCEq6uveUsB2QzJmqSrJ2JYhmUkrqP_I7VB44SCcUWFtc91a3M9BBenFXE_6-9u7a0SVnNVdE9iSGVsRzhwdUpNaHU2dF9yTEp2TE81bndNRGprMDlOSEdGZlp1cEZ4ODFLQnZRSmR6OURMZktXZEFBeFM5X1AtaUNjZFNEMDZkODdtOGVsSVpRIIEC; bili_jct=f1f18c916f99d7ed7ae7997dbc1862ef; sid=5imbub3f; bp_t_offset_74199115=1014819442544082944; b_lsid=39882B5F_1940230C75B; bsource=search_bing; CURRENT_FNVAL=4048"
-  - "buvid3=E96F0AF0-58E6-2FFE-7E83-0C43EF7FFDC724533infoc; b_nut=1733640124; _uuid=51B5A7E5-F9F6-1BFD-6A55-310515EEE104AE25480infoc; buvid_fp=fd64e1d0583049a2c5c9c0271e375af7; enable_web_push=DISABLE; buvid4=7BF037C7-5BB8-154A-F942-4461ED67B3CE25208-024120806-eyKWF1IWU%2FObiMtPMGZGKw%3D%3D; DedeUserID=349869794; DedeUserID__ckMd5=5748890e061cf71a; rpdid=|(um~RJ|~Ykl0J'u~JJYR|uY|; header_theme_version=CLOSE; CURRENT_QUALITY=116; SESSDATA=ab62a20a%2C1750386629%2Cec680%2Ac2CjCQo3r-ykw8kSuvKsKX1RvrPPuqsukpUKhBvXJG18j0DJzM_jJAtozRR5aUyvszX84SVmRGVTNxNS1lSzlhWVR0X3REaDN5em5Zc01BY2E4WnhQSVphYXIxdF82cDkyUGdwWmpxUDhOUUx2dFliYWZWRGRWU21ZS1RfeERSbl9LM21MbDYxX2FnIIEC; bili_jct=9b98c3536608478372b1461c7ca2d008; b_lsid=2BE7A4CC_1940CE70FB1; bili_ticket=eyJhbGciOiJIUzI1NiIsImtpZCI6InMwMyIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzU2NDI0NTcsImlhdCI6MTczNTM4MzE5NywicGx0IjotMX0.MPKliyr2K-Oflf6H5jexqyXH12ZuZKmcIFYgqBzKjlA; bili_ticket_expires=1735642397; bp_t_offset_349869794=1015952429146963968; CURRENT_FNVAL=2000; sid=8b1y795o; home_feed_column=4; browser_resolution=1144-941"
-  - "buvid3=5369501D-B612-35EB-CD6E-7236F5D3431D57333infoc; b_nut=1725796857; _uuid=BD91010963-A494-FF95-6D46-71A15785C81C47563infoc; enable_web_push=DISABLE; buvid4=5977918F-31FE-B70E-4023-30A90F8278F457714-024090812-Z8i3T33q2dgGnnyESCaaHQ%3D%3D; header_theme_version=CLOSE; CURRENT_FNVAL=4048; home_feed_column=5; hit-dyn-v2=1; rpdid=|(J~R~kJkkkY0J'u~J||mJllR; fingerprint=9af0ed73b782d99246bf21e939e63b1e; buvid_fp_plain=undefined; buvid_fp=9af0ed73b782d99246bf21e939e63b1e; bsource=search_bing; browser_resolution=1718-1018; bili_ticket=eyJhbGciOiJIUzI1NiIsImtpZCI6InMwMyIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzU3MjkwODEsImlhdCI6MTczNTQ2OTgyMSwicGx0IjotMX0.d3TtahBdioW0TY6VekZ0ITsLdit5SkpghcNqyYi0GOM; bili_ticket_expires=1735729021; bp_t_offset_74199115=1016324476394012672; SESSDATA=32db5025%2C1751032996%2Ca2e46%2Ac1CjD0iQwYeeZgSB4g7zPEB5PQplvNG0aP4lFojqHh8mW_P3cFFg3ABqU88ufuXRcbqm0SVlgzanBVNVlHZ3hRbFRlclc5dk84d0lvTzFBbGpCdFQ0UzBHZmhEVEVBbkFoM1hPc21MQy1XTjl1ak85ZTVMdnNRVm1nb3V6OG9QcERCOUZtb3NESVBBIIEC; bili_jct=96ac67c9e3ab0763249614e49b4e316c; DedeUserID=1039714777; DedeUserID__ckMd5=af86eed6a0747d34; sid=hg9x14ga; b_lsid=210955DA4_194132583EF"
+WebPort: "127.0.0.1:2025"
 
-# Access_key 在兑换礼品时需要
-Access_key:
-  - "88b1b9650860fe65157260671b4a08c1"
-UserAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0"
+# CK  Cookie
+# Access_key 在兑换礼品时需要。访问APP的某些api必要
+BUserCk:
+  -
+    - Ck: "buvid4=BCBBE5DD-DA08-3323-C879-3B8B4181302D07932-023072221-u3CRc4RDNboKQbEiVxyj1w%3D%3D; header_theme_version=CLOSE; DedeUserID=74199115; DedeUserID__ckMd5=8d1ad2254e14c603; buvid_fp_plain=undefined; enable_web_push=DISABLE; is-2022-channel=1; hit-dyn-v2=1; CURRENT_BLACKGAP=0; FEED_LIVE_VERSION=V_WATCHLATER_PIP_WINDOW; buvid3=10783F3E-F0BB-478C-A9DD-C86A50E920B990117infoc; b_nut=1721570090; _uuid=2E2104DB3-C461-722A-10E5E-49D7B829823C96320infoc; rpdid=|(J~R~kJku|~0J'u~kRY~uk|u; fingerprint=93f22076a6f2434d8f425b61a1b95706; LIVE_BUVID=AUTO8517339017486916; home_feed_column=5; browser_resolution=1897-1013; CURRENT_QUALITY=80; PVID=5; buvid_fp=93f22076a6f2434d8f425b61a1b95706; bili_ticket=eyJhbGciOiJIUzI1NiIsImtpZCI6InMwMyIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzUzNjczMjksImlhdCI6MTczNTEwODA2OSwicGx0IjotMX0.qlnnEwKpqpSb50ZqKQd3GE2wAmW4WnlOfKKkOStGYg4; bili_ticket_expires=1735367269; SESSDATA=5d99d58b%2C1750669329%2Cba5f9%2Ac1CjCEq6uveUsB2QzJmqSrJ2JYhmUkrqP_I7VB44SCcUWFtc91a3M9BBenFXE_6-9u7a0SVnNVdE9iSGVsRzhwdUpNaHU2dF9yTEp2TE81bndNRGprMDlOSEdGZlp1cEZ4ODFLQnZRSmR6OURMZktXZEFBeFM5X1AtaUNjZFNEMDZkODdtOGVsSVpRIIEC; bili_jct=f1f18c916f99d7ed7ae7997dbc1862ef; sid=5imbub3f; bp_t_offset_74199115=1014819442544082944; b_lsid=39882B5F_1940230C75B; bsource=search_bing; CURRENT_FNVAL=4048"
+    - Access_key: "88b1b9650860fe65157260671b4a08c1"
+    - Group: "221094376"
+  -
+    - Ck: "buvid3=E96F0AF0-58E6-2FFE-7E83-0C43EF7FFDC724533infoc; b_nut=1733640124; _uuid=51B5A7E5-F9F6-1BFD-6A55-310515EEE104AE25480infoc; buvid_fp=fd64e1d0583049a2c5c9c0271e375af7; enable_web_push=DISABLE; buvid4=7BF037C7-5BB8-154A-F942-4461ED67B3CE25208-024120806-eyKWF1IWU%2FObiMtPMGZGKw%3D%3D; DedeUserID=349869794; DedeUserID__ckMd5=5748890e061cf71a; rpdid=|(um~RJ|~Ykl0J'u~JJYR|uY|; header_theme_version=CLOSE; CURRENT_QUALITY=116; SESSDATA=ab62a20a%2C1750386629%2Cec680%2Ac2CjCQo3r-ykw8kSuvKsKX1RvrPPuqsukpUKhBvXJG18j0DJzM_jJAtozRR5aUyvszX84SVmRGVTNxNS1lSzlhWVR0X3REaDN5em5Zc01BY2E4WnhQSVphYXIxdF82cDkyUGdwWmpxUDhOUUx2dFliYWZWRGRWU21ZS1RfeERSbl9LM21MbDYxX2FnIIEC; bili_jct=9b98c3536608478372b1461c7ca2d008; b_lsid=2BE7A4CC_1940CE70FB1; bili_ticket=eyJhbGciOiJIUzI1NiIsImtpZCI6InMwMyIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzU2NDI0NTcsImlhdCI6MTczNTM4MzE5NywicGx0IjotMX0.MPKliyr2K-Oflf6H5jexqyXH12ZuZKmcIFYgqBzKjlA; bili_ticket_expires=1735642397; bp_t_offset_349869794=1015952429146963968; CURRENT_FNVAL=2000; sid=8b1y795o; home_feed_column=4; browser_resolution=1144-941"
+  -
+    - Ck: "buvid3=5369501D-B612-35EB-CD6E-7236F5D3431D57333infoc; b_nut=1725796857; _uuid=BD91010963-A494-FF95-6D46-71A15785C81C47563infoc; enable_web_push=DISABLE; buvid4=5977918F-31FE-B70E-4023-30A90F8278F457714-024090812-Z8i3T33q2dgGnnyESCaaHQ%3D%3D; header_theme_version=CLOSE; CURRENT_FNVAL=4048; home_feed_column=5; hit-dyn-v2=1; rpdid=|(J~R~kJkkkY0J'u~J||mJllR; fingerprint=9af0ed73b782d99246bf21e939e63b1e; buvid_fp_plain=undefined; buvid_fp=9af0ed73b782d99246bf21e939e63b1e; bsource=search_bing; browser_resolution=1718-1018; bili_ticket=eyJhbGciOiJIUzI1NiIsImtpZCI6InMwMyIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzU3MjkwODEsImlhdCI6MTczNTQ2OTgyMSwicGx0IjotMX0.d3TtahBdioW0TY6VekZ0ITsLdit5SkpghcNqyYi0GOM; bili_ticket_expires=1735729021; bp_t_offset_74199115=1016324476394012672; SESSDATA=32db5025%2C1751032996%2Ca2e46%2Ac1CjD0iQwYeeZgSB4g7zPEB5PQplvNG0aP4lFojqHh8mW_P3cFFg3ABqU88ufuXRcbqm0SVlgzanBVNVlHZ3hRbFRlclc5dk84d0lvTzFBbGpCdFQ0UzBHZmhEVEVBbkFoM1hPc21MQy1XTjl1ak85ZTVMdnNRVm1nb3V6OG9QcERCOUZtb3NESVBBIIEC; bili_jct=96ac67c9e3ab0763249614e49b4e316c; DedeUserID=1039714777; DedeUserID__ckMd5=af86eed6a0747d34; sid=hg9x14ga; b_lsid=210955DA4_194132583EF"
+
+
 ChargeUid:
   - "2149231"
 LotteryUid:
   - "226257459"    # 大锦鲤
   - "100680137"    #你的工具人老公
 
+# 黑名单
 FakeLotteryUid:
   - "3546609705028467"
   - "1619305144"
   - "1713150198"
+
+WebUserAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0"
+MobileUserAgent: "Mozilla/5.0 (Linux; Android 12; 24031PN0DC Build/V417IR; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/101.0.4951.61 Safari/537.36 Mobile os/android model/24031PN0DC build/8020300 osVer/12 sdkInt/32 network/2 BiliApp/8020300 mobi_app/android channel/yingyongbao Buvid/XU812D18534B34C4113916044792A64880198 sessionID/bde3aecb innerVer/8020300 c_locale/zh_CN s_locale/zh_CN disable_rcmd/0 8.2.0 os/android model/24031PN0DC mobi_app/android build/8020300 channel/yingyongbao innerVer/8020300 osVer/12 network/2"
 
 DDNS:
   ZoneID: "f460ccc93a56c41d9b52de75087dca75"          # Cloudflare域名的Zone ID
@@ -39,9 +48,15 @@ DDNS:
   Type: "AAAA"
   Name: "like.151580.xyz"
 
+
+
+# 访问api睡眠时间
 DelayTime: 20000
+
 Server3: "sctp3776tdvvefnyamdjc7g51zvprjn"  # server3酱的秘钥
 
-
+# 充电UID
 ToCoinUid: ""
+
+# 运行模式
 Model: "test"

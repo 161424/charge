@@ -46,17 +46,19 @@ func ListenDJLChannel() func() {
 
 }
 
+// 默认使用第一个账户配置
 func ReadGroup(size int) {
 	monitor := sender.Monitor{}
 	monitor.Tag = "lottery"
-	monitor.Title = "每日lottery监控——3(Group)"
-	re := regexp.MustCompile(`[0-9]{18,}`)
+	monitor.Title = "每日lottery监控——2(Group)"
 	var groupUrl = "https://api.vc.bilibili.com/svr_sync/v1/svr_sync/fetch_session_msgs?talker_id=221094376&session_type=2&size="
-	_groupUrl := groupUrl + strconv.Itoa(size)
-	responders := inet.DefaultClient.CheckOne(_groupUrl)
 	ctx := context.Background()
 	group := Group{}
 	t := time.Now()
+
+	re := regexp.MustCompile(`[0-9]{18,}`)
+	_groupUrl := groupUrl + strconv.Itoa(size)
+	responders := inet.DefaultClient.CheckOne(_groupUrl)
 	err := json.Unmarshal(responders, &group)
 	if err != nil {
 		fmt.Println("err :", err)

@@ -49,11 +49,11 @@ func init() {
 			IdleConnTimeout: 30 * time.Second,
 		},
 	}
-	DefaultClient.Cks = make([]ckStatus, len(config.Cfg.Cks))
-	_u := config.Cfg.Cks
+	DefaultClient.Cks = make([]ckStatus, len(config.Cfg.BUserCk))
+	_u := config.Cfg.BUserCk
 	utils.Shuffle(_u)
 	for i := 0; i < len(_u); i++ {
-		DefaultClient.Cks[i].Ck = _u[i]
+		DefaultClient.Cks[i].Ck = _u[i].Ck
 	}
 
 	DefaultClient.HandCheckAlive()
@@ -78,9 +78,9 @@ func (d *defaultClient) CheckOne(url string) []byte {
 		return nil
 	}
 
-	req.Header.Set("User-Agent", config.Cfg.User_Agent)
+	req.Header.Set("User-Agent", config.Cfg.WebUserAgent)
 	req.Header.Set("Connection", "keep-alive")
-	req.Header.Set("Cookie", config.Cfg.Cks[0])
+	req.Header.Set("Cookie", config.Cfg.BUserCk[0].Ck)
 	resp, err := d.Client.Do(req)
 	if err != nil {
 		return nil
@@ -98,7 +98,7 @@ func (d *defaultClient) CheckSelect(url string, idx int) []byte {
 	if err != nil {
 		return nil
 	}
-	req.Header.Set("User-Agent", config.Cfg.User_Agent)
+	req.Header.Set("User-Agent", config.Cfg.WebUserAgent)
 	req.Header.Set("Connection", "keep-alive")
 	req.Header.Set("Cookie", d.Cks[idx].Ck)
 
@@ -125,7 +125,7 @@ func (d *defaultClient) CheckSelectPost(url string, contentType, referer, ua str
 		referer = "https://www.bilibili.com/"
 	}
 	if ua == "" {
-		ua = config.Cfg.User_Agent
+		ua = config.Cfg.WebUserAgent
 	}
 	req.Header.Set("Referer", referer)
 	req.Header.Set("User-Agent", ua)
@@ -233,7 +233,7 @@ func (d *defaultClient) HandCheckAlive() {
 // csrf就是bili_jct
 // csrf极易失效
 func (d *defaultClient) JoinChargeLottery(csrf, businessId string) []byte {
-	ck := config.Cfg.Cks[0]
+	ck := config.Cfg.BUserCk[0].Ck
 	if csrf == "" {
 		csrf = utils.CutCsrf(ck)
 	}
@@ -245,7 +245,7 @@ func (d *defaultClient) JoinChargeLottery(csrf, businessId string) []byte {
 		return nil
 	}
 
-	req.Header.Set("User-Agent", config.Cfg.User_Agent)
+	req.Header.Set("User-Agent", config.Cfg.WebUserAgent)
 	req.Header.Set("Connection", "keep-alive")
 	req.Header.Set("Cookie", ck)
 	resp, err := d.Client.Do(req)

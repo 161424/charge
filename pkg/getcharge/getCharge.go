@@ -71,8 +71,8 @@ type ChargeOtherInfo struct {
 
 // 待完善
 func GetChargeFromMonitorDefaultUsersDynamic() func() {
-	opus := utils.GetUserOpus(config.Cfg.ChargeUid)
 	return func() {
+		opus := utils.GetUserOpus(config.Cfg.ChargeUid)
 		CU := "https://api.bilibili.com/x/polymer/web-dynamic/v1/detail?id=" // web json
 		HCU := "https://www.bilibili.com/opus/"                              // web html
 		COU := "https://api.vc.bilibili.com/lottery_svr/v1/lottery_svr/lottery_notice?business_type=12&business_id="

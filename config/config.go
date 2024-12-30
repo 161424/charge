@@ -10,10 +10,11 @@ import (
 )
 
 type config struct {
-	Port  string `yaml:"Port"`
+	WebPort string `yaml:"WebPort"`
+
 	Redis struct {
 		Addr           string `yaml:"Addr"`
-		Port           string `yaml:"Port"`
+		Port           string `yaml:"WebPort"`
 		Password       string `yaml:"Password"`
 		IsIpv6         bool   `yaml:"IsIpv6"`
 		StaticIpv6Addr string `yaml:"StaticIpv6Addr"`
@@ -24,12 +25,19 @@ type config struct {
 		Addr     string `yaml:"Addr"`
 		Password string `yaml:"Password"`
 	}
-	Cks            []string `yaml:"CKs"`
-	Access_key     []string `yaml:"Access_key"`
-	User_Agent     string   `yaml:"UserAgent"`
+
+	BUserCk []struct {
+		Ck         string `yaml:"Ck"`
+		Access_key string `yaml:"Access_key"`
+		Group      string `yaml:"Group"`
+	}
+
 	ChargeUid      []string `yaml:"ChargeUid"`
 	LotteryUid     []string `yaml:"LotteryUid"`
 	FakeLotteryUid []string `yaml:"FakeLotteryUid"`
+
+	WebUserAgent    string `yaml:"WebUserAgent"`
+	MobileUserAgent string `yaml:"MobileUserAgent"`
 
 	DDNS struct {
 		ZoneID      string `yaml:"ZoneID"`
