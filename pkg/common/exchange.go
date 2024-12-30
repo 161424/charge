@@ -86,7 +86,7 @@ func ExchangePoint(idx int) int {
 			return sku.Code
 		}
 		for j := 0; j < len(sku.Data.Skus); j++ {
-			_iurl := fmt.Sprintf(iurl, sku.Data.Skus[j].Token, config.Cfg.Access_key[i])
+			_iurl := fmt.Sprintf(iurl, sku.Data.Skus[j].Token, config.Cfg.BUserCk[i].Access_key)
 			if isMonday {
 				exchangeGoodsNotify(_iurl, idx)
 			}
@@ -145,7 +145,7 @@ func exchangePoint(idx int, token string) int {
 	url := "https://api.bilibili.com/x/vip_point/trade/order/create" // post
 	reqBody := url2.Values{}
 	reqBody.Set("token", token)
-	reqBody.Set("access_key", config.Cfg.Access_key[idx])
+	reqBody.Set("access_key", config.Cfg.BUserCk[idx].Access_key)
 	resp := inet.DefaultClient.CheckSelectPost(url, contentType["x"], "", "", idx, strings.NewReader(reqBody.Encode()))
 	eResp := &ExchangeResp{}
 	err := json.Unmarshal(resp, &eResp)

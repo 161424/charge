@@ -14,7 +14,7 @@ var DefaultUid = ""
 
 func SetDefaultUid(uid string) {
 	if uid == "" {
-		DefaultUid = CutUid(config.Cfg.Cks[0])
+		DefaultUid = CutUid(config.Cfg.BUserCk[0].Ck)
 	} else {
 		DefaultUid = CutUid(uid)
 	}

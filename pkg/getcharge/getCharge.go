@@ -113,7 +113,7 @@ func GetChargeFromMonitorDefaultUsersDynamic() func() {
 			data.EndTime = time.Unix(oDetail.Data.Lottery_time, 0).Format(time.DateOnly)
 			data.NumParticipants = oDetail.Data.Participants
 			data.NumPrizes = oDetail.Data.FirstPrize + oDetail.Data.SecondPrize + oDetail.Data.ThirdPrize
-			ChargerUid := utils2.CutUid(config.Cfg.Cks[0])
+			ChargerUid := utils2.CutUid(config.Cfg.BUserCk[0].Ck)
 			data.ChargerUid = ChargerUid
 			data.BusinessId = op
 
