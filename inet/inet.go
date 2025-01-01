@@ -149,12 +149,12 @@ func (d *defaultClient) RedundantDW(url string, dyTime time.Duration) (re []byte
 		re = d.CheckOne(url)
 		time.Sleep(dyTime)
 	} else {
+		// 有bug，阻塞了，
 		AliveCkNum := d.AliveNum
 		d.AliveCh <- struct{}{}
-
-		idx := d.Idx
+		isRun := false
+		idx := d.Idx % AliveCkNum
 		for {
-			idx %= AliveCkNum
 			if d.Cks[idx].Alive {
 				// 检测是否在睡眠中,最好是动态睡眠吧
 				if d.Cks[idx].DynamicSleep {
@@ -170,11 +170,13 @@ func (d *defaultClient) RedundantDW(url string, dyTime time.Duration) (re []byte
 					<-d.AliveCh
 					d.Cks[idx].DynamicSleepTime = t.Add(dyTime)
 					d.Cks[idx].DynamicSleep = true
-					return
-
+					isRun = true
 				}
 			}
-			d.Idx++
+			d.Idx = idx + 1
+			if isRun {
+				return
+			}
 		}
 	}
 	return

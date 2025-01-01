@@ -2,15 +2,16 @@ package n
 
 import (
 	"charge/config"
+	"charge/inet"
 	"charge/utils"
-	"strings"
-
 	"fmt"
 	"io"
 	"net"
 	"net/http"
 	"net/url"
+	"strings"
 	"testing"
+	"time"
 )
 
 // 2409:8a44:4b12:c6e0:69ec:d9ee:89b:7878
@@ -58,4 +59,12 @@ func TestYY(t *testing.T) {
 	defer resp.Body.Close()
 	body, _ := io.ReadAll(resp.Body)
 	fmt.Println(string(body))
+}
+
+func TestMutile(t *testing.T) {
+	for i := 0; i < 10; i++ {
+		resp := inet.DefaultClient.RedundantDW("https://api.bilibili.com/x/web-interface/nav", time.Second)
+		fmt.Println(string(resp))
+	}
+
 }

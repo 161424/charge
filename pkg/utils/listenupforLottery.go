@@ -21,7 +21,7 @@ func ListenupforLottery(Uid []string) []string {
 	if len(Uid) != 0 {
 		utils.Shuffle(Uid) // 打乱被监听者uid
 		re := regexp.MustCompile("[0-9]{18,}")
-		//fmt.Println(Uid)
+		fmt.Println(Uid)
 		for _, uid := range Uid {
 			fmt.Printf("查看用户uid：%s。", uid)
 			url := DefaultUrl + uid

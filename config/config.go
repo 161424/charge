@@ -14,7 +14,7 @@ type config struct {
 
 	Redis struct {
 		Addr           string `yaml:"Addr"`
-		Port           string `yaml:"WebPort"`
+		Port           string `yaml:"Port"`
 		Password       string `yaml:"Password"`
 		IsIpv6         bool   `yaml:"IsIpv6"`
 		StaticIpv6Addr string `yaml:"StaticIpv6Addr"`
@@ -30,7 +30,7 @@ type config struct {
 		Ck         string `yaml:"Ck"`
 		Access_key string `yaml:"Access_key"`
 		Group      string `yaml:"Group"`
-	}
+	} `yaml:"BUserCk"`
 
 	ChargeUid      []string `yaml:"ChargeUid"`
 	LotteryUid     []string `yaml:"LotteryUid"`
@@ -76,9 +76,13 @@ func init() {
 	if err != nil {
 		log.Fatalf("解析 YAML 失败: %v", err)
 	}
+
 	fmt.Println(Cfg)
 }
 
 func Start() {
+	if len(Cfg.BUserCk) == 0 {
+		panic("BUserCk为无效配置，无法启动服务")
+	}
 
 }
