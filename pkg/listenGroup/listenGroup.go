@@ -58,7 +58,7 @@ func ReadGroup(size int) {
 
 	re := regexp.MustCompile(`[0-9]{18,}`)
 	_groupUrl := groupUrl + strconv.Itoa(size)
-	responders := inet.DefaultClient.CheckOne(_groupUrl)
+	responders := inet.DefaultClient.CheckFirst(_groupUrl)
 	err := json.Unmarshal(responders, &group)
 	if err != nil {
 		fmt.Println("err :", err)

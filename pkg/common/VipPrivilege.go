@@ -1,6 +1,7 @@
 package common
 
 import (
+	"charge/config"
 	"charge/inet"
 	"charge/utils"
 	"encoding/json"
@@ -10,7 +11,8 @@ import (
 	"time"
 )
 
-// 大会员福利，感觉不重要。目前仅实现与BCoin相关的方法
+var BCoinExpiringSoon = false
+
 type PrivilegeList struct {
 	Code    int // -101：账号未登录 -400：请求错误 0：成功
 	Message string
@@ -72,6 +74,21 @@ type pReceive struct {
 	Message string
 }
 
+type ChargeUp struct {
+	Code    int
+	Message string
+	Data    struct {
+		Mid      int    // 本用户mid
+		Up_mid   int    // 目标用户mid
+		Order_no string // 留言token	 用于添加充电留言
+		Bp_num   string // 充电贝壳数
+		Exp      int    // 获得经验数
+		Status   int    // 返回结果	 4：成功 -2：低于20电池下限 -4：B币不足
+		Msg      string // 错误信息
+	}
+}
+
+// 大会员福利，感觉不重要。目前仅实现与BCoin相关的方法
 func VipPrivilege(idx int) int {
 	url := "https://api.bilibili.com/x/vip/privilege_assets/list"
 	resp := inet.DefaultClient.CheckSelect(url, idx)
@@ -104,8 +121,14 @@ func BCoinState(idx int) string {
 	}
 	expireTime := time.UnixMilli(bcS.Data.Result[0].couponDueTime)
 	expireDay := expireTime.Sub(time.Now()).Hours() / 24
+	if expireDay < 3 {
+		BCoinExpiringSoon = true
+		return fmt.Sprintf("B币券过期时间【%s】，距离过期还有%d天。即将为你充电", expireTime.Format("2006-01-02"), int(expireDay))
 
-	return fmt.Sprintf("B币券过期时间【%s】，距离过期还有%d天。", expireTime.Format("2006-01-02"), int(expireDay))
+	} else {
+		return fmt.Sprintf("B币券过期时间【%s】，距离过期还有%d天。", expireTime.Format("2006-01-02"), int(expireDay))
+
+	}
 }
 
 // B币券领取
@@ -135,7 +158,31 @@ func BCoinReceive(idx int) string {
 }
 
 // 默认充电
-func BCoinExchange(idx int) string {
+func BCoinExchangeForUp(idx int) string {
 	url := "https://api.bilibili.com/x/ugcpay/web/v2/trade/elec/pay/quick"
-	return url
+	reqBody := url2.Values{}
+	reqBody.Set("bp_num", "5")                 // 充电 b 币数量
+	reqBody.Set("is_bp_remains_prior", "true") //B币充电请选择true
+	reqBody.Set("up_mid", "349869794")         // 充电对象用户UID
+	reqBody.Set("otype", "up")                 // 充电来源 up：空间充电 archive：视频充电
+	reqBody.Set("oid", "349869794")            // 充电来源代码 空间充电：充电对象用户mid 视频充电：稿件avid
+	reqBody.Set("csrf", utils.CutCsrf(inet.DefaultClient.Cks[idx].Ck))
+	resp := inet.DefaultClient.CheckSelectPost(url, contentType["x"], "https://www.bilibili.com/", "", idx, strings.NewReader(reqBody.Encode()))
+	cU := &ChargeUp{}
+	err := json.Unmarshal(resp, &cU)
+	if err != nil {
+		return fmt.Sprintf(errMsg["json"], err.Error(), string(resp))
+	}
+	if cU.Code != 0 {
+		return fmt.Sprintf(errMsg["code"], "BCoinExchangeForUp", cU.Code, cU.Message)
+	}
+	if cU.Data.Status == 4 {
+		return fmt.Sprintf("B币已为up【%s】充电成功", config.Cfg.Exchange)
+	} else if cU.Data.Status == -2 {
+		return fmt.Sprintf("B币为up【%s】充电失败，原因是低于20电池下限", config.Cfg.Exchange)
+	} else if cU.Data.Status == -4 {
+		return fmt.Sprintf("B币为up【%s】充电失败，原因是B币不足", config.Cfg.Exchange)
+	}
+
+	return fmt.Sprintf("BCoinExchangeForUp出现未知错误。%s，%p", string(resp), cU)
 }

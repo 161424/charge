@@ -49,6 +49,8 @@ type config struct {
 
 	DaleyTime int64  `yaml:"DaleyTime"`
 	Server3   string `yaml:"Server3"`
+	Exchange  string `yaml:"Exchange"`
+	Model     string `yaml:"Model"`
 }
 
 var Cfg = &config{}

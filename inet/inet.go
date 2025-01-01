@@ -72,7 +72,7 @@ func init() {
 var act = 0
 
 // 支持ck[0]单独使用的get访问
-func (d *defaultClient) CheckOne(url string) []byte {
+func (d *defaultClient) CheckFirst(url string) []byte {
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil
@@ -146,7 +146,7 @@ func (d *defaultClient) RedundantDW(url string, dyTime time.Duration) (re []byte
 	t := time.Now()
 	l := len(d.Cks)
 	if l == 1 {
-		re = d.CheckOne(url)
+		re = d.CheckFirst(url)
 		time.Sleep(dyTime)
 	} else {
 		// 有bug，阻塞了，

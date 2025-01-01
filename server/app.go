@@ -38,8 +38,8 @@ func Run() error {
 	// 15点钟  过期
 	//tw.AddTimer(8*60*time.Minute, 2, listenUpForLottery.BalanceLottery()) // 设置每日转发lottery (会删除，因此要最后进行)
 
-	// DailyTask
-	tw.AddTimer(0, 0, 1, "DailyTask", common.DailyTask())
+	// DailyTask。每8个小时运行一次
+	tw.AddTimer(8*60*time.Minute, 1, 0, "DailyTask", common.DailyTask())
 	//todo 多账号监听up充电
 	//todo
 	fmt.Println("执行AddTimer")

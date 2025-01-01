@@ -60,7 +60,7 @@ func GetChargeRecordFromCharger() func() {
 		page := 1
 		url := chargeRecordUrl + strconv.Itoa(page)
 		fmt.Println(url)
-		body := inet.DefaultClient.CheckOne(url)
+		body := inet.DefaultClient.CheckFirst(url)
 		record := ChargeRecord{}
 		err := json.Unmarshal(body, &record)
 		if err != nil {
@@ -78,7 +78,7 @@ func GetChargeRecordFromCharger() func() {
 			time.Sleep(500 * time.Millisecond)
 			if i != 1 {
 				url = chargeRecordUrl + strconv.Itoa(i)
-				body = inet.DefaultClient.CheckOne(url)
+				body = inet.DefaultClient.CheckFirst(url)
 				record = ChargeRecord{}
 				err = json.Unmarshal(body, &record)
 				if err != nil {

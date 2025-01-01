@@ -1,6 +1,7 @@
 package n
 
 import (
+	"charge/config"
 	"fmt"
 	"os"
 	"regexp"
@@ -43,3 +44,8 @@ func TestTime(t *testing.T) {
 //func TestSleep(t *testing.T) {
 //	utils.Sleep(2 * 1000 * time.Millisecond)
 //}
+
+func TestConfig(t *testing.T) {
+	config.Start()
+	fmt.Println(config.Cfg)
+}
