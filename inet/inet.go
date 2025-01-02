@@ -8,6 +8,8 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
+	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -25,15 +27,20 @@ type defaultClient struct {
 	sync.Mutex
 	Client      *http.Client
 	Tracker     <-chan time.Time
-	Idx         int
+	Idx         int64
 	Cks         []ckStatus
-	AliveNum    int
-	AliveCh     chan struct{} // 控制访问并发数量
+	AliveNum    int64
+	AliveCh     map[string]chan []byte // 控制访问并发数量
+	RunTime     map[string]int         // 运行次数
+	mp          map[int]string
+	ml          []string
 	ShuffleTime time.Time
 }
 
 type ckStatus struct {
-	Ck               string
+	Ck string
+	// Mid
+	// Csrf
 	Status           atomic.Bool // true表示正在占用中
 	Alive            bool
 	DynamicSleep     bool
@@ -50,10 +57,16 @@ func init() {
 		},
 	}
 	DefaultClient.Cks = make([]ckStatus, len(config.Cfg.BUserCk))
+	DefaultClient.RunTime = make(map[string]int, len(config.Cfg.BUserCk))
 	_u := config.Cfg.BUserCk
 	utils.Shuffle(_u)
 	for i := 0; i < len(_u); i++ {
 		DefaultClient.Cks[i].Ck = _u[i].Ck
+		uid1 := utils.CutUid(config.Cfg.BUserCk[i].Ck)
+		uid2 := utils.CutUid(_u[i].Ck)
+		DefaultClient.mp[i] = uid2
+		DefaultClient.RunTime[uid1] = 0
+		DefaultClient.ml = append(DefaultClient.ml, uid1)
 	}
 
 	DefaultClient.HandCheckAlive()
@@ -85,8 +98,8 @@ func (d *defaultClient) CheckFirst(url string) []byte {
 	if err != nil {
 		return nil
 	}
-	act++
-	fmt.Println("访问次数：", act)
+	d.RunTime[d.mp[0]]++
+	fmt.Println("访问次数：", d.RunT())
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	return body
@@ -106,8 +119,11 @@ func (d *defaultClient) CheckSelect(url string, idx int) []byte {
 	if err != nil {
 		return nil
 	}
+	d.RunTime[d.mp[idx]]++
+	fmt.Println("访问次数：", d.RunT())
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
+
 	return body
 }
 
@@ -136,47 +152,65 @@ func (d *defaultClient) CheckSelectPost(url string, contentType, referer, ua str
 	if err != nil {
 		return nil
 	}
+	d.RunTime[d.mp[idx]]++
+	fmt.Println("访问次数：", d.RunT())
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	return body
 }
 
 // 尽可能保证请求成功,应该尽可能保证返回结果，
-func (d *defaultClient) RedundantDW(url string, dyTime time.Duration) (re []byte) {
+func (d *defaultClient) RedundantDW(url string, tp string, dyTime time.Duration) (re []byte) {
 	t := time.Now()
 	l := len(d.Cks)
 	if l == 1 {
 		re = d.CheckFirst(url)
 		time.Sleep(dyTime)
+		return
 	} else {
 		// 有bug，阻塞了，
-		AliveCkNum := d.AliveNum
-		d.AliveCh <- struct{}{}
-		isRun := false
-		idx := d.Idx % AliveCkNum
+		//idx := d.Idx % (d.AliveNum + 1)
+		checkAlive := 0
 		for {
+			idx := d.Idx % int64(len(d.Cks))
+			if idx == 0 {
+				checkAlive++
+			}
+			if checkAlive == 3 { // 经过3轮仍未找到合适的ck来执行任务。在超出ck长度的任务在运行时，可能会出发panic
+				d.HandCheckAlive()
+				time.Sleep(dyTime)
+				if d.AliveNum == 0 {
+					panic("没有存活的ck")
+					return
+				}
+			}
+			fmt.Println("idx", d.Idx, idx)
+			//idx %= (d.AliveNum + 1)
 			if d.Cks[idx].Alive {
 				// 检测是否在睡眠中,最好是动态睡眠吧
 				if d.Cks[idx].DynamicSleep {
 					if t.Sub(d.Cks[idx].DynamicSleepTime) > 0 {
 						d.Cks[idx].DynamicSleep = false
 					}
+				} else if d.Cks[idx].Status.Load() == false && d.Cks[idx].DynamicSleep == false { // 正常执行访问
+					go func() {
+						d.Cks[idx].Status.Store(true)
+						resp := d.CheckSelect(url, int(idx))
+						resp = append(resp, byte(idx))
+						d.AliveCh[tp] <- resp
+						d.Cks[idx].Status.Store(false)
+					}()
+					time.Sleep(dyTime)
+					d.Idx = idx + 1
+					fmt.Println("?1", d.Idx, idx)
+					return
 				}
-				// 执行访问
-				if d.Cks[idx].Status.Load() == false && d.Cks[idx].DynamicSleep == false {
-					d.Cks[idx].Status.Store(true)
-					re = d.CheckSelect(url, idx)
-					d.Cks[idx].Status.Store(false)
-					<-d.AliveCh
-					d.Cks[idx].DynamicSleepTime = t.Add(dyTime)
-					d.Cks[idx].DynamicSleep = true
-					isRun = true
-				}
+
 			}
-			d.Idx = idx + 1
-			if isRun {
-				return
-			}
+			//没有执行访问
+			d.Idx++
+			time.Sleep(dyTime)
+			fmt.Println("?2")
 		}
 	}
 	return
@@ -195,6 +229,11 @@ func (d *defaultClient) Unav(unav *Unav, idx int, t time.Time) (re bool) {
 	return
 }
 
+func (d *defaultClient) RegisterTp(tp string) {
+	d.AliveCh[tp] = make(chan []byte, len(d.Cks))
+}
+
+// 初始化检测ck活性
 func (d *defaultClient) HandCheckAlive() {
 	d.Lock()
 	d.AliveNum = 0
@@ -213,7 +252,7 @@ func (d *defaultClient) HandCheckAlive() {
 			d.AliveNum++
 		}
 	}
-	d.AliveCh = make(chan struct{}, d.AliveNum)
+
 	d.Unlock()
 
 }
@@ -257,4 +296,18 @@ func (d *defaultClient) JoinChargeLottery(csrf, businessId string) []byte {
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	return body
+}
+
+func (d *defaultClient) RunT() string {
+	w := []string{}
+	for _, k := range d.ml {
+		w = append(w, k+":"+strconv.Itoa(d.RunTime[k]))
+	}
+	s := strings.Join(w, "; ")
+	return s
+}
+
+func (d *defaultClient) Sleep(idx int, td time.Duration) {
+	d.Cks[idx].DynamicSleep = true
+	d.Cks[idx].DynamicSleepTime = time.Now().Add(td)
 }

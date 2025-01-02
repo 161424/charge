@@ -69,8 +69,11 @@ type ChargeOtherInfo struct {
 	}
 }
 
+var modelTp = "charge"
+
 // 待完善
 func GetChargeFromMonitorDefaultUsersDynamic() func() {
+	inet.DefaultClient.RegisterTp(modelTp)
 	return func() {
 		opus := utils.GetUserOpus(config.Cfg.ChargeUid)
 		CU := "https://api.bilibili.com/x/polymer/web-dynamic/v1/detail?id=" // web json
@@ -84,25 +87,30 @@ func GetChargeFromMonitorDefaultUsersDynamic() func() {
 		monitor.Title = "充电监听——1（ChargeUp）"
 		addChargeList := true
 		t := time.Now()
-		for _, op := range opus {
+		d := inet.DefaultClient
+
+		for i := 0; i < len(opus); i++ {
+			op := opus[i]
 			if redis.ExitCharge(ctx, op) == true {
 				continue
 			}
 			_url := COU + op
 			data := types.FormResp{}
-			oBody := inet.DefaultClient.RedundantDW(_url, 500*time.Millisecond)
-			if oBody == nil {
-				fmt.Println("body is nil")
-				continue
-			}
+
+			d.RedundantDW(_url, modelTp, time.Second)
+			resp := <-d.AliveCh[modelTp]
+			idx := int(resp[len(resp)-1])
 			oDetail := ChargeOtherInfo{}
-			err := json.Unmarshal(oBody, &oDetail)
-			if err != nil {
+			err := json.Unmarshal(resp[:len(resp)-1], &oDetail)
+			if err != nil { // 出现错误，进行睡眠
 				fmt.Println(1, err)
+				d.Sleep(idx, 5*time.Minute)
 				continue
 			}
-			if !(oDetail.Code == 0 || oDetail.Code == 200) {
+			if !(oDetail.Code == 0 || oDetail.Code == 200) { // 出现错误，进行睡眠
 				fmt.Println(3, "err code: ", oDetail.Code)
+				d.Sleep(idx, 5*time.Minute) // 将线程休眠转换成ck休眠
+				i--
 				continue
 			}
 			if oDetail.Data.Lottery_time < t.Unix() { // 过期
@@ -118,14 +126,14 @@ func GetChargeFromMonitorDefaultUsersDynamic() func() {
 			data.BusinessId = op
 
 			_url = CU + op
-			body := inet.DefaultClient.RedundantDW(_url, 500*time.Millisecond)
-			if body == nil {
+			resp = d.CheckSelect(_url, idx)
+			if resp == nil {
 				fmt.Println("body is nil")
 				continue
 			}
 			// 过滤出有用信息
 			detail := ChargeDetail{}
-			err = json.Unmarshal(body, &detail)
+			err = json.Unmarshal(resp, &detail)
 			if err != nil {
 				fmt.Println(2, err)
 				continue

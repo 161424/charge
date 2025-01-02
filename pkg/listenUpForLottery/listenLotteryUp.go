@@ -17,6 +17,7 @@ import (
 var CU = "https://api.bilibili.com/x/polymer/web-dynamic/v1/detail?id="                                        // 获取动态创建时间
 var COU = "https://api.vc.bilibili.com/lottery_svr/v1/lottery_svr/lottery_notice?business_type=1&business_id=" // 非官抽是-9999
 var SleepStep = 0
+var modelTp = "lotteryUp"
 
 type Lottery struct {
 	AddTime        int64  `json:"start_time"`
@@ -49,10 +50,12 @@ type BLottery struct {
 
 // 根据多ck监听其关注的up 或 将up进行列表统计然后多ck进行监听
 func ListenLotteryUp() func() {
+	inet.DefaultClient.RegisterTp(modelTp)
 	return func() {
+
 		monitor := sender.Monitor{}
 		monitor.Tag = "lottery"
-		monitor.Title = "每日lottery监控——1(LotteryUp)"
+		monitor.Title = "每日lottery(ByUp)监控"
 		lotterys := utils.ListenupforLottery(config.Cfg.LotteryUid)
 		time.Sleep(20 * time.Second)
 		if len(lotterys) == 0 {
@@ -63,41 +66,40 @@ func ListenLotteryUp() func() {
 		SleepStep = 0
 		ExecFreq := 0
 		for _, lottery := range lotterys {
-			if LotteryDetail(ctx, lottery, t) {
+			if LotteryDetail(ctx, modelTp, lottery, t) {
 				ExecFreq++
 			}
 		}
 		inet.DefaultClient.Lock()
-		inet.DefaultClient.AliveCh = nil
 		defer inet.DefaultClient.Unlock()
-		fmt.Println("ListenLotteryUp complete")
+		fmt.Println("ListenLotteryUp complete。从lottery(ByUp)获取到的有效动态数:", ExecFreq)
 		if ExecFreq != 0 {
-			monitor.Desp = fmt.Sprintf("%s新增lottery数量%d", t.Format("2006-01-02"), ExecFreq)
+			monitor.Desp = fmt.Sprintf("%slottery(ByUp)新增【%d】个lottery。", t.Format("2006-01-02"), ExecFreq)
 			monitor.PushS()
 		}
 
 	}
 }
 
-func LotteryDetail(ctx context.Context, lottery string, t time.Time) (re bool) {
+func LotteryDetail(ctx context.Context, modelTP, lottery string, t time.Time) (re bool) {
 	if redis.ExitLottery(ctx, lottery) {
 		return
 	}
+	d := inet.DefaultClient
 	LotteryData := Lottery{}
 	LotteryData.AddTime = t.Unix()
 	LotteryData.BusinessId = lottery
 	_url := COU + lottery
-	body := inet.DefaultClient.RedundantDW(_url, 10*time.Second)
-	if body == nil {
-		fmt.Println("body is nil")
-		return
-	}
+	d.RedundantDW(modelTP, _url, 5*time.Second)
+	body := <-d.AliveCh[modelTP]
 
 	// 过滤出有用信息
 	detail := LotteryBody{}
-	err := json.Unmarshal(body, &detail)
+	idx := int(body[len(body)-1])
+	err := json.Unmarshal(body[:len(body)-1], &detail)
 	if err != nil {
 		fmt.Println(1, lottery, err, string(body))
+		d.Sleep(idx, 10*time.Minute)
 		// invalid character '{' after top-level value {"code":-400,"message":"strconv.ParseInt: parsing \"id_from=333.999.0.0\": invalid syntax","ttl":1}{"code":-9999,"data":{},"message":"服务系统错误","msg":"服务系统错误"}
 		return
 	}
@@ -106,7 +108,7 @@ func LotteryDetail(ctx context.Context, lottery string, t time.Time) (re bool) {
 		//fmt.Println("非官抽")
 		// 需要添加detail里面的pub_time，进行定期清除lotterylist
 		_url = CU + lottery
-		body = inet.DefaultClient.RedundantDW(_url, 10*time.Second)
+		body = inet.DefaultClient.CheckSelect(_url, idx)
 		if body == nil {
 			fmt.Println("body is nil")
 			return
@@ -119,11 +121,10 @@ func LotteryDetail(ctx context.Context, lottery string, t time.Time) (re bool) {
 			return
 		}
 		if !(_detail.Code == 0 || _detail.Code == 200) {
-			fmt.Println(3, "5m大休息。err code: ", _detail.Code) // 管抽访问太频繁会风控
+			fmt.Println(3, "10分钟大休息。err code: ", _detail.Code) // 管抽访问太频繁会风控
 			// 3 err code:  4101152
 			// 3 err code:  500
 			time.Sleep(10 * time.Minute)
-			return
 		}
 		LotteryData.CreateTime = _detail.Data.Item.Modules.Module_author.Pub_ts
 	} else if detail.Code == 0 {
@@ -136,18 +137,17 @@ func LotteryDetail(ctx context.Context, lottery string, t time.Time) (re bool) {
 		LotteryData.NumPrizes = detail.Data.FirstPrize + detail.Data.SecondPrize + detail.Data.ThirdPrize
 		SleepStep++
 		if SleepStep/5 == 1 {
-			fmt.Println("20s小休息")
+			fmt.Println("1分钟小休息")
 			time.Sleep(time.Minute)
 			SleepStep = 0
 		}
-
 	} else {
 		fmt.Println("other err code")
 		return
 	}
 	//fmt.Println(4, LotteryData)
 	redis.AddLotteryRecord(ctx, lottery, LotteryData.String()) // 添加到总的lottery中
-	// 监听up均为隔日，无法进行多日均衡
+	// 由于监听up均为隔日开奖，无法进行多日均衡
 	notBalance := true
 	if notBalance {
 		redis.AddLotteryDay(ctx, time.Now().Format(time.DateOnly), LotteryData.BusinessId)

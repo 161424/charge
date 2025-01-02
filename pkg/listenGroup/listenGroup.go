@@ -36,6 +36,7 @@ type Group struct {
 }
 
 var lastTime int64 = 0
+var modelTp = "lotteryGroup"
 
 // 监听大锦鲤频道
 func ListenDJLChannel() func() {
@@ -50,11 +51,12 @@ func ListenDJLChannel() func() {
 func ReadGroup(size int) {
 	monitor := sender.Monitor{}
 	monitor.Tag = "lottery"
-	monitor.Title = "每日lottery监控——2(Group)"
+	monitor.Title = "每日lottery(ByGroup)监控"
 	var groupUrl = "https://api.vc.bilibili.com/svr_sync/v1/svr_sync/fetch_session_msgs?talker_id=221094376&session_type=2&size="
 	ctx := context.Background()
 	group := Group{}
 	t := time.Now()
+	inet.DefaultClient.RegisterTp(modelTp)
 
 	re := regexp.MustCompile(`[0-9]{18,}`)
 	_groupUrl := groupUrl + strconv.Itoa(size)
@@ -82,15 +84,16 @@ func ReadGroup(size int) {
 		res := re.FindAllString(cbody.Content, -1)
 		for j := 0; j < len(res); j++ {
 			msg = append(msg, res[j])
-			if listenUpForLottery.LotteryDetail(ctx, res[j], t) {
+			if listenUpForLottery.LotteryDetail(ctx, modelTp, res[j], t) {
 				ExecFreq++
 			}
 		}
 	}
 	lastTime = groupContent[0].Timestamp
-	fmt.Println("从group获取到的信息数:", ExecFreq)
+	fmt.Println("ListenLotteryGroup complete。从lottery(ByGroup)获取到的有效动态数:", ExecFreq, time.Unix(lastTime, 0))
 	if ExecFreq > 0 {
-		monitor.Desp = fmt.Sprintf("从group获的lottery的个数%d", ExecFreq)
+		//monitor.Desp = fmt.Sprintf("从group获的【%d】个lottery", ExecFreq)
+		monitor.Desp = fmt.Sprintf("%slottery(ByGroup)新增【%d】个lottery。", t.Format("2006-01-02"), ExecFreq)
 		monitor.PushS()
 	}
 

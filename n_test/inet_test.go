@@ -14,6 +14,8 @@ import (
 	"time"
 )
 
+var modelTp = "test"
+
 // 2409:8a44:4b12:c6e0:69ec:d9ee:89b:7878
 func TestDDNS(t *testing.T) {
 	ip := utils.GetCurrentIp()
@@ -62,9 +64,17 @@ func TestYY(t *testing.T) {
 }
 
 func TestMutile(t *testing.T) {
+	d := inet.DefaultClient
+	d.RegisterTp(modelTp)
 	for i := 0; i < 10; i++ {
-		resp := inet.DefaultClient.RedundantDW("https://api.bilibili.com/x/web-interface/nav", time.Second)
-		fmt.Println(string(resp))
+		fmt.Println(i)
+
+		d.RedundantDW(modelTp, "https://api.bilibili.com/x/web-interface/nav", time.Second)
+		resp := <-d.AliveCh[modelTp]
+		idx := int(resp[len(resp)-1])
+		resp = resp[:len(resp)-1]
+		fmt.Println(string(resp), idx)
 	}
+	//fmt.Println(1 % 2)
 
 }

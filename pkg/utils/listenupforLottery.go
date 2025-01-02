@@ -18,17 +18,23 @@ import (
 func ListenupforLottery(Uid []string) []string {
 	opus := map[string]int{} // 去重使用
 	ctx := context.Background()
+	d := inet.DefaultClient
 	if len(Uid) != 0 {
 		utils.Shuffle(Uid) // 打乱被监听者uid
 		re := regexp.MustCompile("[0-9]{18,}")
+		stopPage := 5
 		fmt.Println(Uid)
 		for _, uid := range Uid {
 			fmt.Printf("查看用户uid：%s。", uid)
+			if uid == "2595733" {
+				stopPage = 12
+			}
 			url := DefaultUrl + uid
 			//fmt.Println(inet.DefaultClient)
-			body := inet.DefaultClient.RedundantDW(url, time.Second*5)
+			d.RedundantDW(url, modelTp, time.Second*5)
+			body := <-d.AliveCh[modelTp]
 			userSpace := UserSpace{}
-			err := json.Unmarshal(body, &userSpace)
+			err := json.Unmarshal(body[:len(body)-1], &userSpace)
 			if err != nil {
 				fmt.Println(err)
 				continue
@@ -39,21 +45,24 @@ func ListenupforLottery(Uid []string) []string {
 			counter := 0
 			for _, item := range userSpace.Data.Items {
 				op := map[string]int{}
-				// https://www.bilibili.com/opus/1009676614375571474
-				if counter == 3 { //
+				if counter == stopPage { //
 					break
 				}
 				counter++
 				fmt.Printf("正在查看第【%d】页内容；", counter)
+				if strings.Contains(item.Content, "互动抽奖") == false {
+					continue
+				}
 				if strings.Contains(his, item.OpusID) {
 					continue
 				}
 
 				f := DaleyTime(time.Now()) // 做个延时，减少风控几率
+				// https://www.bilibili.com/opus/1009676614375571474
 				_url := SpaceUrl + item.OpusID
-				ibody := inet.DefaultClient.RedundantDW(_url, 0)
-
-				doc, err := goquery.NewDocumentFromReader(bytes.NewReader(ibody))
+				inet.DefaultClient.RedundantDW(_url, modelTp, 0)
+				body = <-d.AliveCh[modelTp]
+				doc, err := goquery.NewDocumentFromReader(bytes.NewReader(body[:len(body)-1]))
 				if err != nil {
 					panic(err)
 				}
@@ -68,15 +77,10 @@ func ListenupforLottery(Uid []string) []string {
 					}
 
 					if v, ok := s.Find("a").Attr("href"); ok { // 内嵌url
-						//v = v[len(v)-19:]
-						//if v[0] == '/' {
-						//	v = v[1:]
-						//}
 						if re.MatchString(v) {
 							opus[re.FindString(v)]++
 							op[re.FindString(v)]++
 						}
-						//opus[v] = struct{}{}
 					}
 				})
 				f()
@@ -93,7 +97,6 @@ func ListenupforLottery(Uid []string) []string {
 			//}
 			fmt.Println("获取到数据：", len(opus))
 			redis.UpdateLUpHistory(ctx, uid, his)
-
 		}
 	}
 	reOpus := []string{}

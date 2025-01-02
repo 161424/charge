@@ -3,6 +3,7 @@ package n
 import (
 	"charge/config"
 	"fmt"
+	"gopkg.in/yaml.v3"
 	"os"
 	"regexp"
 	"strings"
@@ -48,4 +49,7 @@ func TestTime(t *testing.T) {
 func TestConfig(t *testing.T) {
 	config.Start()
 	fmt.Println(config.Cfg)
+
+	o, err := yaml.Marshal(config.Cfg)
+	fmt.Println(string(o), err)
 }

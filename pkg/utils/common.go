@@ -2,9 +2,14 @@ package utils
 
 import (
 	"charge/config"
+	"charge/inet"
 	"strings"
 	"time"
 )
+
+func init() {
+	inet.DefaultClient.RegisterTp(modelTp)
+}
 
 func DaleyTime(t time.Time) func() {
 	return func() {
