@@ -25,9 +25,11 @@ func ListenupforLottery(Uid []string) []string {
 		stopPage := 5
 		fmt.Println(Uid)
 		for _, uid := range Uid {
-			fmt.Printf("查看用户uid：%s。", uid)
+			fmt.Printf("查看用户uid：【%s】。\n", uid)
 			if uid == "2595733" {
 				stopPage = 12
+			} else {
+				stopPage = 5
 			}
 			url := DefaultUrl + uid
 			//fmt.Println(inet.DefaultClient)

@@ -3,6 +3,7 @@ package redis
 import (
 	"charge/config"
 	"charge/router/types"
+	utils2 "charge/sender/utils"
 	"charge/utils"
 	"context"
 	"encoding/json"
@@ -43,7 +44,7 @@ func Start() {
 		panic(ok.Err())
 	}
 	RedisClient = redisClient
-	fmt.Println("redis 访问 DynamicIpv6 成功！", utils.DDNSCheck(config.Cfg.Redis.DynamicIpv6))
+	fmt.Println("redis 访问 DynamicIpv6 成功！", utils2.DDNSCheck(config.Cfg.Redis.DynamicIpv6))
 
 }
 

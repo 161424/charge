@@ -15,8 +15,8 @@ func TestSpace(t *testing.T) {
 	_url := "https://www.bilibili.com/opus/1007475508047249432"
 	opus := []string{}
 
-	inet.DefaultClient.RedundantDW(_url, time.Second*5)
-	body := <-inet.DefaultClient.AliveCh
+	body := inet.DefaultClient.RedundantDW(_url, "", time.Second*5)
+
 	//fmt.Println(string(body))
 	doc, err := goquery.NewDocumentFromReader(bytes.NewReader(body))
 	if err != nil {

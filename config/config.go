@@ -1,6 +1,7 @@
 package config
 
 import (
+	"charge/utils"
 	"fmt"
 	"gopkg.in/yaml.v3"
 	"io"
@@ -28,6 +29,7 @@ type config struct {
 
 	BUserCk []struct {
 		Ck         string `yaml:"Ck"`
+		Token      string `yaml:"Token"`
 		Access_key string `yaml:"Access_key"`
 		Group      string `yaml:"Group"`
 	} `yaml:"BUserCk"`
@@ -54,10 +56,11 @@ type config struct {
 }
 
 var Cfg = &config{}
+var path = ""
 
 func init() {
 	// 读取 YAML 文件
-	path, _ := os.Getwd()
+	path, _ = os.Getwd()
 	npath := strings.Split(path, "\\")
 	if npath[len(npath)-1] != "charge" {
 		npath = npath[:len(npath)-1]
@@ -69,7 +72,7 @@ func init() {
 	if err != nil {
 		log.Fatalf("读取文件失败: %v", err)
 	}
-
+	defer data.Close()
 	// 创建一个 Config 实例
 	//var config Config
 	buf, _ := io.ReadAll(data)
@@ -86,5 +89,30 @@ func Start() {
 	if len(Cfg.BUserCk) == 0 {
 		panic("BUserCk为无效配置，无法启动服务")
 	}
+}
 
+func Write() {
+	o, err := yaml.Marshal(Cfg)
+	data, err := os.OpenFile(path+"/config/config.yaml", os.O_RDWR, 777)
+	if err != nil {
+		log.Fatalf("读取文件失败: %v", err)
+	}
+	defer data.Close()
+	_, err = data.Write(o)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("保存配置成功")
+
+}
+
+func SetUck(tp string, value string) {
+	uid := utils.CutUid(value)
+	for _, v := range Cfg.BUserCk {
+		if utils.CutUid(v.Ck) == uid {
+			v.Ck = value
+			break
+		}
+	}
+	Write()
 }

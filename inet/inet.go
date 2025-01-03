@@ -35,6 +35,7 @@ type defaultClient struct {
 	mp          map[int]string
 	ml          []string
 	ShuffleTime time.Time
+	isFirstRUn  bool
 }
 
 type ckStatus struct {
@@ -58,8 +59,10 @@ func init() {
 	}
 	DefaultClient.Cks = make([]ckStatus, len(config.Cfg.BUserCk))
 	DefaultClient.RunTime = make(map[string]int, len(config.Cfg.BUserCk))
+	DefaultClient.mp = make(map[int]string, len(config.Cfg.BUserCk))
+	//DefaultClient.ml = make([]string, len(config.Cfg.BUserCk))
 	_u := config.Cfg.BUserCk
-	utils.Shuffle(_u)
+	utils.Shuffle(_u) // 打乱ck毫无必要，还增加了工作量，需要修改
 	for i := 0; i < len(_u); i++ {
 		DefaultClient.Cks[i].Ck = _u[i].Ck
 		uid1 := utils.CutUid(config.Cfg.BUserCk[i].Ck)
@@ -82,7 +85,25 @@ func init() {
 	}()
 }
 
-var act = 0
+func (d *defaultClient) Http(method, url, ct string, body io.Reader) []byte {
+	var resp *http.Response
+	var err error
+	if method == http.MethodGet {
+		resp, err = http.Get(url)
+		if err != nil {
+			return nil
+		}
+	} else if method == http.MethodPost {
+		resp, err = http.Post(url, ct, body)
+	}
+	if resp != nil {
+		defer resp.Body.Close()
+		body, _ := io.ReadAll(resp.Body)
+		return body
+	} else {
+		return nil
+	}
+}
 
 // 支持ck[0]单独使用的get访问
 func (d *defaultClient) CheckFirst(url string) []byte {
@@ -163,7 +184,7 @@ func (d *defaultClient) CheckSelectPost(url string, contentType, referer, ua str
 func (d *defaultClient) RedundantDW(url string, tp string, dyTime time.Duration) (re []byte) {
 	t := time.Now()
 	l := len(d.Cks)
-	if l == 1 {
+	if l == 1 || tp == "" {
 		re = d.CheckFirst(url)
 		time.Sleep(dyTime)
 		return
@@ -184,7 +205,7 @@ func (d *defaultClient) RedundantDW(url string, tp string, dyTime time.Duration)
 					return
 				}
 			}
-			fmt.Println("idx", d.Idx, idx)
+			//fmt.Println("idx", d.Idx, idx)
 			//idx %= (d.AliveNum + 1)
 			if d.Cks[idx].Alive {
 				// 检测是否在睡眠中,最好是动态睡眠吧
@@ -202,7 +223,7 @@ func (d *defaultClient) RedundantDW(url string, tp string, dyTime time.Duration)
 					}()
 					time.Sleep(dyTime)
 					d.Idx = idx + 1
-					fmt.Println("?1", d.Idx, idx)
+					//fmt.Println("?1", d.Idx, idx)
 					return
 				}
 
@@ -210,7 +231,7 @@ func (d *defaultClient) RedundantDW(url string, tp string, dyTime time.Duration)
 			//没有执行访问
 			d.Idx++
 			time.Sleep(dyTime)
-			fmt.Println("?2")
+			//fmt.Println("?2")
 		}
 	}
 	return
@@ -230,6 +251,9 @@ func (d *defaultClient) Unav(unav *Unav, idx int, t time.Time) (re bool) {
 }
 
 func (d *defaultClient) RegisterTp(tp string) {
+	if d.AliveCh == nil {
+		d.AliveCh = make(map[string]chan []byte)
+	}
 	d.AliveCh[tp] = make(chan []byte, len(d.Cks))
 }
 
@@ -240,6 +264,9 @@ func (d *defaultClient) HandCheckAlive() {
 	d.AliveCh = nil
 
 	for idx := 0; idx < len(d.Cks); idx++ {
+		if d.isFirstRUn == false {
+			Refresh(0)
+		}
 		re := d.CheckSelect(nUrl, idx)
 		unav := &Unav{}
 		err := json.Unmarshal(re, unav)

@@ -8,8 +8,8 @@ import (
 	"charge/pkg/common"
 	"charge/pkg/listenGroup"
 	"charge/pkg/listenUpForLottery"
+	utils2 "charge/pkg/utils"
 	"charge/router"
-	"charge/utils"
 	"fmt"
 	"time"
 )
@@ -20,7 +20,7 @@ func Start() {
 	config.Start()
 	redis.Start()
 	pkg.Start()
-	utils.SetDefaultUid("")
+	utils2.SetDefaultUid("")
 }
 
 // 启动后端

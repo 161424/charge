@@ -3,7 +3,7 @@ package n
 import (
 	"charge/config"
 	"charge/inet"
-	"charge/utils"
+	"charge/sender/utils"
 	"fmt"
 	"io"
 	"net"

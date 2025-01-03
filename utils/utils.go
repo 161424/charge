@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"charge/config"
 	"fmt"
 
 	"math/rand"
@@ -9,16 +8,6 @@ import (
 	"strings"
 	"time"
 )
-
-var DefaultUid = ""
-
-func SetDefaultUid(uid string) {
-	if uid == "" {
-		DefaultUid = CutUid(config.Cfg.BUserCk[0].Ck)
-	} else {
-		DefaultUid = CutUid(uid)
-	}
-}
 
 func Tracker(t time.Time) {
 	tm := time.Now()

@@ -3,12 +3,23 @@ package utils
 import (
 	"charge/config"
 	"charge/inet"
+	"charge/utils"
 	"strings"
 	"time"
 )
 
 func init() {
 	inet.DefaultClient.RegisterTp(modelTp)
+}
+
+var DefaultUid = ""
+
+func SetDefaultUid(uid string) {
+	if uid == "" {
+		DefaultUid = utils.CutUid(config.Cfg.BUserCk[0].Ck)
+	} else {
+		DefaultUid = utils.CutUid(uid)
+	}
 }
 
 func DaleyTime(t time.Time) func() {

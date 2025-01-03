@@ -7,10 +7,15 @@
 - redis数据持久化（支持ipv6访问）
 - 大会员每日积分
 
+
+
+
 还未实现功能
 - 漫画签到
 - B币提醒及兑换
 - qqbot信息推送
+- OCR登录、Ck刷新
+- 接入青龙
 
 参考项目
 - [BiliOutils](https://github.com/catlair/BiliOutils)：Bilibili 每日工具箱

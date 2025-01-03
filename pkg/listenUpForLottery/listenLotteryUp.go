@@ -90,9 +90,9 @@ func LotteryDetail(ctx context.Context, modelTP, lottery string, t time.Time) (r
 	LotteryData.AddTime = t.Unix()
 	LotteryData.BusinessId = lottery
 	_url := COU + lottery
-	d.RedundantDW(modelTP, _url, 5*time.Second)
+	d.RedundantDW(_url, modelTP, 5*time.Second)
 	body := <-d.AliveCh[modelTP]
-
+	fmt.Println("正在查询lottery：", lottery)
 	// 过滤出有用信息
 	detail := LotteryBody{}
 	idx := int(body[len(body)-1])
@@ -121,7 +121,7 @@ func LotteryDetail(ctx context.Context, modelTP, lottery string, t time.Time) (r
 			return
 		}
 		if !(_detail.Code == 0 || _detail.Code == 200) {
-			fmt.Println(3, "10分钟大休息。err code: ", _detail.Code) // 管抽访问太频繁会风控
+			fmt.Println(3, "10分钟大休息。err code: ", _detail.Code, _detail.Message) // 管抽访问太频繁会风控
 			// 3 err code:  4101152
 			// 3 err code:  500
 			time.Sleep(10 * time.Minute)
@@ -142,7 +142,7 @@ func LotteryDetail(ctx context.Context, modelTP, lottery string, t time.Time) (r
 			SleepStep = 0
 		}
 	} else {
-		fmt.Println("other err code")
+		fmt.Println("other err code", detail.Code, detail.Data)
 		return
 	}
 	//fmt.Println(4, LotteryData)
