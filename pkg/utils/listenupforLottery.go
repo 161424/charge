@@ -15,10 +15,11 @@ import (
 )
 
 // 获取uname最近的几个动态dity
-func ListenupforLottery(Uid []string) []string {
+func ListenupforLottery(Uid []string, cmp chan struct{}) []string {
 	opus := map[string]int{} // 去重使用
 	ctx := context.Background()
 	d := inet.DefaultClient
+
 	if len(Uid) != 0 {
 		utils.Shuffle(Uid) // 打乱被监听者uid
 		re := regexp.MustCompile("[0-9]{18,}")
@@ -98,7 +99,11 @@ func ListenupforLottery(Uid []string) []string {
 			//	fmt.Println(string(body))
 			//}
 			fmt.Println("获取到数据：", len(opus))
-			redis.UpdateLUpHistory(ctx, uid, his)
+			go func() {
+				<-cmp
+				redis.UpdateLUpHistory(ctx, uid, his) // 同步可能导致未能完全获取动态
+			}()
+
 		}
 	}
 	reOpus := []string{}

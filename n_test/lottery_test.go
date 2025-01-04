@@ -5,7 +5,6 @@ import (
 	"charge/dao/redis"
 	"charge/pkg/listenGroup"
 	"charge/pkg/listenUpForLottery"
-	utils2 "charge/pkg/utils"
 	"charge/utils"
 	"context"
 	"fmt"
@@ -42,28 +41,28 @@ func TestListenLotteryUp(t *testing.T) {
 	f2()
 }
 
-func TestU(t *testing.T) {
-	config.Start()
-	lotterys := utils2.ListenupforLottery(config.Cfg.LotteryUid)
-
-	//opus := utils2.GetUserOpus(config.Cfg.ChargeUid)
-	fmt.Println(len(lotterys), lotterys)
-	v := map[string]int{}
-	for _, lottery := range lotterys {
-		v[lottery]++
-	}
-	fmt.Println(v)
-}
+//func TestU(t *testing.T) {
+//	config.Start()
+//	lotterys := utils2.ListenupforLottery(config.Cfg.LotteryUid)
+//
+//	//opus := utils2.GetUserOpus(config.Cfg.ChargeUid)
+//	fmt.Println(len(lotterys), lotterys)
+//	v := map[string]int{}
+//	for _, lottery := range lotterys {
+//		v[lottery]++
+//	}
+//	fmt.Println(v)
+//}
 
 func TestAAL(t *testing.T) {
 	config.Start()
 	redis.Start()
 
-	defer utils.Tracker(time.Now())
-	f1 := listenUpForLottery.ListenLotteryUp()
-	fmt.Println("开始f1")
-	f1()
-	time.Sleep(1 * time.Minute)
+	//defer utils.Tracker(time.Now())
+	//f1 := listenUpForLottery.ListenLotteryUp()
+	//fmt.Println("开始f1")
+	//f1()
+	//time.Sleep(1 * time.Minute)
 	f2 := listenGroup.ListenDJLChannel()
 	fmt.Println("开始f2")
 	f2()
@@ -75,22 +74,22 @@ func TestAAL(t *testing.T) {
 	fmt.Println(m)
 }
 
-func TestR(t *testing.T) {
-	redis.Start()
-	lotterys := utils2.ListenupforLottery(config.Cfg.LotteryUid)
-	time.Sleep(20 * time.Second)
-	fmt.Println(len(lotterys), lotterys)
-	u := 0
-	for _, lottery := range lotterys {
-		if redis.ExitLottery(context.Background(), lottery) {
-			u++
-			fmt.Printf("%s is exit.%d", lottery, u)
-
-			continue
-		}
-
-	}
-}
+//func TestR(t *testing.T) {
+//	redis.Start()
+//	lotterys := utils2.ListenupforLottery(config.Cfg.LotteryUid)
+//	time.Sleep(20 * time.Second)
+//	fmt.Println(len(lotterys), lotterys)
+//	u := 0
+//	for _, lottery := range lotterys {
+//		if redis.ExitLottery(context.Background(), lottery) {
+//			u++
+//			fmt.Printf("%s is exit.%d", lottery, u)
+//
+//			continue
+//		}
+//
+//	}
+//}
 
 func TestHget(t *testing.T) {
 	config.Start()

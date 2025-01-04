@@ -56,7 +56,8 @@ func ListenLotteryUp() func() {
 		monitor := sender.Monitor{}
 		monitor.Tag = "lottery"
 		monitor.Title = "每日lottery(ByUp)监控"
-		lotterys := utils.ListenupforLottery(config.Cfg.LotteryUid)
+		complete := make(chan struct{})
+		lotterys := utils.ListenupforLottery(config.Cfg.LotteryUid, complete)
 		time.Sleep(20 * time.Second)
 		if len(lotterys) == 0 {
 			return
@@ -73,6 +74,7 @@ func ListenLotteryUp() func() {
 		inet.DefaultClient.Lock()
 		defer inet.DefaultClient.Unlock()
 		fmt.Println("ListenLotteryUp complete。从lottery(ByUp)获取到的有效动态数:", ExecFreq)
+		complete <- struct{}{}
 		if ExecFreq != 0 {
 			monitor.Desp = fmt.Sprintf("%slottery(ByUp)新增【%d】个lottery。", t.Format("2006-01-02"), ExecFreq)
 			monitor.PushS()

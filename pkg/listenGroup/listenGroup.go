@@ -57,7 +57,7 @@ func ReadGroup(size int) {
 	group := Group{}
 	t := time.Now()
 	inet.DefaultClient.RegisterTp(modelTp)
-
+	fmt.Println("正在运行：lottery(ByGroup)")
 	re := regexp.MustCompile(`[0-9]{18,}`)
 	_groupUrl := groupUrl + strconv.Itoa(size)
 	responders := inet.DefaultClient.CheckFirst(_groupUrl)
@@ -89,7 +89,7 @@ func ReadGroup(size int) {
 			}
 		}
 	}
-	lastTime = groupContent[0].Timestamp
+	lastTime = groupContent[0].Timestamp //  完全执行完毕后才会记录lastTime
 	fmt.Println("ListenLotteryGroup complete。从lottery(ByGroup)获取到的有效动态数:", ExecFreq, time.Unix(lastTime, 0))
 	if ExecFreq > 0 {
 		//monitor.Desp = fmt.Sprintf("从group获的【%d】个lottery", ExecFreq)

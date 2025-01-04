@@ -162,6 +162,7 @@ const (
 	dataModeNone dataMode = 1 << iota
 	dataModeNumeric
 	dataModeAlphanumeric
+	dataModeByte
 )
 
 func (d *dataEncoder) classifyDataModes() dataMode {
@@ -174,8 +175,11 @@ func (d *dataEncoder) classifyDataModes() dataMode {
 		switch {
 		case v >= 0x30 && v <= 0x39:
 			newMode = dataModeNumeric
-		default:
+		case v == 0x20 || v == 0x24 || v == 0x25 || v == 0x2a || v == 0x2b || v ==
+			0x2d || v == 0x2e || v == 0x2f || v == 0x3a || (v >= 0x41 && v <= 0x5a):
 			newMode = dataModeAlphanumeric
+		default:
+			newMode = dataModeByte
 		}
 
 		if newMode != mode {
@@ -199,6 +203,8 @@ func (d *dataEncoder) modeIndicator(dataMode dataMode) *Bitset {
 		return d.numericModeIndicator
 	case dataModeAlphanumeric:
 		return d.alphanumericModeIndicator
+	case dataModeByte:
+		return d.byteModeIndicator
 	default:
 		log.Panic("Unknown data mode")
 	}
@@ -211,6 +217,8 @@ func (d *dataEncoder) charCountBits(dataMode dataMode) int {
 		return d.numNumericCharCountBits
 	case dataModeAlphanumeric:
 		return d.numAlphanumericCharCountBits
+	case dataModeByte:
+		return d.numByteCharCountBits
 	default:
 		log.Panic("Unknown data mode")
 	}
@@ -240,6 +248,9 @@ func (d *dataEncoder) encodedLength(dataMode dataMode, n int) (int, error) {
 	case dataModeAlphanumeric:
 		length += 11 * (n / 2)
 		length += 6 * (n % 2)
+	case dataModeByte:
+		length += 8 * n
+
 	}
 
 	return length, nil
@@ -363,6 +374,10 @@ func (d *dataEncoder) encodeDataRaw(data []byte, dataMode dataMode, encoded *Bit
 			}
 
 			encoded.AppendUint32(value, bitsUsed)
+		}
+	case dataModeByte:
+		for _, b := range data {
+			encoded.AppendByte(b, 8)
 		}
 
 	}

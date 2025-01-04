@@ -11,3 +11,11 @@ func TestQr(t *testing.T) {
 	fmt.Printf("%+v", q)
 	q.WriteFile("./qr.png")
 }
+
+func TestRe(t *testing.T) {
+	inet.Refresh(2)
+}
+
+func TestReh(t *testing.T) {
+
+}

@@ -35,13 +35,11 @@ type defaultClient struct {
 	mp          map[int]string
 	ml          []string
 	ShuffleTime time.Time
-	isFirstRUn  bool
+	isFirstRnn  bool
 }
 
 type ckStatus struct {
-	Ck string
-	// Mid
-	// Csrf
+	Ck               string
 	Status           atomic.Bool // true表示正在占用中
 	Alive            bool
 	DynamicSleep     bool
@@ -73,7 +71,7 @@ func init() {
 	}
 
 	DefaultClient.HandCheckAlive()
-	DefaultClient.Tracker = time.Tick(3 * 24 * time.Hour)
+	DefaultClient.Tracker = time.Tick(24 * time.Hour)
 	// 定期检查ck是否存活
 	go func() {
 		for {
@@ -180,6 +178,31 @@ func (d *defaultClient) CheckSelectPost(url string, contentType, referer, ua str
 	return body
 }
 
+func (d *defaultClient) CheckSelectPost2(url string, idx int, ck string, rbody io.Reader) ([]string, []byte) {
+	req, err := http.NewRequest(http.MethodPost, url, rbody)
+	if err != nil {
+		return nil, nil
+	}
+
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	if ck != "" {
+		req.Header.Set("Cookie", ck)
+	} else {
+		req.Header.Set("Cookie", d.Cks[idx].Ck)
+	}
+
+	resp, err := d.Client.Do(req)
+	if err != nil {
+		return nil, nil
+	}
+	d.RunTime[d.mp[idx]]++
+	fmt.Println("访问次数：", d.RunT())
+	defer resp.Body.Close()
+	cookies := resp.Header.Values("set-cookie")
+	body, err := io.ReadAll(resp.Body)
+	return cookies, body
+}
+
 // 尽可能保证请求成功,应该尽可能保证返回结果，
 func (d *defaultClient) RedundantDW(url string, tp string, dyTime time.Duration) (re []byte) {
 	t := time.Now()
@@ -205,8 +228,7 @@ func (d *defaultClient) RedundantDW(url string, tp string, dyTime time.Duration)
 					return
 				}
 			}
-			//fmt.Println("idx", d.Idx, idx)
-			//idx %= (d.AliveNum + 1)
+
 			if d.Cks[idx].Alive {
 				// 检测是否在睡眠中,最好是动态睡眠吧
 				if d.Cks[idx].DynamicSleep {
@@ -223,7 +245,6 @@ func (d *defaultClient) RedundantDW(url string, tp string, dyTime time.Duration)
 					}()
 					time.Sleep(dyTime)
 					d.Idx = idx + 1
-					//fmt.Println("?1", d.Idx, idx)
 					return
 				}
 
@@ -231,7 +252,7 @@ func (d *defaultClient) RedundantDW(url string, tp string, dyTime time.Duration)
 			//没有执行访问
 			d.Idx++
 			time.Sleep(dyTime)
-			//fmt.Println("?2")
+
 		}
 	}
 	return
@@ -259,29 +280,51 @@ func (d *defaultClient) RegisterTp(tp string) {
 
 // 初始化检测ck活性
 func (d *defaultClient) HandCheckAlive() {
+	msg := "  —————— 账号检测 ———————  "
+	msg += fmt.Sprintf("现在是：%s", time.Now().Format("2006-01-02 15:04:05"))
 	d.Lock()
-	d.AliveNum = 0
-	d.AliveCh = nil
 
+	d.AliveCh = nil
 	for idx := 0; idx < len(d.Cks); idx++ {
-		if d.isFirstRUn == false {
-			Refresh(0)
+
+		uid = utils.CutUid(d.Cks[idx].Ck)
+		code := Refresh(idx)
+		if code == 0 { // 0 表示登录或ck刷新成功，无需再确定活性
+			d.Cks[idx].Alive = true
+			msg += fmt.Sprintf("%d. %s又苟过一天\n", idx, uid)
+			return
+		} else if code == 1 {
+			d.Cks[idx].Alive = true
+			msg += fmt.Sprintf("%d. %s需要进行登录\n", idx, uid)
+			return
+		} else if code == 2 {
+			d.Cks[idx].Alive = true
+			msg += fmt.Sprintf("%d. %sck需要进行刷新\n", idx, uid)
+			return
+		} else if code == -101 {
+			d.Cks[idx].Alive = false
+			msg += fmt.Sprintf("%d. %s吃鸡失败\n", idx, uid)
+			continue
 		}
+		// code == -1.代表出现各种为止错误时，会到达
 		re := d.CheckSelect(nUrl, idx)
 		unav := &Unav{}
 		err := json.Unmarshal(re, unav)
 		if err != nil {
 			d.Cks[idx].Alive = false
 			fmt.Println(err, string(re))
+			msg += fmt.Sprintf("%d. %s吃鸡失败\n", idx, uid)
 			continue
 		}
 		if d.Unav(unav, idx, time.Now()) {
-			d.AliveNum++
+			msg += fmt.Sprintf("%d. %s又苟过一天\n", idx, uid)
+		} else {
+			msg += fmt.Sprintf("%d. %s吃鸡失败\n", idx, uid)
 		}
+
 	}
-
 	d.Unlock()
-
+	fmt.Println(msg)
 }
 
 //func (d *defaultClient) CheckAliveCk() {

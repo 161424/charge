@@ -21,11 +21,11 @@ type config struct {
 		StaticIpv6Addr string `yaml:"StaticIpv6Addr"`
 		DynamicIpv6    string `yaml:"DynamicIpv6"`
 		Id_rsa         string `yaml:"Id_rsa"`
-	}
+	} `yaml:"Redis"`
 	Mongodb struct {
 		Addr     string `yaml:"Addr"`
 		Password string `yaml:"Password"`
-	}
+	} `yaml:"Mongodb"`
 
 	BUserCk []struct {
 		Ck         string `yaml:"Ck"`
@@ -47,7 +47,7 @@ type config struct {
 		ApiToken    string `yaml:"ApiToken"`
 		Type        string `yaml:"Type"`
 		Name        string `yaml:"Name"`
-	}
+	} `yaml:"DDNS"`
 
 	DaleyTime int64  `yaml:"DaleyTime"`
 	Server3   string `yaml:"Server3"`
@@ -56,19 +56,20 @@ type config struct {
 }
 
 var Cfg = &config{}
-var path = ""
+
+var Path = ""
 
 func init() {
 	// 读取 YAML 文件
-	path, _ = os.Getwd()
-	npath := strings.Split(path, "\\")
+	Path, _ = os.Getwd()
+	npath := strings.Split(Path, "\\")
 	if npath[len(npath)-1] != "charge" {
 		npath = npath[:len(npath)-1]
 	}
-	path = strings.Join(npath, "/")
+	Path = strings.Join(npath, "/")
 
-	fmt.Println(path)
-	data, err := os.OpenFile(path+"/config/config.yaml", os.O_RDWR, 777)
+	fmt.Println(Path)
+	data, err := os.OpenFile(Path+"/config/config.yaml", os.O_RDWR, 777)
 	if err != nil {
 		log.Fatalf("读取文件失败: %v", err)
 	}
@@ -93,7 +94,7 @@ func Start() {
 
 func Write() {
 	o, err := yaml.Marshal(Cfg)
-	data, err := os.OpenFile(path+"/config/config.yaml", os.O_RDWR, 777)
+	data, err := os.OpenFile(Path+"/config/config.yaml", os.O_RDWR, 777)
 	if err != nil {
 		log.Fatalf("读取文件失败: %v", err)
 	}
@@ -106,13 +107,42 @@ func Write() {
 
 }
 
-func SetUck(tp string, value string) {
-	uid := utils.CutUid(value)
-	for _, v := range Cfg.BUserCk {
-		if utils.CutUid(v.Ck) == uid {
-			v.Ck = value
-			break
+func SetUck(tp string, value, uid string) {
+
+	switch tp {
+	case "ck":
+		uid = utils.CutUid(value)
+		for idx, v := range Cfg.BUserCk {
+			if utils.CutUid(v.Ck) == uid {
+				fmt.Println(idx, uid, value)
+				Cfg.BUserCk[idx].Ck = value
+				break
+			}
 		}
+	case "token":
+		for idx, v := range Cfg.BUserCk {
+			if utils.CutUid(v.Ck) == uid {
+				Cfg.BUserCk[idx].Token = value
+				break
+			}
+		}
+	case "access_key":
+		for idx, v := range Cfg.BUserCk {
+			if utils.CutUid(v.Ck) == uid {
+				Cfg.BUserCk[idx].Access_key = value
+				break
+			}
+		}
+	case "Group":
+		for _, v := range Cfg.BUserCk {
+			if utils.CutUid(v.Ck) == uid {
+				v.Group = value
+				break
+			}
+		}
+	default:
+		fmt.Println("tp输入错误，找不到对应关系")
 	}
+
 	Write()
 }
