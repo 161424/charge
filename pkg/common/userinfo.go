@@ -2,6 +2,7 @@ package common
 
 import (
 	"charge/inet"
+	"charge/utils"
 	"encoding/json"
 	"fmt"
 )
@@ -37,11 +38,11 @@ func GetUserInfo(idx int) (userinfo UserInfo) {
 	resp := inet.DefaultClient.CheckSelect(url, idx)
 	err := json.Unmarshal(resp, &userinfo)
 	if err != nil {
-		userinfo.Message = fmt.Sprintf(errMsg["json"], err.Error(), string(resp))
+		userinfo.Message = fmt.Sprintf(utils.ErrMsg["json"], err.Error(), string(resp))
 		return
 	}
 	if userinfo.Code != 0 {
-		userinfo.Message = fmt.Sprintf(errMsg["code"], "GetUserInfo", userinfo.Code, userinfo.Message)
+		userinfo.Message = fmt.Sprintf(utils.ErrMsg["code"], "GetUserInfo", userinfo.Code, userinfo.Message)
 		return
 	}
 	return

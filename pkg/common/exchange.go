@@ -4,6 +4,7 @@ import (
 	"charge/config"
 	"charge/inet"
 	"charge/sender"
+	"charge/utils"
 	"encoding/json"
 	"fmt"
 	url2 "net/url"
@@ -146,7 +147,7 @@ func exchangePoint(idx int, token string) int {
 	reqBody := url2.Values{}
 	reqBody.Set("token", token)
 	reqBody.Set("access_key", config.Cfg.BUserCk[idx].Access_key)
-	resp := inet.DefaultClient.CheckSelectPost(url, contentType["x"], "", "", idx, strings.NewReader(reqBody.Encode()))
+	resp := inet.DefaultClient.CheckSelectPost(url, utils.ContentType["x"], "", "", idx, strings.NewReader(reqBody.Encode()))
 	eResp := &ExchangeResp{}
 	err := json.Unmarshal(resp, &eResp)
 	if err != nil {

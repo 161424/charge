@@ -4,6 +4,7 @@ import (
 	"charge/inet"
 	"charge/pkg/listenUpForLottery"
 	"charge/sender"
+	utils2 "charge/utils"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -69,7 +70,7 @@ func ReadGroup(size int) {
 	msg := []string{}
 	if group.Code != 0 {
 		// code:-101  账号未登录
-		fmt.Println("ReadGroup err code:", group.Code, group)
+		fmt.Printf(utils2.ErrMsg["code"], "ReadGroup", group.Code, group.Message)
 		return
 	}
 

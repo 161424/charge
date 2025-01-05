@@ -29,22 +29,20 @@ type defaultClient struct {
 	Tracker     <-chan time.Time
 	Idx         int64
 	Cks         []ckStatus
-	AliveNum    int64
+	AliveNum    int
 	AliveCh     map[string]chan []byte // 控制访问并发数量
 	RunTime     map[string]int         // 运行次数
-	mp          map[int]string
-	ml          []string
 	ShuffleTime time.Time
-	isFirstRnn  bool
 }
 
 type ckStatus struct {
 	Ck               string
 	Status           atomic.Bool // true表示正在占用中
+	Uid              string
+	Csrf             string
 	Alive            bool
 	DynamicSleep     bool
 	DynamicSleepTime time.Time
-	CkCheckTime      time.Time
 }
 
 var DefaultClient = &defaultClient{}
@@ -55,24 +53,9 @@ func init() {
 			IdleConnTimeout: 30 * time.Second,
 		},
 	}
-	DefaultClient.Cks = make([]ckStatus, len(config.Cfg.BUserCk))
-	DefaultClient.RunTime = make(map[string]int, len(config.Cfg.BUserCk))
-	DefaultClient.mp = make(map[int]string, len(config.Cfg.BUserCk))
-	//DefaultClient.ml = make([]string, len(config.Cfg.BUserCk))
-	_u := config.Cfg.BUserCk
-	utils.Shuffle(_u) // 打乱ck毫无必要，还增加了工作量，需要修改
-	for i := 0; i < len(_u); i++ {
-		DefaultClient.Cks[i].Ck = _u[i].Ck
-		uid1 := utils.CutUid(config.Cfg.BUserCk[i].Ck)
-		uid2 := utils.CutUid(_u[i].Ck)
-		DefaultClient.mp[i] = uid2
-		DefaultClient.RunTime[uid1] = 0
-		DefaultClient.ml = append(DefaultClient.ml, uid1)
-	}
-
-	DefaultClient.HandCheckAlive()
+	DefaultClient.ReFresh()
 	DefaultClient.Tracker = time.Tick(24 * time.Hour)
-	// 定期检查ck是否存活
+	// 每日检查ck是否存活
 	go func() {
 		for {
 			select {
@@ -81,6 +64,19 @@ func init() {
 			}
 		}
 	}()
+}
+
+func (d *defaultClient) ReFresh() {
+	DefaultClient.Cks = make([]ckStatus, len(config.Cfg.BUserCk))
+	DefaultClient.RunTime = make(map[string]int, len(config.Cfg.BUserCk))
+	_u := config.Cfg.BUserCk
+	// utils.Shuffle(_u) // 打乱ck毫无必要，还增加了工作量，需要修改
+	for i := 0; i < len(_u); i++ {
+		DefaultClient.Cks[i].Ck = _u[i].Ck
+		DefaultClient.Cks[i].Uid = utils.CutUid(_u[i].Ck)
+		DefaultClient.Cks[i].Csrf = utils.CutCsrf(_u[i].Ck)
+	}
+	DefaultClient.HandCheckAlive()
 }
 
 func (d *defaultClient) Http(method, url, ct string, body io.Reader) []byte {
@@ -112,12 +108,12 @@ func (d *defaultClient) CheckFirst(url string) []byte {
 
 	req.Header.Set("User-Agent", config.Cfg.WebUserAgent)
 	req.Header.Set("Connection", "keep-alive")
-	req.Header.Set("Cookie", config.Cfg.BUserCk[0].Ck)
+	req.Header.Set("Cookie", d.Cks[0].Ck)
 	resp, err := d.Client.Do(req)
 	if err != nil {
 		return nil
 	}
-	d.RunTime[d.mp[0]]++
+	d.RunTime[d.Cks[0].Uid]++
 	fmt.Println("访问次数：", d.RunT())
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
@@ -138,7 +134,7 @@ func (d *defaultClient) CheckSelect(url string, idx int) []byte {
 	if err != nil {
 		return nil
 	}
-	d.RunTime[d.mp[idx]]++
+	d.RunTime[d.Cks[idx].Uid]++
 	fmt.Println("访问次数：", d.RunT())
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
@@ -171,7 +167,7 @@ func (d *defaultClient) CheckSelectPost(url string, contentType, referer, ua str
 	if err != nil {
 		return nil
 	}
-	d.RunTime[d.mp[idx]]++
+	d.RunTime[d.Cks[idx].Uid]++
 	fmt.Println("访问次数：", d.RunT())
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
@@ -195,7 +191,7 @@ func (d *defaultClient) CheckSelectPost2(url string, idx int, ck string, rbody i
 	if err != nil {
 		return nil, nil
 	}
-	d.RunTime[d.mp[idx]]++
+	d.RunTime[d.Cks[idx].Uid]++
 	fmt.Println("访问次数：", d.RunT())
 	defer resp.Body.Close()
 	cookies := resp.Header.Values("set-cookie")
@@ -212,8 +208,6 @@ func (d *defaultClient) RedundantDW(url string, tp string, dyTime time.Duration)
 		time.Sleep(dyTime)
 		return
 	} else {
-		// 有bug，阻塞了，
-		//idx := d.Idx % (d.AliveNum + 1)
 		checkAlive := 0
 		for {
 			idx := d.Idx % int64(len(d.Cks))
@@ -252,7 +246,6 @@ func (d *defaultClient) RedundantDW(url string, tp string, dyTime time.Duration)
 			//没有执行访问
 			d.Idx++
 			time.Sleep(dyTime)
-
 		}
 	}
 	return
@@ -266,11 +259,10 @@ func (d *defaultClient) Unav(unav *Unav, idx int, t time.Time) (re bool) {
 	} else if unav.Code == -101 {
 		d.Cks[idx].Alive = false
 	}
-	d.Cks[idx].CkCheckTime = t
-	time.Sleep(500 * time.Millisecond)
 	return
 }
 
+// 注册消息通道
 func (d *defaultClient) RegisterTp(tp string) {
 	if d.AliveCh == nil {
 		d.AliveCh = make(map[string]chan []byte)
@@ -283,27 +275,26 @@ func (d *defaultClient) HandCheckAlive() {
 	msg := "  —————— 账号检测 ———————  "
 	msg += fmt.Sprintf("现在是：%s", time.Now().Format("2006-01-02 15:04:05"))
 	d.Lock()
-
-	d.AliveCh = nil
+	d.AliveNum = len(d.Cks)
 	for idx := 0; idx < len(d.Cks); idx++ {
-
 		uid = utils.CutUid(d.Cks[idx].Ck)
 		code := Refresh(idx)
 		if code == 0 { // 0 表示登录或ck刷新成功，无需再确定活性
 			d.Cks[idx].Alive = true
 			msg += fmt.Sprintf("%d. %s又苟过一天\n", idx, uid)
 			return
-		} else if code == 1 {
+		} else if code == 1 { // 代表了登录成功
 			d.Cks[idx].Alive = true
-			msg += fmt.Sprintf("%d. %s需要进行登录\n", idx, uid)
+			msg += fmt.Sprintf("%d. %s登录成功\n", idx, uid)
 			return
-		} else if code == 2 {
+		} else if code == 2 { // 代表了刷新成功
 			d.Cks[idx].Alive = true
-			msg += fmt.Sprintf("%d. %sck需要进行刷新\n", idx, uid)
+			msg += fmt.Sprintf("%d. %sck刷新成功\n", idx, uid)
 			return
 		} else if code == -101 {
 			d.Cks[idx].Alive = false
 			msg += fmt.Sprintf("%d. %s吃鸡失败\n", idx, uid)
+			d.AliveNum--
 			continue
 		}
 		// code == -1.代表出现各种为止错误时，会到达
@@ -314,32 +305,19 @@ func (d *defaultClient) HandCheckAlive() {
 			d.Cks[idx].Alive = false
 			fmt.Println(err, string(re))
 			msg += fmt.Sprintf("%d. %s吃鸡失败\n", idx, uid)
+			d.AliveNum--
 			continue
 		}
 		if d.Unav(unav, idx, time.Now()) {
 			msg += fmt.Sprintf("%d. %s又苟过一天\n", idx, uid)
 		} else {
 			msg += fmt.Sprintf("%d. %s吃鸡失败\n", idx, uid)
+			d.AliveNum--
 		}
-
 	}
 	d.Unlock()
 	fmt.Println(msg)
 }
-
-//func (d *defaultClient) CheckAliveCk() {
-//	d.Lock()
-//	defer d.Unlock()
-//	url := ""
-//	l := len(config.Cfg.Cks)
-//
-//	for i := 0; i < l; i++ {
-//		re := d.CheckSelect(url, i)
-//		if utils.WebFilter(re) {
-//			d.AliveCK[i] = 1
-//		}
-//	}
-//}
 
 // csrf就是bili_jct
 // csrf极易失效
@@ -370,8 +348,8 @@ func (d *defaultClient) JoinChargeLottery(csrf, businessId string) []byte {
 
 func (d *defaultClient) RunT() string {
 	w := []string{}
-	for _, k := range d.ml {
-		w = append(w, k+":"+strconv.Itoa(d.RunTime[k]))
+	for _, k := range d.Cks {
+		w = append(w, k.Uid+":"+strconv.Itoa(d.RunTime[k.Uid]))
 	}
 	s := strings.Join(w, "; ")
 	return s

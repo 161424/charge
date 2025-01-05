@@ -4,7 +4,6 @@ import (
 	"charge/dao/redis"
 	"charge/inet"
 	"charge/sender"
-	"charge/utils"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -16,7 +15,7 @@ import (
 var url = "https://api.bilibili.com/x/relation/followings?vmid=%s&pn=%d&order=desc&order_type=attention" // vmid为uid，pn为第几页，默认一页50个up
 
 type FollowingData struct {
-	Mid             int    `json:"mid"`
+	Mid             string `json:"mid"`
 	Uname           string `json:"uname"`
 	Official_Desc   string `json:"official_desc"`
 	ChargeLottery   int
@@ -42,7 +41,6 @@ func ListenFollowUp() func() {
 	return func() {
 		cks := inet.DefaultClient.Cks
 		ctx := context.Background()
-		//followingData := []string{}
 		monitor := sender.Monitor{}
 		t := time.Now().Format(time.DateOnly)
 		monitor.Title = fmt.Sprintf("%s完成监控关注任务", t)
@@ -52,7 +50,7 @@ func ListenFollowUp() func() {
 		for idx := range len(cks) {
 			followData := Following{}
 			pageIdx := 1
-			uid := utils.CutUid(cks[idx].Ck)
+			uid := cks[idx].Uid
 			total := 0
 			ftotal := 100
 			for total < ftotal {
@@ -68,15 +66,15 @@ func ListenFollowUp() func() {
 				}
 				vFollowData := FollowingData{}
 				for _, ls := range followData.Data.List {
-					vFollowData.Mid = ls.Mid
+					vFollowData.Mid = strconv.Itoa(ls.Mid)
 					vFollowData.Uname = ls.Uname
 					vFollowData.Official_Desc = ls.Official_verify.Desc
 					//followingData = append(followingData, vFollowData.String())
-					if redis.FindUp(ctx, strconv.Itoa(vFollowData.Mid)) == "" {
-						redis.UpdateUp(ctx, strconv.Itoa(vFollowData.Mid), vFollowData.String()) //
+					if redis.FindUp(ctx, vFollowData.Mid) == "" {
+						redis.UpdateUp(ctx, vFollowData.Mid, vFollowData.String()) //
 						num++
 					}
-					time.Sleep(1 * time.Second)
+					time.Sleep(2 * time.Second)
 				}
 				total += 50
 				pageIdx++
@@ -85,7 +83,6 @@ func ListenFollowUp() func() {
 		desp += fmt.Sprintf("执行完毕后，新增%d个关注", num)
 		monitor.Desp = desp
 		monitor.PushS()
-
 	}
 }
 

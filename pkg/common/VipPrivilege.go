@@ -111,10 +111,10 @@ func BCoinState(idx int) string {
 	bcS := &bsState{}
 	err := json.Unmarshal(resp, &bcS)
 	if err != nil {
-		return fmt.Sprintf(errMsg["json"], err.Error(), string(resp))
+		return fmt.Sprintf(utils.ErrMsg["json"], err.Error(), string(resp))
 	}
 	if bcS.Code != 0 {
-		return fmt.Sprintf(errMsg["code"], "B币券监听", bcS.Code, bcS.Msg)
+		return fmt.Sprintf(utils.ErrMsg["code"], "B币券监听", bcS.Code, bcS.Msg)
 	}
 	if len(bcS.Data.Result) == 0 || bcS.Data.Result[0].couponDueTime < time.Now().UnixMilli() {
 		return BCoinReceive(idx)
@@ -139,11 +139,11 @@ func BCoinReceive(idx int) string {
 	reqBody := url2.Values{}
 	reqBody.Set("type", "1") // 1.大会员B币券；2.大会员福利
 	reqBody.Set("csrf", utils.CutCsrf(inet.DefaultClient.Cks[idx].Ck))
-	resp := inet.DefaultClient.CheckSelectPost(url, contentType["x"], "https://www.bilibili.com/", "", idx, strings.NewReader(reqBody.Encode()))
+	resp := inet.DefaultClient.CheckSelectPost(url, utils.ContentType["x"], "https://www.bilibili.com/", "", idx, strings.NewReader(reqBody.Encode()))
 	pR := &pReceive{}
 	err := json.Unmarshal(resp, &pR)
 	if err != nil {
-		return fmt.Sprintf(errMsg["json"], err.Error(), string(resp))
+		return fmt.Sprintf(utils.ErrMsg["json"], err.Error(), string(resp))
 	}
 	if pR.code == 69801 {
 		return "你已领取过该权益"
@@ -152,7 +152,7 @@ func BCoinReceive(idx int) string {
 	} else if pR.code == 0 {
 		return "B币券领取成功"
 	} else {
-		return fmt.Sprintf(errMsg["code"], "B币券领取", pR.Message, string(resp))
+		return fmt.Sprintf(utils.ErrMsg["code"], "B币券领取", pR.Message, string(resp))
 	}
 	//return VipPrivilege(idx)
 }
@@ -167,14 +167,14 @@ func BCoinExchangeForUp(idx int) string {
 	reqBody.Set("otype", "up")                 // 充电来源 up：空间充电 archive：视频充电
 	reqBody.Set("oid", "349869794")            // 充电来源代码 空间充电：充电对象用户mid 视频充电：稿件avid
 	reqBody.Set("csrf", utils.CutCsrf(inet.DefaultClient.Cks[idx].Ck))
-	resp := inet.DefaultClient.CheckSelectPost(url, contentType["x"], "https://www.bilibili.com/", "", idx, strings.NewReader(reqBody.Encode()))
+	resp := inet.DefaultClient.CheckSelectPost(url, utils.ContentType["x"], "https://www.bilibili.com/", "", idx, strings.NewReader(reqBody.Encode()))
 	cU := &ChargeUp{}
 	err := json.Unmarshal(resp, &cU)
 	if err != nil {
-		return fmt.Sprintf(errMsg["json"], err.Error(), string(resp))
+		return fmt.Sprintf(utils.ErrMsg["json"], err.Error(), string(resp))
 	}
 	if cU.Code != 0 {
-		return fmt.Sprintf(errMsg["code"], "BCoinExchangeForUp", cU.Code, cU.Message)
+		return fmt.Sprintf(utils.ErrMsg["code"], "BCoinExchangeForUp", cU.Code, cU.Message)
 	}
 	if cU.Data.Status == 4 {
 		return fmt.Sprintf("B币已为up【%s】充电成功", config.Cfg.Exchange)

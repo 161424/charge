@@ -23,7 +23,7 @@ type ChargeDetail struct {
 		Item struct {
 			Modules struct {
 				Module_author struct {
-					Mid    int64
+					Mid    int
 					Name   string
 					Pub_ts int64 // 动态发布时间
 				}
@@ -147,7 +147,7 @@ func GetChargeFromMonitorDefaultUsersDynamic() func() {
 				data.IsParticipants = mainBody.Module_dynamic.Additional.Upower_lottery.Button.Jump_style.Text // 未参加的没有check按钮
 			}
 
-			data.Uid = mainBody.Module_author.Mid
+			data.Uid = strconv.Itoa(mainBody.Module_author.Mid)
 			data.UName = mainBody.Module_author.Name
 			tx := mainBody.Module_dynamic.Additional.Upower_lottery.Hint.Text
 			txl := re.FindAllString(tx, -1) // 加入当前UP主的「6元档包月充电」即可参与
@@ -174,7 +174,7 @@ func GetChargeFromMonitorDefaultUsersDynamic() func() {
 			// other info
 			//  https://api.vc.bilibili.com/lottery_svr/v1/lottery_svr/lottery_notice?business_id=1006518945822277649&business_type=12
 			go func() {
-				if s := redis.ReadOneChargeRecord(ctx, ChargerUid, strconv.Itoa(int(data.Uid))); s != "" {
+				if s := redis.ReadOneChargeRecord(ctx, ChargerUid, data.Uid); s != "" {
 					tr := ChargeRecordLoad{}
 					err = json.Unmarshal([]byte(s), &tr)
 					if err == nil {

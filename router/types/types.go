@@ -11,7 +11,7 @@ type FormResp struct {
 	BusinessId      string `json:"business_id"`
 	UName           string `json:"name"`        // 抽奖者名字
 	UFans           string `json:"fans"`        // 抽奖者粉丝数
-	Uid             int64  `json:"uid"`         //
+	Uid             string `json:"uid"`         //
 	ChargerUid      string `json:"charger_uid"` //   抽奖参与者uid
 	EndTimeUnix     int64  `json:"end_timeUnix"`
 	EndTime         string `json:"end_time"` // 结束时间

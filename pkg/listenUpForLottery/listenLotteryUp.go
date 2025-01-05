@@ -1,16 +1,19 @@
 package listenUpForLottery
 
 import (
+	"bytes"
 	"charge/config"
 	"charge/dao/redis"
 	"charge/inet"
 	"charge/pkg/getcharge"
 	"charge/pkg/utils"
 	"charge/sender"
+	utils2 "charge/utils"
 	"context"
 	"encoding/json"
 	"fmt"
 	"sort"
+	"strconv"
 	"time"
 )
 
@@ -24,6 +27,7 @@ type Lottery struct {
 	CreateTime     int64  `json:"create_time"`
 	BusinessId     string `json:"business_id"`
 	Mid            string `json:"mid"`
+	Uname          string `json:"uname"`
 	IsOfficial     bool   `json:"is_official"`
 	EndTime        int64  `json:"end_time"`       // 对与官方的，在超过结束时间就会删除，非官方的根据CreateTime时间，两个月删除
 	IsParticipate  string `json:"is_participate"` // 已成功参与
@@ -35,6 +39,7 @@ type Lottery struct {
 type LotteryBody struct {
 	Code int `json:"code"`
 	Data struct {
+		Sender_uid   int   `json:"sender_uid"`
 		Lottery_time int64 `json:"lottery_time"`
 		Participants int   `json:"participants"`
 		FirstPrize   int   `json:"first_prize"`
@@ -52,7 +57,6 @@ type BLottery struct {
 func ListenLotteryUp() func() {
 	inet.DefaultClient.RegisterTp(modelTp)
 	return func() {
-
 		monitor := sender.Monitor{}
 		monitor.Tag = "lottery"
 		monitor.Title = "每日lottery(ByUp)监控"
@@ -91,70 +95,87 @@ func LotteryDetail(ctx context.Context, modelTP, lottery string, t time.Time) (r
 	LotteryData := Lottery{}
 	LotteryData.AddTime = t.Unix()
 	LotteryData.BusinessId = lottery
-	_url := COU + lottery
-	d.RedundantDW(_url, modelTP, 5*time.Second)
-	body := <-d.AliveCh[modelTP]
-	fmt.Println("正在查询lottery：", lottery)
-	// 过滤出有用信息
-	detail := LotteryBody{}
-	idx := int(body[len(body)-1])
-	err := json.Unmarshal(body[:len(body)-1], &detail)
-	if err != nil {
-		fmt.Println(1, lottery, err, string(body))
-		d.Sleep(idx, 10*time.Minute)
-		// invalid character '{' after top-level value {"code":-400,"message":"strconv.ParseInt: parsing \"id_from=333.999.0.0\": invalid syntax","ttl":1}{"code":-9999,"data":{},"message":"服务系统错误","msg":"服务系统错误"}
-		return
-	}
-	time.Sleep(10 * time.Second)
-	if detail.Code == -9999 {
-		//fmt.Println("非官抽")
-		// 需要添加detail里面的pub_time，进行定期清除lotterylist
-		_url = CU + lottery
-		body = inet.DefaultClient.CheckSelect(_url, idx)
-		if body == nil {
-			fmt.Println("body is nil")
-			return
-		}
+	_url := COU + lottery // 官方抽奖才能访问
+	for i := 0; i < d.AliveNum; i++ {
+		d.RedundantDW(_url, modelTP, 2*time.Second)
+		body := <-d.AliveCh[modelTP]
+		fmt.Println("正在查询lottery：", lottery)
 		// 过滤出有用信息
-		_detail := getcharge.ChargeDetail{}
-		err = json.Unmarshal(body, &_detail)
+		detail := LotteryBody{}
+		idx := int(body[len(body)-1])
+		body = body[:len(body)-1]
+		err := json.Unmarshal(body, &detail)
 		if err != nil {
-			fmt.Println(2, err, string(body))
-			return
+			fmt.Printf(utils2.ErrMsg["json"], err.Error(), string(body))
+			// invalid character '{' after top-level value {"code":-400,"message":"strconv.ParseInt: parsing \"id_from=333.999.0.0\": invalid syntax","ttl":1}{"code":-9999,"data":{},"message":"服务系统错误","msg":"服务系统错误"}
+			if bytes.Contains(body, []byte("风控")) || bytes.Contains(body, []byte("稍后再试")) {
+				d.Sleep(idx, 10*time.Minute)
+			}
+			continue
 		}
-		if !(_detail.Code == 0 || _detail.Code == 200) {
-			fmt.Println(3, "10分钟大休息。err code: ", _detail.Code, _detail.Message) // 管抽访问太频繁会风控
-			// 3 err code:  4101152
-			// 3 err code:  500
-			time.Sleep(10 * time.Minute)
+		time.Sleep(2 * time.Second)
+		if detail.Code == -9999 {
+			//fmt.Println("非官抽")
+			// 需要添加detail里面的pub_time，进行定期清除lotterylist
+			_url = CU + lottery
+			body = inet.DefaultClient.CheckSelect(_url, idx)
+			if body == nil {
+				fmt.Println("body is nil") // 换个ck。应答达到不到
+				continue
+			}
+			// 过滤出有用信息
+			_detail := getcharge.ChargeDetail{}
+			err = json.Unmarshal(body, &_detail)
+			if err != nil {
+				fmt.Printf(utils2.ErrMsg["json"], err.Error(), string(body))
+				if bytes.Contains(body, []byte("风控")) || bytes.Contains(body, []byte("稍后再试")) {
+					d.Sleep(idx, 10*time.Minute)
+				}
+				continue
+			}
+			if !(_detail.Code == 0 || _detail.Code == 200) {
+				fmt.Println(3, "10分钟大休息。err code: ", _detail.Code, _detail.Message) // 管抽访问太频繁会风控
+				// 3 err code:  4101152
+				// 3 err code:  500
+				time.Sleep(10 * time.Minute)
+			}
+			LotteryData.CreateTime = _detail.Data.Item.Modules.Module_author.Pub_ts
+			LotteryData.Mid = strconv.Itoa(_detail.Data.Item.Modules.Module_author.Mid)
+			LotteryData.Uname = _detail.Data.Item.Modules.Module_author.Name
+			break
+		} else if detail.Code == 0 {
+			if detail.Data.Lottery_time < t.Unix() { // 管抽有截止时间，忽略掉已经截止的
+				return
+			}
+			LotteryData.IsOfficial = true
+			LotteryData.EndTime = detail.Data.Lottery_time
+			LotteryData.NumParticipate = detail.Data.Participants
+			LotteryData.NumPrizes = detail.Data.FirstPrize + detail.Data.SecondPrize + detail.Data.ThirdPrize
+			LotteryData.Mid = strconv.Itoa(detail.Data.Sender_uid)
+			SleepStep++
+			if SleepStep/10 == 1 {
+				fmt.Println("1分钟小休息")
+				time.Sleep(time.Minute)
+				SleepStep = 0
+			}
+			break
+		} else {
+			fmt.Println("other err code", detail.Code, detail.Data)
+			continue
 		}
-		LotteryData.CreateTime = _detail.Data.Item.Modules.Module_author.Pub_ts
-	} else if detail.Code == 0 {
-		if detail.Data.Lottery_time < t.Unix() { // 管抽有截止时间，忽略掉已经截止的
-			return
-		}
-		LotteryData.IsOfficial = true
-		LotteryData.EndTime = detail.Data.Lottery_time
-		LotteryData.NumParticipate = detail.Data.Participants
-		LotteryData.NumPrizes = detail.Data.FirstPrize + detail.Data.SecondPrize + detail.Data.ThirdPrize
-		SleepStep++
-		if SleepStep/5 == 1 {
-			fmt.Println("1分钟小休息")
-			time.Sleep(time.Minute)
-			SleepStep = 0
-		}
-	} else {
-		fmt.Println("other err code", detail.Code, detail.Data)
-		return
+		//fmt.Println(4, LotteryData)
+
 	}
-	//fmt.Println(4, LotteryData)
+	// 保底会将lottery存储到redis中。通过for会尽量获取到lottery中的信息
 	redis.AddLotteryRecord(ctx, lottery, LotteryData.String()) // 添加到总的lottery中
+	ListenUp(modelTP, LotteryData)
 	// 由于监听up均为隔日开奖，无法进行多日均衡
 	notBalance := true
 	if notBalance {
 		redis.AddLotteryDay(ctx, time.Now().Format(time.DateOnly), LotteryData.BusinessId)
 	}
 	return true
+
 }
 
 func (l *Lottery) String() string {

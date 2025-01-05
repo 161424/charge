@@ -29,13 +29,13 @@ func BigExperience(idx int) string {
 	reqBody := url2.Values{}
 	reqBody.Set("csrf", utils.CutCsrf(inet.DefaultClient.Cks[idx].Ck))
 	be := &bE{}
-	resp := inet.DefaultClient.CheckSelectPost(url, contentType["x"], "", "", idx, strings.NewReader(reqBody.Encode()))
+	resp := inet.DefaultClient.CheckSelectPost(url, utils.ContentType["x"], "", "", idx, strings.NewReader(reqBody.Encode()))
 	err := json.Unmarshal([]byte(resp), be)
 	if err != nil {
-		return fmt.Sprintf(errMsg["json"], err.Error(), string(resp))
+		return fmt.Sprintf(utils.ErrMsg["json"], err.Error(), string(resp))
 	}
 	if be.Code != 0 {
-		return fmt.Sprintf(errMsg["code"], be.Code, be.Message)
+		return fmt.Sprintf(utils.ErrMsg["code"], be.Code, be.Message)
 	}
 	return fmt.Sprintf("大会员每日10经验领取成功")
 }
