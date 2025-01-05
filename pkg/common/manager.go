@@ -11,6 +11,7 @@ func DailyTask() func() {
 		mointer := sender.Monitor{}
 		mointer.Tag = "Daily Tasks"
 		cks := inet.DefaultClient.Cks
+		fmt.Printf("%+v", cks)
 		for idx := range len(cks) {
 			fmt.Println("---------------------------")
 			fmt.Printf("正在执行第【%d】个账号的每日任务\n", idx+1)
@@ -21,8 +22,8 @@ func DailyTask() func() {
 			//s1 := ""
 			// userinfo
 			userInfo := GetUserInfo(idx)
-			if userInfo.IsLogin == false {
-				fmt.Printf("第【%d】个账号Ck已失活\n", idx+1)
+			if userInfo.Data.IsLogin == false {
+				fmt.Printf("第【%d】个账号Ck已失活。原因是：%s\n", idx+1, userInfo.Message)
 				cks[idx].Alive = false
 				continue
 			}
@@ -40,10 +41,10 @@ func DailyTask() func() {
 			// manga    没漫画需求，先不做吧
 
 			// 大会员栏目
-			if userInfo.VipStatus == 1 {
+			if userInfo.Data.VipStatus == 1 {
 				// 大会员积分
-				BigPoint(idx) // 每日积分签到，保底45~50。最少1350，最多2700
-				//ExchangePoint(idx) // 月兑换10天大会员，需要2400积分。
+				BigPoint(idx)      // 每日积分签到，保底45~50。最少1350，最多2700
+				ExchangePoint(idx) // 月兑换10天大会员，需要2400积分。
 				// 会员BB券提醒
 				BCoinState(idx)
 				// BB券充电。检测到马上过期，会自动充电
@@ -56,7 +57,7 @@ func DailyTask() func() {
 			}
 
 			// 风纪会员栏目
-			if userInfo.Is_jury == true {
+			if userInfo.Data.Is_jury == true {
 
 			}
 

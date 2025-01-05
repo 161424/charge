@@ -272,28 +272,28 @@ func (d *defaultClient) RegisterTp(tp string) {
 
 // 初始化检测ck活性
 func (d *defaultClient) HandCheckAlive() {
-	msg := "  —————— 账号检测 ———————  "
-	msg += fmt.Sprintf("现在是：%s", time.Now().Format("2006-01-02 15:04:05"))
-	d.Lock()
+
+	msg := "  ——————  账号检测  ———————  \n"
+	msg += fmt.Sprintf("现在是：%s\n", time.Now().Format("2006-01-02 15:04:05"))
 	d.AliveNum = len(d.Cks)
 	for idx := 0; idx < len(d.Cks); idx++ {
 		uid = utils.CutUid(d.Cks[idx].Ck)
 		code := Refresh(idx)
 		if code == 0 { // 0 表示登录或ck刷新成功，无需再确定活性
 			d.Cks[idx].Alive = true
-			msg += fmt.Sprintf("%d. %s又苟过一天\n", idx, uid)
-			return
+			msg += fmt.Sprintf("%d. %s又苟过一天. 存活状态：%t\n", idx, uid, d.Cks[idx].Alive)
+			continue
 		} else if code == 1 { // 代表了登录成功
 			d.Cks[idx].Alive = true
-			msg += fmt.Sprintf("%d. %s登录成功\n", idx, uid)
-			return
+			msg += fmt.Sprintf("%d. %s登录成功. 存活状态：%t\n", idx, uid, d.Cks[idx].Alive)
+			continue
 		} else if code == 2 { // 代表了刷新成功
 			d.Cks[idx].Alive = true
-			msg += fmt.Sprintf("%d. %sck刷新成功\n", idx, uid)
-			return
+			msg += fmt.Sprintf("%d. %sck刷新成功. 存活状态：%t\n", idx, uid, d.Cks[idx].Alive)
+			continue
 		} else if code == -101 {
 			d.Cks[idx].Alive = false
-			msg += fmt.Sprintf("%d. %s吃鸡失败\n", idx, uid)
+			msg += fmt.Sprintf("%d. %s吃鸡失败. 存活状态：%t\n", idx, uid, d.Cks[idx].Alive)
 			d.AliveNum--
 			continue
 		}
@@ -304,18 +304,18 @@ func (d *defaultClient) HandCheckAlive() {
 		if err != nil {
 			d.Cks[idx].Alive = false
 			fmt.Println(err, string(re))
-			msg += fmt.Sprintf("%d. %s吃鸡失败\n", idx, uid)
+			msg += fmt.Sprintf("%d. %s吃鸡失败. 存活状态：%t\n", idx, uid, d.Cks[idx].Alive)
 			d.AliveNum--
 			continue
 		}
 		if d.Unav(unav, idx) {
-			msg += fmt.Sprintf("%d. %s又苟过一天\n", idx, uid)
+			msg += fmt.Sprintf("%d. %s又苟过一天. 存活状态：%t\n", idx, uid, d.Cks[idx].Alive)
 		} else {
-			msg += fmt.Sprintf("%d. %s吃鸡失败\n", idx, uid)
+			msg += fmt.Sprintf("%d. %s吃鸡失败. 存活状态：%t\n", idx, uid, d.Cks[idx].Alive)
 			d.AliveNum--
 		}
 	}
-	d.Unlock()
+	msg += "  —————— 账号检测完毕 ———————  \n"
 	fmt.Println(msg)
 }
 

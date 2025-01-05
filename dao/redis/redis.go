@@ -267,3 +267,14 @@ func UpdateLUpHistory(ctx context.Context, key, val string) {
 		fmt.Println(w.Err())
 	}
 }
+
+func ListenUpHistoryReserve(ctx context.Context, key string) string {
+	return RedisClient.HGet(ctx, "reserve-up", key).Val()
+}
+
+func UpdateRUpHistory(ctx context.Context, key, val string) {
+	w := RedisClient.HSet(ctx, "reserve-up", key, val)
+	if w.Err() != nil {
+		fmt.Println(w.Err())
+	}
+}

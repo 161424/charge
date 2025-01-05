@@ -136,7 +136,7 @@ func AutoJoinCharge() func() {
 		//	resp[k] = j
 		//}
 		for _, c := range charges {
-			uid := strconv.Itoa(int(c.Uid))
+			uid := c.Uid
 			if v, ok := chargeRecords[uid]; ok { // 已冲电
 				// code:4420014,已冲电但是未关注
 				// code:4100001,参数错误

@@ -168,7 +168,7 @@ func LotteryDetail(ctx context.Context, modelTP, lottery string, t time.Time) (r
 	}
 	// 保底会将lottery存储到redis中。通过for会尽量获取到lottery中的信息
 	redis.AddLotteryRecord(ctx, lottery, LotteryData.String()) // 添加到总的lottery中
-	ListenUp(modelTP, LotteryData)
+	LotteryRecords(modelTP, LotteryData)
 	// 由于监听up均为隔日开奖，无法进行多日均衡
 	notBalance := true
 	if notBalance {

@@ -23,10 +23,7 @@ BUserCk:
       Token: 6b4e44fc78ab00b530ed6ca0c7c92012
       Access_key: ""
       Group: ""
-    - Ck: DedeUserID=2115950214; DedeUserID__ckMd5=a05872d7604d00ac; Expires=1751563945; SESSDATA=7708d38b,1751563945,10621*12CjC0sygc-x1qwkj5yx3RdqNkCiV2ewNQRZ-W3MTOMgzSQIE__cmw7027KApkrSG03uESVi03MUpxaVdqMm9LSU8xRXdod2lwaDB0am5CVzk0MV9GdElzd016WXpMSXhQcC1maE5UV0dYenY4TlVCSnFLUERxUmEtbVdzdlQxUU5LZmZEMXVvY293IIEC; bili_jct=172533f37b377ed6ab3f30724b289212; gourl=https%3A%2F%2Fwww.bilibili.com; first_domain=.bilibili.com
-      Token: 6b4e44fc78ab00b530ed6ca0c7c92012
-      Access_key: ""
-      Group: ""
+
 ChargeUid:
     - "2149231"
 LotteryUid:

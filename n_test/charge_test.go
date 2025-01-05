@@ -26,7 +26,6 @@ func TestChargeInfo(t *testing.T) {
 	err := json.Unmarshal(body, &detail)
 	mainBody := detail.Data.Item.Modules
 	data.IsParticipants = mainBody.Module_dynamic.Additional.Upower_lottery.Button.Check.Text
-	data.Uid = mainBody.Module_author.Mid
 	data.UName = mainBody.Module_author.Name
 	tx := mainBody.Module_dynamic.Additional.Upower_lottery.Hint.Text
 	txl := re.FindAllString(tx, -1)

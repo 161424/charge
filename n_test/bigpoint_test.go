@@ -40,3 +40,8 @@ func TestVSign(t *testing.T) {
 	fmt.Println(n)
 	fmt.Println("【123】，【哈哈哈】，[123]，[哈哈哈]")
 }
+
+func TestDailyTask(t *testing.T) {
+	f := common.DailyTask()
+	f()
+}

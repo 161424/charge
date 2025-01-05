@@ -8,7 +8,7 @@ import (
 	"fmt"
 )
 
-func ListenUp(tp string, input interface{}) {
+func LotteryRecords(tp string, input interface{}) {
 	ctx := context.Background()
 	vFollowData := listenFollowUp.FollowingData{}
 	switch tp {
@@ -38,5 +38,9 @@ func ListenUp(tp string, input interface{}) {
 			redis.UpdateUp(ctx, vFollowData.Mid, vFollowData.String()) //
 		}
 	}
+
+}
+
+func ListenUp() {
 
 }

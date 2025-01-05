@@ -3,7 +3,6 @@ package pkg
 import (
 	redis2 "charge/dao/redis"
 	"charge/pkg/common"
-	"charge/pkg/getcharge"
 	"charge/pkg/listenGroup"
 	"charge/pkg/listenUpForLottery"
 	"fmt"
@@ -22,12 +21,12 @@ func Start() {
 		return
 	}
 
-	f := getcharge.GetChargeFromMonitorDefaultUsersDynamic()
-	fmt.Println("init start: getcharge.GetChargeFromMonitorDefaultUsersDynamic() ")
+	//f := getcharge.GetChargeFromMonitorDefaultUsersDynamic()
+	//fmt.Println("init start: getcharge.GetChargeFromMonitorDefaultUsersDynamic() ")
 
-	f = getcharge.GetChargeRecordFromCharger()
-	fmt.Println("init start: getcharge.GetChargeRecordFromCharger()")
-	lf = append(lf, f)
+	//f := getcharge.GetChargeRecordFromCharger()
+	//fmt.Println("init start: getcharge.GetChargeRecordFromCharger()")
+	//lf = append(lf, f)
 
 	f1 := listenUpForLottery.ListenLotteryUp()
 	fmt.Println("init start: listenUpForLottery.ListenLotteryUp()")
