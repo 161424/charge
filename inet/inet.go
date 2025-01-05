@@ -252,7 +252,7 @@ func (d *defaultClient) RedundantDW(url string, tp string, dyTime time.Duration)
 }
 
 // code:-101 未登录
-func (d *defaultClient) Unav(unav *Unav, idx int, t time.Time) (re bool) {
+func (d *defaultClient) Unav(unav *Unav, idx int) (re bool) {
 	if unav.Code == 0 {
 		re = true
 		d.Cks[idx].Alive = true
@@ -308,7 +308,7 @@ func (d *defaultClient) HandCheckAlive() {
 			d.AliveNum--
 			continue
 		}
-		if d.Unav(unav, idx, time.Now()) {
+		if d.Unav(unav, idx) {
 			msg += fmt.Sprintf("%d. %s又苟过一天\n", idx, uid)
 		} else {
 			msg += fmt.Sprintf("%d. %s吃鸡失败\n", idx, uid)
