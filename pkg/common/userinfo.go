@@ -11,12 +11,12 @@ type UserInfo struct {
 	Code    int
 	Message string
 	Data    struct {
-		IsLogin    bool
+		IsLogin    bool //  是否登录
 		Level_info struct {
-			CurrentLevel int    `json:"current_level"`
-			CurrentMin   int    `json:"current_min"`
-			CurrentExp   int    `json:"current_exp"`
-			NextExp      string `json:"next_exp"`
+			CurrentLevel int         `json:"current_level"` //   当前等级
+			CurrentMin   int         `json:"current_min"`   //   到达当前等级要求最小经验
+			CurrentExp   int         `json:"current_exp"`   //    当前等级经验
+			NextExp      interface{} `json:"next_exp"`      //   到下一个等级所需升级经验
 		}
 		Mid              int
 		Uname            string `json:"uname"`
@@ -42,7 +42,7 @@ func GetUserInfo(idx int) *UserInfo {
 	err := json.Unmarshal(resp, userinfo)
 	//fmt.Println(userinfo, string(resp))
 	if err != nil {
-		userinfo.Message = fmt.Sprintf(utils.ErrMsg["json"], err.Error(), string(resp))
+		userinfo.Message = fmt.Sprintf(utils.ErrMsg["json"], "GetUserInfo", err.Error(), string(resp))
 		return userinfo
 	}
 	if userinfo.Code != 0 {

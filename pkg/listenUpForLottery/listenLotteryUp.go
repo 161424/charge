@@ -61,7 +61,8 @@ func ListenLotteryUp() func() {
 		monitor.Tag = "lottery"
 		monitor.Title = "每日lottery(ByUp)监控"
 		complete := make(chan struct{})
-		lotterys := utils.ListenupforLottery(config.Cfg.LotteryUid, complete)
+		lotterys := utils.ListenUpForLottery(config.Cfg.LotteryUid, complete)
+		lotterys = append(lotterys, utils.ListenUpForLottery2(config.Cfg.SpecialUid, complete)...)
 		time.Sleep(20 * time.Second)
 		if len(lotterys) == 0 {
 			return
@@ -106,7 +107,7 @@ func LotteryDetail(ctx context.Context, modelTP, lottery string, t time.Time) (r
 		body = body[:len(body)-1]
 		err := json.Unmarshal(body, &detail)
 		if err != nil {
-			fmt.Printf(utils2.ErrMsg["json"], err.Error(), string(body))
+			fmt.Printf(utils2.ErrMsg["json"], "LotteryDetail", err.Error(), string(body))
 			// invalid character '{' after top-level value {"code":-400,"message":"strconv.ParseInt: parsing \"id_from=333.999.0.0\": invalid syntax","ttl":1}{"code":-9999,"data":{},"message":"服务系统错误","msg":"服务系统错误"}
 			if bytes.Contains(body, []byte("风控")) || bytes.Contains(body, []byte("稍后再试")) {
 				d.Sleep(idx, 10*time.Minute)
@@ -127,7 +128,7 @@ func LotteryDetail(ctx context.Context, modelTP, lottery string, t time.Time) (r
 			_detail := getcharge.ChargeDetail{}
 			err = json.Unmarshal(body, &_detail)
 			if err != nil {
-				fmt.Printf(utils2.ErrMsg["json"], err.Error(), string(body))
+				fmt.Printf(utils2.ErrMsg["json"], "LotteryDetail", err.Error(), string(body))
 				if bytes.Contains(body, []byte("风控")) || bytes.Contains(body, []byte("稍后再试")) {
 					d.Sleep(idx, 10*time.Minute)
 				}

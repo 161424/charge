@@ -11,7 +11,7 @@ Mongodb:
     Addr: ""
     Password: ""
 BUserCk:
-    - Ck: SESSDATA=536488d3%2C1751557331%2Ce8e93%2A11CjD-sGbV6nHqeNjegUBHFZLflirTAys8pioLPfoLAmD2BhawLGy3telmhGJD0s2dZFgSVnNmV1BLdXlvdG9VY0F5SElNTE5PMWo1cXZFTlVBcHlBU3BVRGJ6dmR1RWRQX2g1YTlEdkV0TnU1MmRYd1NGalltU3lDY2ZBblFYRHpYTko2MW5hNTlnIIEC; bili_jct=773118d5304f2879bab7e8cf840b0909; DedeUserID=74199115; DedeUserID__ckMd5=8d1ad2254e14c603; sid=gl14k95y
+    - Ck: buvid3=BD420DC9-1E50-8034-A85F-9DD26C0F170282921infoc; b_nut=1718953682; _uuid=7C114E66-831F-C8E3-35DD-910F325342D8883701infoc; enable_web_push=DISABLE; rpdid=|(umRR~|kJm|0J'u~u)mlRRRl; header_theme_version=CLOSE; LIVE_BUVID=AUTO6817258668713773; buvid4=A2EED5AE-F341-6341-0BAE-B4EB7782CDFF10251-023040919-yFM8A5Q5nEe3t1Sl1VHWJA%3D%3D; buvid_fp_plain=undefined; CURRENT_BLACKGAP=0; hit-dyn-v2=1; DedeUserID=74199115; DedeUserID__ckMd5=8d1ad2254e14c603; CURRENT_QUALITY=116; fingerprint=d2bb79ad289465b816cc4c155fc421db; share_source_origin=COPY; dy_spec_agreed=1; buvid_fp=d2bb79ad289465b816cc4c155fc421db; home_feed_column=5; browser_resolution=1854-905; PVID=3; bsource=search_bing; bp_t_offset_74199115=1018989782774054912; CURRENT_FNVAL=16; bili_ticket=eyJhbGciOiJIUzI1NiIsImtpZCI6InMwMyIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzY0MjI1NzcsImlhdCI6MTczNjE2MzMxNywicGx0IjotMX0.RNCfLpNdxNbhy9YwMensfhm07k2I9_05uogvpgLcdJ4; bili_ticket_expires=1736422517; b_lsid=94147F8A_1943BBDAF1E; SESSDATA=fc125332%2C1751721376%2C81e29%2A11CjBQpW305sKYxMDI8nbeqh9kyKUlrkeMrxL_iWpBZibOu8tByJRurSMWn1Qm2BH86iQSVmcwX1MwVnVyVDItTHNZaElrT29ORnBDSUV0enlsR0FaWHVjZ2hxTWpKZm9OODVScDFMRHlOODAtSGRpYzE0RGpuT24xdmR2THlMMllFcTJuTE9GQWZnIIEC; bili_jct=92972a6faf457e0a17dbca82d17ed074; sid=7xjnd5a0
       Token: 5df6ccb39e73f41632143c7c2854d611
       Access_key: 88b1b9650860fe65157260671b4a08c1
       Group: "221094376"
@@ -23,13 +23,22 @@ BUserCk:
       Token: 6b4e44fc78ab00b530ed6ca0c7c92012
       Access_key: ""
       Group: ""
-
+    - Ck: DedeUserID=1039714777; DedeUserID__ckMd5=af86eed6a0747d34; Expires=1751721162; SESSDATA=f29d8775,1751721162,e3904*11CjBxDPcYcabQNDo85ftVLWY77VnXgm_YgBmbySKAnAMSlUR-_cBs-ZX8ABKowLfqONASVnZ3dlNycDBtTjdOZS02R3ZxQ0RfT1prZF9KUVFUQWtIWWtYcTBvMlgzUG9TMFZWbFZGRFNlQUlhVTRqell3WEZxZUxkaXI3a0Q5cVNxZnRJYW15MHJnIIEC; bili_jct=dd112b32c4551c27d5ea829007883c84; gourl=https%3A%2F%2Fwww.bilibili.com; first_domain=.bilibili.com
+      Token: d06602204c5246ab37958b5a7c178511
+      Access_key: ""
+      Group: ""
 ChargeUid:
     - "2149231"
 LotteryUid:
     - "226257459"
     - "100680137"
     - "2595733"
+    - "417545609"
+    - "5536630"
+SpecialUid:
+  - 1673762431
+  - 885439
+  - 373018905
 FakeLotteryUid:
     - "3546609705028467"
     - "1619305144"
@@ -45,7 +54,5 @@ DDNS:
 DaleyTime: 0
 Server3: sctp3776tdvvefnyamdjc7g51zvprjn
 Exchange: "74199115"
-Key_words: '[抽奖送揪]|福利[转关评粉]|参与'
-
-
 Model: test
+

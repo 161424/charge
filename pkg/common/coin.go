@@ -106,52 +106,34 @@ func GainCoin(idx int) {
 // 2. 查看账号硬币个数
 // 3. 对列表视频进行投币
 // 4. 观看投币视频
-func SpendCoin(idx int) {
 
-	urlAccount := "https://account.bilibili.com/site/getCoin"
+// 投币经验查询
+func GetCoinExp(idx int) int {
 	urlCoinExp := "https://api.bilibili.com/x/web-interface/coin/today/exp" // 获得的经验
 
 	resp := inet.DefaultClient.CheckSelect(urlCoinExp, idx)
 	b := &body{}
 	err := json.Unmarshal(resp, b)
 	if err != nil {
-		fmt.Println(err)
-		return
+		fmt.Println(utils.ErrMsg["json"], "GetCoinExp", err.Error(), string(resp))
+		return -1
 	}
 	if b.Code != 0 {
-		fmt.Println(b.Code, b.Message)
-		return
+		fmt.Println(utils.ErrMsg["code"], "GetCoinExp", b.Code, b.Message)
+		return -1
 	}
 	if b.Data >= 50 { //  已经通过硬币获得50经验
 		// 获取账号硬币数量
 		// earn expire
-		fmt.Printf("已获得经验：%d", b.Data)
-		return
+		fmt.Printf("已通过投币获得经验：%d\n", b.Data)
+		return 1
 	}
-	resp = inet.DefaultClient.CheckSelect(urlAccount, idx)
-	ac := &account{}
-	err = json.Unmarshal(resp, ac)
-	if err != nil {
-		return
-	}
-	if b.Code != 0 {
-		return
-	}
-	money := int(ac.Data.Money)
-	if money < 5 { //账户不足5个硬币
-		return
-	}
+	return 0
+}
+
+func SpendCoin(idx int) {
 	getAidByRecommend(idx)
-	resp = inet.DefaultClient.CheckSelect(urlCoinExp, idx)
-	b = &body{}
-	err = json.Unmarshal(resp, b)
-	if err != nil {
-		return
-	}
-	if b.Code != 0 {
-		return
-	}
-	fmt.Printf("通过投币已获得经验：%d\n", b.Data)
+	GetCoinExp(idx)
 
 }
 
@@ -162,9 +144,11 @@ func getAidByRecommend(idx int) {
 	r := &recommend{}
 	err := json.Unmarshal(resp, r)
 	if err != nil {
+		fmt.Println(utils.ErrMsg["json"], "getAidByRecommend", err.Error(), string(resp))
 		return
 	}
 	if r.Code != 0 {
+		fmt.Println(utils.ErrMsg["code"], "getAidByRecommend", r.Code, r.Message)
 		return
 	}
 
@@ -177,9 +161,11 @@ func getAidByRecommend(idx int) {
 		ad := &aid{}
 		err = json.Unmarshal(resp, ad)
 		if err != nil {
+			fmt.Println(utils.ErrMsg["json"], "getAidByRecommend", err.Error(), string(resp))
 			continue
 		}
 		if ad.Code != 0 {
+			fmt.Println(utils.ErrMsg["code"], "getAidByRecommend", ad.Code, ad.Data)
 			continue
 		}
 		//aid: 113672986822554
@@ -209,16 +195,17 @@ func getAidByRecommend(idx int) {
 		aC := &addCoin{}
 		err = json.Unmarshal(resp, aC)
 		if err != nil {
+			fmt.Println(utils.ErrMsg["json"], "getAidByRecommend", err.Error(), string(resp))
 			continue
 		}
 		//fmt.Println("ac", aC, string(resp), item)
 		if aC.Code == 0 {
-			fmt.Println("投币成功")
+			fmt.Printf("视频【%d】投币成功。获得%d经验。\n", item.Id, ct*10)
 			state -= 2
 		} else if aC.Code == 34005 {
-			fmt.Println("投币已达到上限")
+			fmt.Printf("视频【%d】投币已达到上限。\n", item.Id)
 		} else {
-			fmt.Println("投币失败：", aC.Message)
+			fmt.Printf("视频【%d】投币失败。code:%d; msg：%s。\n", item.Id, aC.Code, aC.Message)
 		}
 
 		// 观看任务

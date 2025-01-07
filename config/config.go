@@ -34,12 +34,12 @@ type config struct {
 		Group      string `yaml:"Group"`
 	} `yaml:"BUserCk"`
 
-	ChargeUid      []string `yaml:"ChargeUid"`
-	LotteryUid     []string `yaml:"LotteryUid"`
-	FakeLotteryUid []string `yaml:"FakeLotteryUid"`
-
-	WebUserAgent    string `yaml:"WebUserAgent"`
-	MobileUserAgent string `yaml:"MobileUserAgent"`
+	ChargeUid       []string `yaml:"ChargeUid"`
+	LotteryUid      []string `yaml:"LotteryUid"`
+	FakeLotteryUid  []string `yaml:"FakeLotteryUid"`
+	SpecialUid      []string `yaml:"SpecialUid"`
+	WebUserAgent    string   `yaml:"WebUserAgent"`
+	MobileUserAgent string   `yaml:"MobileUserAgent"`
 
 	DDNS struct {
 		ZoneID      string `yaml:"ZoneID"`
@@ -92,6 +92,7 @@ func Start() {
 	}
 }
 
+// 有一些bug，在覆盖yaml后，yaml总会多一些重复的内容
 func Write() {
 	o, err := yaml.Marshal(Cfg)
 	data, err := os.OpenFile(Path+"/config/config.yaml", os.O_RDWR, 777)

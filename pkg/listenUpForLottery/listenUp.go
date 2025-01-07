@@ -15,7 +15,7 @@ func LotteryRecords(tp string, input interface{}) {
 	case "modelTp", "lotteryGroup":
 		ls := input.(Lottery)
 		if v := redis.FindUp(ctx, ls.Mid); v != "" {
-			err := json.Unmarshal([]byte(v), &vFollowData)
+			err := json.Unmarshal([]byte(v), &vFollowData) // json: cannot unmarshal number into Go struct field FollowingData.mid of type string
 			if err != nil {
 				fmt.Println(err)
 				return

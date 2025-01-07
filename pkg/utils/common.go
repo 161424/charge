@@ -4,6 +4,8 @@ import (
 	"charge/config"
 	"charge/inet"
 	"charge/utils"
+	"fmt"
+	"net/http"
 	"strings"
 	"time"
 )
@@ -41,6 +43,29 @@ func CheckFK(b []byte) {
 
 	if isSleep {
 		time.Sleep(10 * time.Minute)
+	}
+}
+
+func Btv2opus(tv string) string {
+	c := http.Client{
+		CheckRedirect: func(req *http.Request, via []*http.Request) error {
+			return http.ErrUseLastResponse
+		},
+	}
+	req, _ := http.NewRequest(http.MethodGet, tv, nil)
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 Edg/125.0.0.0")
+	resp, err := c.Do(req)
+
+	if err != nil {
+		fmt.Println("请求错误:", err)
+		return ""
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode == http.StatusFound { // 检查状态码是否为302
+		redirectURL := resp.Header.Get("Location") // 获取重定向地址
+		return redirectURL
+	} else {
+		return ""
 	}
 }
 

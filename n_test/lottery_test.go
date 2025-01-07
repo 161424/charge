@@ -5,6 +5,7 @@ import (
 	"charge/dao/redis"
 	"charge/pkg/listenGroup"
 	"charge/pkg/listenUpForLottery"
+	utils2 "charge/pkg/utils"
 	"charge/utils"
 	"context"
 	"fmt"
@@ -20,6 +21,7 @@ func TestLottery2(t *testing.T) {
 	doc, _ := goquery.NewDocumentFromReader(d)
 	data := map[string]struct{}{}
 	re := regexp.MustCompile("[0-9]{18,}")
+
 	doc.Find(".opus-module-content > p").Each(func(i int, s *goquery.Selection) {
 		//fmt.Println(1, s.Get(i), s.Text())
 		if v, ok := s.Find("a").Attr("href"); ok == true {
@@ -110,4 +112,16 @@ func TestHget(t *testing.T) {
 	redis.Start()
 	n := redis.RedisClient.HGet(context.Background(), "up", "123").Val()
 	fmt.Println(n)
+}
+
+func TestLottery3(t *testing.T) {
+	d, _ := os.Open("G:/编程/goland/project/try/charge/data/lottery2.html")
+	doc, _ := goquery.NewDocumentFromReader(d)
+
+	f := doc.Find("title").Text()
+	fmt.Println(f)
+}
+
+func TestTv(t *testing.T) {
+	fmt.Println(utils2.Btv2opus("https://b23.tv/rNyzhIB"))
 }

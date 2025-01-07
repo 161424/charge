@@ -13,7 +13,7 @@ func TestQr(t *testing.T) {
 }
 
 func TestRe(t *testing.T) {
-	inet.Refresh(2)
+	inet.Refresh(3)
 }
 
 func TestReh(t *testing.T) {

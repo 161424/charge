@@ -111,7 +111,7 @@ func BCoinState(idx int) string {
 	bcS := &bsState{}
 	err := json.Unmarshal(resp, &bcS)
 	if err != nil {
-		return fmt.Sprintf(utils.ErrMsg["json"], err.Error(), string(resp))
+		return fmt.Sprintf(utils.ErrMsg["json"], "BCoinState", err.Error(), string(resp))
 	}
 	if bcS.Code != 0 {
 		return fmt.Sprintf(utils.ErrMsg["code"], "B币券监听", bcS.Code, bcS.Msg)
@@ -143,7 +143,7 @@ func BCoinReceive(idx int) string {
 	pR := &pReceive{}
 	err := json.Unmarshal(resp, &pR)
 	if err != nil {
-		return fmt.Sprintf(utils.ErrMsg["json"], err.Error(), string(resp))
+		return fmt.Sprintf(utils.ErrMsg["json"], "BCoinReceive", err.Error(), string(resp))
 	}
 	if pR.code == 69801 {
 		return "你已领取过该权益"
@@ -171,7 +171,7 @@ func BCoinExchangeForUp(idx int) string {
 	cU := &ChargeUp{}
 	err := json.Unmarshal(resp, &cU)
 	if err != nil {
-		return fmt.Sprintf(utils.ErrMsg["json"], err.Error(), string(resp))
+		return fmt.Sprintf(utils.ErrMsg["json"], "BCoinExchangeForUp", err.Error(), string(resp))
 	}
 	if cU.Code != 0 {
 		return fmt.Sprintf(utils.ErrMsg["code"], "BCoinExchangeForUp", cU.Code, cU.Message)

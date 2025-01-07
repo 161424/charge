@@ -32,10 +32,10 @@ func BigExperience(idx int) string {
 	resp := inet.DefaultClient.CheckSelectPost(url, utils.ContentType["x"], "", "", idx, strings.NewReader(reqBody.Encode()))
 	err := json.Unmarshal([]byte(resp), be)
 	if err != nil {
-		return fmt.Sprintf(utils.ErrMsg["json"], err.Error(), string(resp))
+		return fmt.Sprintf(utils.ErrMsg["json"], "BigExperience", err.Error(), string(resp))
 	}
 	if be.Code != 0 {
-		return fmt.Sprintf(utils.ErrMsg["code"], be.Code, be.Message)
+		return fmt.Sprintf(utils.ErrMsg["code"], "BigExperience", be.Code, be.Message)
 	}
 	return fmt.Sprintf("大会员每日10经验领取成功")
 }
