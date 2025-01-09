@@ -1,6 +1,7 @@
 package n
 
 import (
+	"charge/pkg/common"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -56,4 +57,8 @@ func TestTask2(t *testing.T) {
 		panic(err)
 	}
 	fmt.Println(bangumibody)
+}
+
+func TestWatchExp(t *testing.T) {
+	common.WatchExp(3)
 }

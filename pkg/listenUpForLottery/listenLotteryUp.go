@@ -65,6 +65,7 @@ func ListenLotteryUp() func() {
 		lotterys = append(lotterys, utils.ListenUpForLottery2(config.Cfg.SpecialUid, complete)...)
 		time.Sleep(20 * time.Second)
 		if len(lotterys) == 0 {
+			fmt.Println("并未获取到有效的lottery")
 			return
 		}
 		t := time.Now()

@@ -115,7 +115,22 @@ func watchRandomEp(idx int) int {
 		fmt.Printf("观看视频%s失败.res Code:%d,res Message:%s", BangumiList.Name, reS.Code, reS.Message)
 		return reS.Code
 	}
-
 	return 0
+
+}
+
+func WatchExp(idx int) {
+	url := "https://api.bilibili.com/x/report/web/heartbeat"
+	reqBody := url2.Values{}
+	reqBody.Set("aid", "113788095305605")
+	reqBody.Set("cid", "27752595972")
+	reqBody.Set("mid", "17819768")
+	reqBody.Set("start_ts", "1736439677")
+	reqBody.Set("realtime", "10")
+	reqBody.Set("type", "3")
+	reqBody.Set("play_type", "0")
+	reqBody.Set("dt", "2")
+	resp := inet.DefaultClient.CheckSelectPost(url, "application/x-www-form-urlencoded", "", "", idx, strings.NewReader(reqBody.Encode()))
+	fmt.Println(string(resp))
 
 }

@@ -26,7 +26,10 @@ func DailyTask() func() {
 				cks[idx].Alive = false
 				continue
 			}
-			// Experience
+
+			// 打印目前用户信息
+
+			// Experience  登录和观看视频的10经验不知道怎么搞
 			// coin
 			GainCoin(idx) //  查看硬币使用历史，暂未找到获得硬币api
 			if userInfo.Data.Level_info.CurrentLevel < 6 {
@@ -34,7 +37,6 @@ func DailyTask() func() {
 				fmt.Printf("当前用户等级【Lv%d】，目前%d经验，还差%.f经验升级。大概需要%.f天\n", userInfo.Data.Level_info.CurrentLevel, userInfo.Data.Level_info.CurrentExp, userInfo.Data.Level_info.NextExp, (userInfo.Data.Level_info.NextExp).(float64)/50)
 			} else {
 				fmt.Printf("当前用户等级【Lv%d】，以达到最大等级，无需升级\n", userInfo.Data.Level_info.CurrentLevel)
-
 			}
 
 			if GetCoinExp(idx) == 0 { // 投币经验小于50
@@ -47,9 +49,9 @@ func DailyTask() func() {
 
 			// shareAndWatch
 
-			// like
+			// like  点赞
 
-			// manga    没漫画需求，先不做吧
+			// manga    没漫画需求，先不做吧。漫画积分以及兑换品都会失效
 
 			// 大会员栏目
 			if userInfo.Data.VipStatus == 1 {
@@ -69,7 +71,7 @@ func DailyTask() func() {
 
 			// 风纪会员栏目
 			if userInfo.Data.Is_jury == true {
-
+				// pass  没活动了
 			}
 
 			fmt.Printf("第【%d】个账号的每日任务执行完毕\n", idx+1)

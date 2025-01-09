@@ -75,6 +75,7 @@ func Refresh(idx int) int {
 			token = config.Cfg.BUserCk[idx].Token
 			ok := refresh(idx, token)
 			if ok == false {
+				fmt.Printf("【%s】ck刷新失败 x\n", uid)
 				return -1
 			} else {
 				fmt.Printf("【%s】ck刷新成功 √\n", uid)

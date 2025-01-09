@@ -179,7 +179,7 @@ func BigPoint(idx int) {
 	time.Sleep(2 * time.Second)
 	todayPoint := GetTodayPoint(idx)
 	if todayPoint == 45 || todayPoint == 50 {
-		fmt.Printf("今日获取积分【%d】，由于您开启了异步观看，所以跳过检测观看结果\n", todayPoint)
+		fmt.Printf("今日获取积分【%d】，跳过检测观看结果\n", todayPoint)
 
 	} else if todayPoint == 0 {
 		fmt.Printf("今日获取积分【%d】, 部分任务未成功 ×", todayPoint)

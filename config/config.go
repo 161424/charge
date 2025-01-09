@@ -110,13 +110,11 @@ func Write() {
 }
 
 func SetUck(tp string, value, uid string) {
-	fmt.Println(tp, value, uid)
 	switch tp {
 	case "ck":
 		uid = utils.CutUid(value)
 		for idx, v := range Cfg.BUserCk {
 			if utils.CutUid(v.Ck) == uid {
-				fmt.Println("????", value)
 				Cfg.BUserCk[idx].Ck = value
 				break
 			}
