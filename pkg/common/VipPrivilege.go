@@ -124,7 +124,6 @@ func BCoinState(idx int) string {
 	if expireDay < 3 {
 		BCoinExpiringSoon = true
 		return fmt.Sprintf("B币券过期时间【%s】，距离过期还有%d天。即将为你充电", expireTime.Format("2006-01-02"), int(expireDay))
-
 	} else {
 		return fmt.Sprintf("B币券过期时间【%s】，距离过期还有%d天。", expireTime.Format("2006-01-02"), int(expireDay))
 

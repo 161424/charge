@@ -3,7 +3,6 @@ package n
 import (
 	"charge/config"
 	"fmt"
-	"gopkg.in/yaml.v3"
 	"os"
 	"regexp"
 	"strings"
@@ -49,7 +48,14 @@ func TestTime(t *testing.T) {
 func TestConfig(t *testing.T) {
 	config.Start()
 	fmt.Println(config.Cfg)
+	tp := []string{"ck", "token", "access_key", "Group"}
+	uid := "DedeUserID=349869794;AAAAAAA"
+	//for i := 0; i < 10; i++ {
+	//	for j := 0; j < len(tp); j++ {
+	//		config.SetUck(tp[j], uid, uid)
+	//	}
+	//}
+	j := 0
+	config.SetUck(tp[j], uid, uid)
 
-	o, err := yaml.Marshal(config.Cfg)
-	fmt.Println(string(o), err)
 }

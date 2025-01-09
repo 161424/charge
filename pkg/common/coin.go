@@ -205,7 +205,7 @@ func getAidByRecommend(idx int) {
 		} else if aC.Code == 34005 {
 			fmt.Printf("视频【%d】投币已达到上限。\n", item.Id)
 		} else {
-			fmt.Printf("视频【%d】投币失败。code:%d; msg：%s。\n", item.Id, aC.Code, aC.Message)
+			fmt.Printf("视频【%d】投币失败。code:%d; msg：%s。\n", item.Id, aC.Code, aC.Message) // code:-403; msg：账号异常,操作失败。
 		}
 
 		// 观看任务

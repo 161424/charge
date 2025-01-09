@@ -5,11 +5,12 @@ import (
 	"charge/inet"
 	"charge/sender"
 	"charge/utils"
+	"crypto/md5"
 	"encoding/json"
 	"fmt"
 	url2 "net/url"
+	"sort"
 	"strings"
-	"time"
 )
 
 var goods = map[string]int{"大会员3天卡": 720, "大会员7天卡": 1680}
@@ -57,10 +58,10 @@ type SkuInfo struct {
 		Exchange_limit_num int
 		Rights_detail      []struct {
 			Content string
-			Type    string
+			Type    string // text,pic
 		}
 		Purchase_button struct {
-			Status string
+			Status string // sold_out,available
 		}
 	}
 }
@@ -69,45 +70,60 @@ func ExchangePoint(idx int) int {
 	// 商品列表
 	pn := 1  // 页面
 	ps := 20 //  每一页的长度
-	isMonday := time.Now().Weekday().String() == "Monday"
 
-	url := "https://api.bilibili.com/x/vip_point/sku/list?pn=%d&ps=%d"            // pn  ps   total
-	iurl := "https://api.bilibili.com/x/vip_point/sku/info?token=%saccess_key=%s" // access_key,token
+	url := "https://api.bilibili.com/x/vip_point/sku/list?pn=%d&ps=%d"             // pn  ps   total
+	iurl := "https://api.bilibili.com/x/vip_point/sku/info?token=%s&access_key=%s" // access_key,token
 	for i := 1; i <= pn; i++ {
 		_url := fmt.Sprintf(url, i, ps)
 		sku := &Sku{}
 		resp := inet.DefaultClient.CheckSelect(_url, idx)
 		err := json.Unmarshal(resp, sku)
 		if err != nil {
-			fmt.Println(err)
+			fmt.Printf(utils.ErrMsg["json"], "ExchangePoint", err.Error(), string(resp))
 			return -1
 		}
 		if sku.Code != 0 {
-			fmt.Println(sku.Code, sku.Message)
+			fmt.Printf(utils.ErrMsg["code"], "exchangePoint", sku.Code, sku.Message)
 			return sku.Code
 		}
 		for j := 0; j < len(sku.Data.Skus); j++ {
-			_iurl := fmt.Sprintf(iurl, sku.Data.Skus[j].Token, config.Cfg.BUserCk[i].Access_key)
-			if isMonday {
-				exchangeGoodsNotify(_iurl, idx)
-			}
-			// 商品页面
-			if _, ok := goods[sku.Data.Skus[i].Title]; ok == false {
-				continue
-			}
+			_iurl := fmt.Sprintf(iurl, sku.Data.Skus[j].Token, config.Cfg.BUserCk[idx].Access_key)
+			//if isMonday {
+			//	exchangeGoodsNotify(_iurl, idx)
+			//}
+
 			skuInfo := &SkuInfo{}
 			resp := inet.DefaultClient.CheckSelect(_iurl, idx)
-			err = json.Unmarshal(resp, skuInfo)
+			err := json.Unmarshal(resp, skuInfo)
 			if err != nil {
-				fmt.Println(err)
+				fmt.Printf(utils.ErrMsg["json"], "ExchangePoint", err.Error(), string(resp))
 				continue
 			}
 			if skuInfo.Code != 0 {
-				fmt.Println(skuInfo.Code, skuInfo.Message)
+				fmt.Printf(utils.ErrMsg["code"], "exchangePoint", skuInfo.Code, skuInfo.Message)
 				continue
 			}
+			s := ""
+			for i := 0; i < len(skuInfo.Data.Rights_detail); i++ {
+				if skuInfo.Data.Rights_detail[i].Type == "text" {
+					if len(skuInfo.Data.Rights_detail[i].Content) <= 2 {
+						continue
+					}
+					s += skuInfo.Data.Rights_detail[i].Content
+				}
+			}
+
+			notifyDesp += fmt.Sprintf("- 【%s】:%s\n", skuInfo.Data.Title, s)
+
+			// 商品页面
+			fmt.Println(skuInfo.Data.Title, skuInfo.Data.Token)
+			if _, ok := goods[skuInfo.Data.Title]; ok == false {
+				continue
+			}
+
 			//purchase_button.status 有available(可以兑换)，not_logging(没有access_key)，exchange_limit(不能兑换)
 			if skuInfo.Data.Purchase_button.Status == "available" {
+				fmt.Printf("《%s》可以兑换", skuInfo.Data.Title)
 				if exchangePoint(idx, skuInfo.Data.Token) == 0 {
 					fmt.Printf("大会员积分兑换物品【%s】成功，可能还可以兑换%d次\n", skuInfo.Data.Title, skuInfo.Data.Exchange_limit_num-1)
 				}
@@ -115,6 +131,8 @@ func ExchangePoint(idx int) int {
 				fmt.Printf("大会员积分兑换物品【%s】失败，可能是因为Access_key失效\n", skuInfo.Data.Title)
 			} else if skuInfo.Data.Purchase_button.Status == "exchange_limit" {
 				fmt.Printf("大会员积分兑换物品【%s】失败，已达到最大兑换次数\n", skuInfo.Data.Title)
+			} else if skuInfo.Data.Purchase_button.Status == "sold_out" {
+				fmt.Printf("大会员积分兑换物品【%s】失败，该物品已售罄\n", skuInfo.Data.Title)
 			} else {
 				fmt.Println("未知状态", skuInfo)
 			}
@@ -124,15 +142,13 @@ func ExchangePoint(idx int) int {
 		} else {
 			pn = sku.Data.Page.Total/sku.Data.Page.Size + 1
 		}
+	}
 
-	}
-	if isMonday {
-		monitor := sender.Monitor{}
-		monitor.Title = "大会员积分兑换一览"
-		monitor.Tag = "BigVip"
-		monitor.Desp = notifyDesp
-		monitor.PushS()
-	}
+	monitor := sender.Monitor{}
+	monitor.Title = "大会员积分兑换一览"
+	monitor.Tag = "BigVip"
+	monitor.Desp = notifyDesp
+	monitor.PushS()
 
 	return 0
 }
@@ -151,33 +167,48 @@ func exchangePoint(idx int, token string) int {
 	eResp := &ExchangeResp{}
 	err := json.Unmarshal(resp, &eResp)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Printf(utils.ErrMsg["json"], "exchangePoint", err.Error(), string(resp))
 		return -1
 	}
 	if eResp.Code != 0 {
-		fmt.Println(eResp.Code)
+		fmt.Printf(utils.ErrMsg["code"], "exchangePoint", eResp.Code, eResp)
 		return eResp.Code
 	}
 	return 0
 }
 
 func exchangeGoodsNotify(url string, idx int) {
-	skuInfo := &SkuInfo{}
-	resp := inet.DefaultClient.CheckSelect(url, idx)
-	err := json.Unmarshal(resp, skuInfo)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	if skuInfo.Code != 0 {
-		fmt.Println(skuInfo.Code, skuInfo.Message)
-		return
-	}
+	//fmt.Println("url:", url)
+
+}
+
+func Appkey() {
+	params := map[string]string{}
+	pl := []string{"id", "str", "test", "appkey"}
+	params["id"] = "114514"
+	params["str"] = "1919810"
+	params["test"] = "いいよ，こいよ"
+	params["appkey"] = "1d8b6e7d45233436"
+	appsec := "560c52ccd288fed045859ed18bffd973"
+
+	sort.Strings(pl)
 	s := ""
-	for i := 0; i < len(skuInfo.Data.Rights_detail); i++ {
-		s += skuInfo.Data.Rights_detail[i].Content
+	for _, v := range pl {
+		s += v + "=" + url2.QueryEscape(params[v]) + "&"
 	}
-	notifyDesp += fmt.Sprintf("- 【%s】:%s", skuInfo.Data.Title, s)
+	s = s[:len(s)-1]
+
+	s += appsec
+	fmt.Println(s)
+
+	data := []byte(s) //切片
+	fmt.Println(data)
+	fmt.Println([]byte("appkey=1d8b6e7d45233436&id=114514&str=1919810&test=%E3%81%84%E3%81%84%E3%82%88%EF%BC%8C%E3%81%93%E3%81%84%E3%82%88560c52ccd288fed045859ed18bffd973"))
+	has := md5.Sum(data)
+	md5str := fmt.Sprintf("%x", has) //将[]byte转成16进制
+	fmt.Println(md5str)
+	fmt.Println(has)
+
 }
 
 func ExchangeManga(a, b, c, d int) {

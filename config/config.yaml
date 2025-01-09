@@ -13,14 +13,14 @@ Mongodb:
 BUserCk:
     - Ck: buvid3=BD420DC9-1E50-8034-A85F-9DD26C0F170282921infoc; b_nut=1718953682; _uuid=7C114E66-831F-C8E3-35DD-910F325342D8883701infoc; enable_web_push=DISABLE; rpdid=|(umRR~|kJm|0J'u~u)mlRRRl; header_theme_version=CLOSE; LIVE_BUVID=AUTO6817258668713773; buvid4=A2EED5AE-F341-6341-0BAE-B4EB7782CDFF10251-023040919-yFM8A5Q5nEe3t1Sl1VHWJA%3D%3D; buvid_fp_plain=undefined; CURRENT_BLACKGAP=0; hit-dyn-v2=1; DedeUserID=74199115; DedeUserID__ckMd5=8d1ad2254e14c603; CURRENT_QUALITY=116; fingerprint=d2bb79ad289465b816cc4c155fc421db; share_source_origin=COPY; dy_spec_agreed=1; buvid_fp=d2bb79ad289465b816cc4c155fc421db; home_feed_column=5; browser_resolution=1854-905; PVID=3; bsource=search_bing; bp_t_offset_74199115=1018989782774054912; CURRENT_FNVAL=16; bili_ticket=eyJhbGciOiJIUzI1NiIsImtpZCI6InMwMyIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzY0MjI1NzcsImlhdCI6MTczNjE2MzMxNywicGx0IjotMX0.RNCfLpNdxNbhy9YwMensfhm07k2I9_05uogvpgLcdJ4; bili_ticket_expires=1736422517; b_lsid=94147F8A_1943BBDAF1E; SESSDATA=fc125332%2C1751721376%2C81e29%2A11CjBQpW305sKYxMDI8nbeqh9kyKUlrkeMrxL_iWpBZibOu8tByJRurSMWn1Qm2BH86iQSVmcwX1MwVnVyVDItTHNZaElrT29ORnBDSUV0enlsR0FaWHVjZ2hxTWpKZm9OODVScDFMRHlOODAtSGRpYzE0RGpuT24xdmR2THlMMllFcTJuTE9GQWZnIIEC; bili_jct=92972a6faf457e0a17dbca82d17ed074; sid=7xjnd5a0
       Token: 5df6ccb39e73f41632143c7c2854d611
-      Access_key: 88b1b9650860fe65157260671b4a08c1
+      Access_key: c36372f25f8cbd568b7a506e86c65711CjA5U6SXRli12mz7hDToIAIIAbcix8ujBSoTKKQGWvz8h1krr5eQ9rEimbUu2vXSNzMSVldPRDZQWGo2UmphdXBEa0NTTzZmNjhEUkU0TWs0cmwzeENZYTlwS2ptcXk1dmk4WGRMSEpsXzVJWU1kTFJ5NmFvbWc5ZG5HN3NhSkNydGlucW1POERBIIEC
       Group: "221094376"
-    - Ck: buvid3=E96F0AF0-58E6-2FFE-7E83-0C43EF7FFDC724533infoc; b_nut=1733640124; _uuid=51B5A7E5-F9F6-1BFD-6A55-310515EEE104AE25480infoc; enable_web_push=DISABLE; buvid4=7BF037C7-5BB8-154A-F942-4461ED67B3CE25208-024120806-eyKWF1IWU%2FObiMtPMGZGKw%3D%3D; DedeUserID=349869794; DedeUserID__ckMd5=5748890e061cf71a; rpdid=|(um~RJ|~Ykl0J'u~JJYR|uY|; header_theme_version=CLOSE; CURRENT_QUALITY=116; CURRENT_FNVAL=4048; b_lsid=632D71043_1942BDC2099; bili_ticket=eyJhbGciOiJIUzI1NiIsImtpZCI6InMwMyIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzYxNjIzMTAsImlhdCI6MTczNTkwMzA1MCwicGx0IjotMX0.JEW5b7ohPCI7xwf7K7c3CzT4N5HB50m-Ebk4yljpCDo; bili_ticket_expires=1736162250; fingerprint=fd64e1d0583049a2c5c9c0271e375af7; buvid_fp_plain=undefined; bp_t_offset_349869794=1018185202255527936; SESSDATA=5972f02e%2C1751455244%2C87676%2A12CjCXLwKQ9jlxMlEXFg-ZqhVpUlpDfFYlMEwWUhVexnUYuTaUBZVxn7hCm0gMPL57OAkSVktnZ2tXVkVYaDc2cUJpVV9vWXlZeWZiakNBNnI1UDRqdDA0ZUNyRE9mdms2T1JEcXdWZ2J4NGRwcGo1UmVVS0JCcGtLNjZkelBvV0dUUTZWemsyalpBIIEC; bili_jct=4fa4250126ce0b23bc2a102ab00ba0e8; sid=f7ycggns; buvid_fp=fd64e1d0583049a2c5c9c0271e375af7; home_feed_column=4; browser_resolution=1144-941
+    - Ck: DedeUserID=349869794;
       Token: ""
       Access_key: ""
       Group: ""
-    - Ck: DedeUserID=2115950214; DedeUserID__ckMd5=a05872d7604d00ac; Expires=1751563945; SESSDATA=7708d38b,1751563945,10621*12CjC0sygc-x1qwkj5yx3RdqNkCiV2ewNQRZ-W3MTOMgzSQIE__cmw7027KApkrSG03uESVi03MUpxaVdqMm9LSU8xRXdod2lwaDB0am5CVzk0MV9GdElzd016WXpMSXhQcC1maE5UV0dYenY4TlVCSnFLUERxUmEtbVdzdlQxUU5LZmZEMXVvY293IIEC; bili_jct=172533f37b377ed6ab3f30724b289212; gourl=https%3A%2F%2Fwww.bilibili.com; first_domain=.bilibili.com
-      Token: 6b4e44fc78ab00b530ed6ca0c7c92012
+    - Ck: SESSDATA=719fee18%2C1751881850%2C5bb7d%2A11CjCeXjSQyiP-me16Qq8iveSUNFNjJNryMxo7SKU6bSBDfSH8_jbtGTbM-NZwxrr5Ye0SVndabHZNbTJMOGZITVl6NHZzQmNNN2E1SnM3UDFyZ2xNcEZ0dXcxZjNJZnpYODlaU0NZLXh0cnpsZXZheFJrakxhRVpmM3dWeWhNN0hSRnlCbXFWU3pRIIEC; bili_jct=c50a329a5a2a305183de78a1be8404a2; DedeUserID=2115950214; DedeUserID__ckMd5=a05872d7604d00ac; sid=g9a5udp4
+      Token: 5703cd13a963aa73063711d73f1cfb11
       Access_key: ""
       Group: ""
     - Ck: DedeUserID=1039714777; DedeUserID__ckMd5=af86eed6a0747d34; Expires=1751721162; SESSDATA=f29d8775,1751721162,e3904*11CjBxDPcYcabQNDo85ftVLWY77VnXgm_YgBmbySKAnAMSlUR-_cBs-ZX8ABKowLfqONASVnZ3dlNycDBtTjdOZS02R3ZxQ0RfT1prZF9KUVFUQWtIWWtYcTBvMlgzUG9TMFZWbFZGRFNlQUlhVTRqell3WEZxZUxkaXI3a0Q5cVNxZnRJYW15MHJnIIEC; bili_jct=dd112b32c4551c27d5ea829007883c84; gourl=https%3A%2F%2Fwww.bilibili.com; first_domain=.bilibili.com
@@ -35,14 +35,15 @@ LotteryUid:
     - "2595733"
     - "417545609"
     - "5536630"
-SpecialUid:
-  - 1673762431
-  - 885439
-  - 373018905
+    - "373018905"
 FakeLotteryUid:
     - "3546609705028467"
     - "1619305144"
     - "1713150198"
+SpecialUid:
+    - "1673762431"
+    - "885439"
+    - "373018905"
 WebUserAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0
 MobileUserAgent: Mozilla/5.0 (Linux; Android 12; 24031PN0DC Build/V417IR; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/101.0.4951.61 Safari/537.36 Mobile os/android model/24031PN0DC build/8020300 osVer/12 sdkInt/32 network/2 BiliApp/8020300 mobi_app/android channel/yingyongbao Buvid/XU812D18534B34C4113916044792A64880198 sessionID/bde3aecb innerVer/8020300 c_locale/zh_CN s_locale/zh_CN disable_rcmd/0 8.2.0 os/android model/24031PN0DC mobi_app/android build/8020300 channel/yingyongbao innerVer/8020300 osVer/12 network/2
 DDNS:
@@ -53,6 +54,5 @@ DDNS:
     Name: like.151580.xyz
 DaleyTime: 0
 Server3: sctp3776tdvvefnyamdjc7g51zvprjn
-Exchange: "74199115"
-Model: test
-
+Exchange: ""
+Model: ""

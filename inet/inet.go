@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	url2 "net/url"
 	"strconv"
 	"strings"
 	"sync"
@@ -74,7 +75,7 @@ func (d *defaultClient) ReFresh() {
 	for i := 0; i < len(_u); i++ {
 		DefaultClient.Cks[i].Ck = _u[i].Ck
 		DefaultClient.Cks[i].Uid = utils.CutUid(_u[i].Ck)
-		DefaultClient.Cks[i].Csrf = utils.CutCsrf(_u[i].Ck)
+		DefaultClient.Cks[i].Csrf = utils.CutCsrf(_u[i].Ck) // csrf可能为空，注意验证
 	}
 	DefaultClient.HandCheckAlive()
 }
@@ -174,6 +175,7 @@ func (d *defaultClient) CheckSelectPost(url string, contentType, referer, ua str
 	return body
 }
 
+// 多返回个数据头。用来持久化ck
 func (d *defaultClient) CheckSelectPost2(url string, idx int, ck string, rbody io.Reader) ([]string, []byte) {
 	req, err := http.NewRequest(http.MethodPost, url, rbody)
 	if err != nil {
@@ -358,4 +360,13 @@ func (d *defaultClient) RunT() string {
 func (d *defaultClient) Sleep(idx int, td time.Duration) {
 	d.Cks[idx].DynamicSleep = true
 	d.Cks[idx].DynamicSleepTime = time.Now().Add(td)
+}
+
+func (d *defaultClient) ArticleLike(bid string) {
+	url := "https://api.bilibili.com/x/article/like"
+	reqBody := url2.Values{}
+	reqBody.Set("id", bid)
+	reqBody.Set("type", "1")
+	reqBody.Set("csrf", d.Cks[0].Csrf)
+	d.CheckSelectPost(url, utils.ContentType["json"], "", "", 0, strings.NewReader(reqBody.Encode()))
 }

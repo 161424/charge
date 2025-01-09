@@ -77,8 +77,12 @@ func ListenUpForLottery(Uid []string, cmp chan struct{}) []string {
 					panic(err)
 				}
 
-				lTime := strings.Replace(doc.Find(".opus-module-author__pub__text").Text(), "\n", ",", -1)
+				lTime := doc.Find(".opus-module-author__pub__text").Text()
+				if len(lTime) > 10 {
+					lTime = lTime[:10] + "..."
+				}
 				fmt.Printf("文章id：%s；文章标题《%s》；%s\n", item.OpusID, item.Content, lTime)
+				inet.DefaultClient.ArticleLike(item.OpusID)
 				doc.Find(".opus-module-content > p").Each(func(i int, s *goquery.Selection) {
 					//fmt.Println(1, s.Get(i), s.Text())
 					if v := s.Find("span").Text(); v != "" { // 文字内容
@@ -93,17 +97,31 @@ func ListenUpForLottery(Uid []string, cmp chan struct{}) []string {
 						}
 					}
 
-					if v, ok := s.Find("a").Attr("href"); ok { // 内嵌url
-						if re.MatchString(v) {
-							opus[re.FindString(v)]++
-						}
-						if reBv.MatchString(v) {
-							o := Btv2opus(v)
-							if re.MatchString(o) {
-								opus[re.FindString(o)]++
+					//if v, ok := s.Find("a").Attr("href"); ok { // 内嵌url
+					//	if re.MatchString(v) {
+					//		opus[re.FindString(v)]++
+					//	}
+					//	if reBv.MatchString(v) {
+					//		o := Btv2opus(v)
+					//		if re.MatchString(o) {
+					//			opus[re.FindString(o)]++
+					//		}
+					//	}
+					//}
+
+					s.Find("a").Each(func(i int, s *goquery.Selection) { //  内嵌url 专门处理 5536630
+						if v, ok := s.Attr("href"); ok == true {
+							if re.MatchString(v) {
+								opus[re.FindString(v)]++
+							}
+							if reBv.MatchString(v) {
+								o := Btv2opus(v)
+								if re.MatchString(o) {
+									opus[re.FindString(o)]++
+								}
 							}
 						}
-					}
+					})
 
 				})
 				f()
@@ -120,7 +138,7 @@ func ListenUpForLottery(Uid []string, cmp chan struct{}) []string {
 			for _, v := range opus {
 				lotteryRepetitionRate += v
 			}
-			fmt.Printf("目前总取到Lottery个数：%d，重复率是%f,\n", len(opus), float64(lotteryRepetitionRate)/float64(len(opus)))
+			fmt.Printf("目前总取到Lottery个数：%d，重复率是%f。\n", len(opus), float64(lotteryRepetitionRate)/float64(len(opus)))
 		}
 		go func() {
 			<-cmp
@@ -218,4 +236,5 @@ func ListenUpForLottery2(Uid []string, cmp chan struct{}) []string {
 	return reOpus
 }
 
+// https://app.bilibili.com/x/v2/space/archive/cursor?vmid=[这里填写用户的uid（填写的时候记得把外面的方括号去掉）]
 // 417545609，5536630 动态

@@ -45,3 +45,8 @@ func TestDailyTask(t *testing.T) {
 	f := common.DailyTask()
 	f()
 }
+
+func TestExchangePoint(t *testing.T) {
+	code := common.ExchangePoint(0)
+	fmt.Println(code)
+}

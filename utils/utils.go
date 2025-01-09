@@ -34,6 +34,9 @@ func CutUid(s string) string {
 func CutCsrf(s string) string {
 	re := regexp.MustCompile("bili_jct=[0-9a-z]{32}")
 	nre := re.FindAllString(s, -1)
+	if len(nre) == 0 {
+		return ""
+	}
 	nre = strings.Split(nre[0], "=")
 	return nre[1]
 }

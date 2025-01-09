@@ -95,7 +95,8 @@ func Start() {
 // 有一些bug，在覆盖yaml后，yaml总会多一些重复的内容
 func Write() {
 	o, err := yaml.Marshal(Cfg)
-	data, err := os.OpenFile(Path+"/config/config.yaml", os.O_RDWR, 777)
+	fmt.Printf("%+v", Cfg)
+	data, err := os.OpenFile(Path+"/config/config.yaml", os.O_RDWR|os.O_TRUNC, 777)
 	if err != nil {
 		log.Fatalf("读取文件失败: %v", err)
 	}
@@ -109,13 +110,13 @@ func Write() {
 }
 
 func SetUck(tp string, value, uid string) {
-
+	fmt.Println(tp, value, uid)
 	switch tp {
 	case "ck":
 		uid = utils.CutUid(value)
 		for idx, v := range Cfg.BUserCk {
 			if utils.CutUid(v.Ck) == uid {
-				fmt.Println(idx, uid, value)
+				fmt.Println("????", value)
 				Cfg.BUserCk[idx].Ck = value
 				break
 			}

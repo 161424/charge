@@ -125,3 +125,23 @@ func TestLottery3(t *testing.T) {
 func TestTv(t *testing.T) {
 	fmt.Println(utils2.Btv2opus("https://b23.tv/rNyzhIB"))
 }
+
+func TestLottery4(t *testing.T) {
+	d, _ := os.Open("G:/编程/goland/project/try/charge/data/lottery4.html")
+	doc, _ := goquery.NewDocumentFromReader(d)
+	doc.Find(".opus-module-content > p").Each(func(i int, s *goquery.Selection) {
+		//fmt.Println(1, s.Get(i), s.Text())
+		//if v, ok := s.Attr("href"); ok == true {
+		//	fmt.Println(v)
+		//
+		//}
+
+		s.Find("a").Each(func(i int, s *goquery.Selection) {
+			if v, ok := s.Attr("href"); ok == true {
+				fmt.Println(v)
+
+			}
+		})
+	})
+
+}

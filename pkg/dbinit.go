@@ -2,9 +2,6 @@ package pkg
 
 import (
 	redis2 "charge/dao/redis"
-	"charge/pkg/common"
-	"charge/pkg/listenGroup"
-	"charge/pkg/listenUpForLottery"
 	"fmt"
 	"time"
 )
@@ -12,6 +9,7 @@ import (
 var Month = time.Now().Month().String()
 
 // 用来初始化数据库
+// 可以配置单次运行函数
 func Start() {
 	lf := []func(){}
 	redis := redis2.RedisClient
@@ -28,17 +26,17 @@ func Start() {
 	//fmt.Println("init start: getcharge.GetChargeRecordFromCharger()")
 	//lf = append(lf, f)
 
-	f1 := listenUpForLottery.ListenLotteryUp()
-	fmt.Println("init start: listenUpForLottery.ListenLotteryUp()")
-	lf = append(lf, f1)
-	f2 := listenGroup.ListenDJLChannel()
-	fmt.Println("开始f2")
-	lf = append(lf, f2)
+	//f1 := listenUpForLottery.ListenLotteryUp()
+	//fmt.Println("init start: listenUpForLottery.ListenLotteryUp()")
+	//lf = append(lf, f1)
+	//f2 := listenGroup.ListenDJLChannel()
+	//fmt.Println("开始f2")
+	//lf = append(lf, f2)
 	//f2 := listenUpForLottery.BalanceLottery()
 	//fmt.Println("init start: listenUpForLottery.BalanceLottery()")
 	//lf = append(lf, f2)
 
-	lf = append(lf, common.DailyTask())
+	//lf = append(lf, common.DailyTask())
 	if len(lf) > 0 {
 		for _, f := range lf {
 			f()
