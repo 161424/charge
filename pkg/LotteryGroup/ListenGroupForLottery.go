@@ -1,8 +1,8 @@
-package listenGroup
+package LotteryGroup
 
 import (
 	"charge/inet"
-	"charge/pkg/listenUpForLottery"
+	"charge/pkg/LotteryUp"
 	"charge/sender"
 	utils2 "charge/utils"
 	"context"
@@ -40,7 +40,7 @@ var lastTime int64 = 0
 var modelTp = "lotteryGroup"
 
 // 监听大锦鲤频道
-func ListenDJLChannel() func() {
+func ListenGroupForLottery() func() {
 	return func() {
 		size := 20
 		ReadGroup(size)
@@ -85,7 +85,7 @@ func ReadGroup(size int) {
 		res := re.FindAllString(cbody.Content, -1)
 		for j := 0; j < len(res); j++ {
 			msg = append(msg, res[j])
-			if listenUpForLottery.LotteryDetail(ctx, modelTp, res[j], t) {
+			if LotteryUp.LotteryDetail(ctx, modelTp, res[j], t) {
 				ExecFreq++
 			}
 		}

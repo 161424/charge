@@ -14,7 +14,7 @@ import (
 )
 
 // 获取uname最近的几个动态dity
-func ListenupforReverse(cmp chan struct{}) []string {
+func ListenReverse(cmp chan struct{}) []string {
 	opus := map[string]int{} // 去重使用
 	ctx := context.Background()
 	d := inet.DefaultClient
@@ -64,7 +64,7 @@ func ListenupforReverse(cmp chan struct{}) []string {
 		body = <-d.AliveCh[modelTp]
 		doc, err := goquery.NewDocumentFromReader(bytes.NewReader(body[:len(body)-1]))
 		if err != nil {
-			panic(err)
+			continue
 		}
 
 		doc.Find(".opus-module-content > p").Each(func(i int, s *goquery.Selection) {
@@ -89,7 +89,6 @@ func ListenupforReverse(cmp chan struct{}) []string {
 
 	go func() {
 		<-cmp
-		fmt.Println("2")
 		redis.UpdateRUpHistory(ctx, uid, his) // 同步可能导致未能完全获取动态
 	}()
 
@@ -97,6 +96,5 @@ func ListenupforReverse(cmp chan struct{}) []string {
 	for k := range opus {
 		reOpus = append(reOpus, k)
 	}
-	fmt.Println("1")
 	return reOpus
 }

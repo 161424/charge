@@ -1,0 +1,27 @@
+{
+  "code": 0,
+  "data": {
+    "taskId": "htask_xborcfl2xib",
+    "startTime": 1735747200,
+    "endTime": 1754063999,
+    "eventType": "view",
+    "eventId": "hevent_6m3rv1eed03",
+    "title": "浏览欧气专区",
+    "extraData": {
+      "taskName1": "浏览10秒",
+      "taskName2": "领金币",
+      "progressColor": "#FFC75B",
+      "backUrl": "",
+      "prizePic": "//i0.hdslb.com/bfs/activity-plat/static/20220630/7b925ef85373a2241dca64f5ae8d938b/mL5TZKZSMf.png",
+      "progressBackColor": "#FFFAEB",
+      "eventTime": 10,
+      "taskNameColor": "#E09708",
+      "backPic": "//i0.hdslb.com/bfs/activity-plat/static/20220630/7b925ef85373a2241dca64f5ae8d938b/bKDf0zsQGx.png",
+      "taskEndText": "任务完成"
+    },
+    "needDispatch": true
+  },
+  "errtag": 0,
+  "message": "SUCCESS",
+  "ttl": 1736500825154
+}

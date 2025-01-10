@@ -3,8 +3,8 @@ package n
 import (
 	"charge/config"
 	"charge/dao/redis"
-	"charge/pkg/listenGroup"
-	"charge/pkg/listenUpForLottery"
+	"charge/pkg/LotteryGroup"
+	"charge/pkg/LotteryUp"
 	utils2 "charge/pkg/utils"
 	"charge/utils"
 	"context"
@@ -53,7 +53,7 @@ func TestListenLotteryUp(t *testing.T) {
 	redis.Start()
 	defer utils.Tracker(time.Now())
 
-	f2 := listenUpForLottery.BalanceLottery()
+	f2 := LotteryUp.BalanceLottery()
 	f2()
 }
 
@@ -75,11 +75,11 @@ func TestAAL(t *testing.T) {
 	redis.Start()
 
 	defer utils.Tracker(time.Now())
-	f1 := listenUpForLottery.ListenLotteryUp()
+	f1 := LotteryUp.ListenLotteryUp()
 	fmt.Println("开始f1")
 	f1()
 	time.Sleep(1 * time.Minute)
-	f2 := listenGroup.ListenDJLChannel()
+	f2 := LotteryGroup.ListenGroupForLottery()
 	fmt.Println("开始f2")
 	f2()
 	time.Sleep(1 * time.Minute)

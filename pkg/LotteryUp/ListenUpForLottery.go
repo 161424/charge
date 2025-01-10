@@ -1,4 +1,4 @@
-package listenUpForLottery
+package LotteryUp
 
 import (
 	"bytes"

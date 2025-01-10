@@ -3,7 +3,8 @@ package n
 import (
 	"charge/config"
 	"charge/dao/redis"
-	"charge/pkg/listenUpForReserve"
+	"charge/pkg/Reserve"
+
 	"charge/pkg/utils"
 	"fmt"
 	"testing"
@@ -11,7 +12,7 @@ import (
 
 func TestReserve(t *testing.T) {
 	config.Start()
-	s := listenUpForReserve.ReserveFromBusinessId(2, "4345074")
+	s := Reserve.ReserveFromBusinessId(2, "4345074")
 	fmt.Println(s)
 }
 
@@ -19,12 +20,12 @@ func TestListenupforReverse(t *testing.T) {
 	config.Start()
 	redis.Start()
 	c := make(chan struct{})
-	w := utils.ListenupforReverse(c)
+	w := utils.ListenReverse(c)
 	c <- struct{}{}
 	fmt.Println(w)
 	for i := 0; i < len(w); i++ {
 		for j := 0; j < 3; j++ {
-			s := listenUpForReserve.ReserveFromBusinessId(j, w[i])
+			s := Reserve.ReserveFromBusinessId(j, w[i])
 			fmt.Println(s)
 		}
 	}

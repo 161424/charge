@@ -1,0 +1,140 @@
+{
+  "code": 0,
+  "data": {
+    "tasks": [
+      {
+        "nodeId": 3456,
+        "actualValue": "1",
+        "expectValue": "1",
+        "title": "浏览新人专区(1/1)",
+        "taskTitle": "浏览新人专区",
+        "description": "浏览新人专区",
+        "background": "https://i0.hdslb.com/bfs/activity-plat/static/20211025/97c40e378c8720c763d566d91950756c/gUGKSytZub.png",
+        "showProgress": true,
+        "action": "receive",
+        "buttonText": "领取奖励",
+        "buttonStyle": "receive",
+        "prizeIcon": "https://i0.hdslb.com/bfs/activity-plat/static/20211025/97c40e378c8720c763d566d91950756c/w0w0P7286e.png",
+        "prize": {
+          "value": "福利日历金币",
+          "type": "text",
+          "textIndent": 128,
+          "prizeName": "福利日历金币",
+          "prizeImg": "//i1.hdslb.com/bfs/openplatform/202303/7yDg8N111680275296091.png",
+          "prizeNum": 15
+        },
+        "data": {
+          "url": "https://mall.bilibili.com/act/aicms/8xgGIJMBP.html?rmsource=calendar_task",
+          "needDispatch": false
+        }
+      },
+      {
+        "nodeId": 3447,
+        "actualValue": "0",
+        "expectValue": "1",
+        "title": "会员购下单(0/1)",
+        "taskTitle": "会员购下单",
+        "description": "购买任意商品1单",
+        "background": "https://i0.hdslb.com/bfs/activity-plat/static/20211025/97c40e378c8720c763d566d91950756c/gUGKSytZub.png",
+        "showProgress": true,
+        "action": "jump",
+        "buttonText": "去完成",
+        "buttonStyle": "go",
+        "prizeIcon": "https://i0.hdslb.com/bfs/activity-plat/static/20211025/97c40e378c8720c763d566d91950756c/w0w0P7286e.png",
+        "prize": {
+          "value": "福利日历金币",
+          "type": "text",
+          "textIndent": 128,
+          "prizeName": "福利日历金币",
+          "prizeImg": "//i1.hdslb.com/bfs/openplatform/202303/7yDg8N111680275296091.png",
+          "prizeNum": 50
+        },
+        "data": {
+          "url": "https://mall.bilibili.com/act/aicms/ab0edacaa9b.html?msource=calendar_task",
+          "needDispatch": false
+        }
+      },
+      {
+        "nodeId": 3459,
+        "actualValue": "0",
+        "expectValue": "1",
+        "title": "分享可爱fufu~",
+        "taskTitle": "分享可爱fufu~",
+        "description": "分享可爱fufu~",
+        "background": "https://i0.hdslb.com/bfs/activity-plat/static/20211025/97c40e378c8720c763d566d91950756c/gUGKSytZub.png",
+        "showProgress": false,
+        "action": "jump",
+        "buttonText": "去分享",
+        "buttonStyle": "go",
+        "prizeIcon": "https://i0.hdslb.com/bfs/activity-plat/static/20211025/97c40e378c8720c763d566d91950756c/w0w0P7286e.png",
+        "prize": {
+          "value": "福利日历金币",
+          "type": "text",
+          "textIndent": 128,
+          "prizeName": "福利日历金币",
+          "prizeImg": "//i1.hdslb.com/bfs/openplatform/202303/7yDg8N111680275296091.png",
+          "prizeNum": 10
+        },
+        "data": {
+          "url": "https://mall.bilibili.com/detail.html?herculesId=htask_36lk8a6jsjr&noTitleBar=1&itemsId=10421498&msource=calendar_task#noReffer=true&goFrom=na",
+          "needDispatch": false
+        }
+      },
+      {
+        "nodeId": 3461,
+        "actualValue": "0",
+        "expectValue": "1",
+        "title": "浏览欧气专区(0/1)",
+        "taskTitle": "浏览欧气专区",
+        "description": "浏览欧气专区",
+        "background": "https://i0.hdslb.com/bfs/activity-plat/static/20211025/97c40e378c8720c763d566d91950756c/gUGKSytZub.png",
+        "showProgress": true,
+        "action": "jump",
+        "buttonText": "去浏览",
+        "buttonStyle": "go",
+        "prizeIcon": "https://i0.hdslb.com/bfs/activity-plat/static/20211025/97c40e378c8720c763d566d91950756c/w0w0P7286e.png",
+        "prize": {
+          "value": "福利日历金币",
+          "type": "text",
+          "textIndent": 128,
+          "prizeName": "福利日历金币",
+          "prizeImg": "//i1.hdslb.com/bfs/openplatform/202303/7yDg8N111680275296091.png",
+          "prizeNum": 15
+        },
+        "data": {
+          "url": "https://mall.bilibili.com/act/aicms/ab0edacaa9b.html?herculesId=htask_xborcfl2xib&rmsource=calendar_task",
+          "needDispatch": false
+        }
+      },
+      {
+        "nodeId": 3452,
+        "actualValue": "1",
+        "expectValue": "1",
+        "title": "浏览周边特惠频道(1/1)",
+        "taskTitle": "浏览周边特惠频道",
+        "description": "浏览周边特惠频道",
+        "background": "https://i0.hdslb.com/bfs/activity-plat/static/20211025/97c40e378c8720c763d566d91950756c/gUGKSytZub.png",
+        "showProgress": true,
+        "action": "done",
+        "buttonText": "已完成",
+        "buttonStyle": "done",
+        "prizeIcon": "https://i0.hdslb.com/bfs/activity-plat/static/20211025/97c40e378c8720c763d566d91950756c/w0w0P7286e.png",
+        "prize": {
+          "value": "福利日历金币",
+          "type": "text",
+          "textIndent": 128,
+          "prizeName": "福利日历金币",
+          "prizeImg": "//i1.hdslb.com/bfs/openplatform/202303/7yDg8N111680275296091.png",
+          "prizeNum": 15
+        },
+        "data": {
+          "url": "https://mall.bilibili.com/act/aicms/Hz9UvqV0j.html?rmsource=calendar_task",
+          "needDispatch": false
+        }
+      }
+    ]
+  },
+  "errtag": 0,
+  "message": "SUCCESS",
+  "ttl": 1736500824826
+}

@@ -1,7 +1,8 @@
-package listenUpForReserve
+package Reserve
 
 import (
 	"charge/inet"
+	utils2 "charge/pkg/utils"
 	"charge/utils"
 	"encoding/json"
 	"fmt"
@@ -60,6 +61,21 @@ type info struct {
 type T struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
+}
+
+func ListenUpForReserve() func() {
+	return func() {
+		c := make(chan struct{})
+		w := utils2.ListenReverse(c)
+		c <- struct{}{}
+		fmt.Println(w)
+		for i := 0; i < len(w); i++ {
+			for j := 0; j < 3; j++ {
+				s := ReserveFromBusinessId(j, w[i])
+				fmt.Println(s)
+			}
+		}
+	}
 }
 
 // 预约直播，都是小up唉
@@ -123,8 +139,7 @@ func ReserveFromBusinessId(idx int, bId string) string {
 		return fmt.Sprintf(utils.ErrMsg["json"], err.Error(), string(resp))
 	}
 	if bidResp.Code != 0 {
-		fmt.Println(1)
-		return fmt.Sprintf(utils.ErrMsg["code"], "ReserveFromBusinessId", bidResp.Code, string(resp))
+		return fmt.Sprintf(utils.ErrMsg["code"], "ReserveFromBusinessId.bidResp", bidResp.Code, string(resp))
 	}
 	if bidResp.Data.Status != 0 || time.Unix(bidResp.Data.LotteryTime, 0).After(time.Now()) == false {
 		return fmt.Sprintf("%s预约抽奖已经过期", bId)
@@ -138,7 +153,7 @@ func ReserveFromBusinessId(idx int, bId string) string {
 		return fmt.Sprintf(utils.ErrMsg["json"], err.Error(), string(resp))
 	}
 	if binfo.Data.List == nil {
-		return ""
+		return "无直播预约信息"
 	}
 	ifo := &info{}
 	ls := binfo.Data.List.(map[string]interface{})
@@ -152,7 +167,7 @@ func ReserveFromBusinessId(idx int, bId string) string {
 		return fmt.Sprintf(utils.ErrMsg["json"], err.Error(), string(resp))
 	}
 	if ifo.IsFollow == 1 {
-		return fmt.Sprintf("【%s】已经参与", bId)
+		return fmt.Sprintf("uid-【%s】已经参与预约直播【%s】", inet.DefaultClient.Cks[idx].Uid, bId)
 	}
 	// POST https://api.bilibili.com/x/space/reserve X sid=bid csrf 也可以达到效果
 	url = "https://api.vc.bilibili.com/dynamic_mix/v1/dynamic_mix/reserve_attach_card_button"
@@ -168,17 +183,9 @@ func ReserveFromBusinessId(idx int, bId string) string {
 		return fmt.Sprintf(utils.ErrMsg["json"], err.Error(), string(resp))
 	}
 	if t.Code != 0 {
-		return fmt.Sprintf(utils.ErrMsg["code"], "ReserveFromBusinessId", t.Code, string(resp))
+		return fmt.Sprintf(utils.ErrMsg["code"], "ReserveFromBusinessId.t", t.Code, string(resp))
 	}
-	return fmt.Sprintf("【%s】参与成功", bId)
-	//                 url: "//api.vc.bilibili.com/dynamic_mix/v1/dynamic_mix/reserve_attach_card_button",   // 参与预约
-	//                method: "POST",
-	//                data: {
-	//                    reserve_id:reserve_id,
-	//                    cur_btn_status:1,
-	//                    reserve_total:reserve_total,
-	//                    csrf: csrf_token,
-	//                }
+	return fmt.Sprintf("uid-【%s】参与预约直播【%s】成功 √", inet.DefaultClient.Cks[idx].Uid, bId)
 }
 
 // 转盘

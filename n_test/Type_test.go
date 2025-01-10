@@ -23,3 +23,9 @@ func TestType(t *testing.T) {
 func TestTimeMinute(t *testing.T) {
 	fmt.Println(time.Now().Minute() + time.Now().Hour()*60)
 }
+
+func TestFloat(t *testing.T) {
+	a := 3
+	b := 2
+	fmt.Println(float64(a) / float64(b))
+}
