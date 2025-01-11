@@ -202,8 +202,6 @@ func Appkey() {
 	fmt.Println(s)
 
 	data := []byte(s) //切片
-	fmt.Println(data)
-	fmt.Println([]byte("appkey=1d8b6e7d45233436&id=114514&str=1919810&test=%E3%81%84%E3%81%84%E3%82%88%EF%BC%8C%E3%81%93%E3%81%84%E3%82%88560c52ccd288fed045859ed18bffd973"))
 	has := md5.Sum(data)
 	md5str := fmt.Sprintf("%x", has) //将[]byte转成16进制
 	fmt.Println(md5str)

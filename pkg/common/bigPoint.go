@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	url2 "net/url"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -141,12 +140,7 @@ func BigPoint(idx int) {
 							// 执行任务
 							if task.Task_code == "ogvwatchnew" {
 								// 10分钟观影任务
-								if watchRandomEp(idx) == 0 {
-									continue
-									go func() {
-										time.Sleep(10 * time.Minute)
-									}()
-								}
+								watchRandomEp(idx)
 							} else if task.Task_code == "vipmallview" {
 								// 会员购
 								if VipMallView(idx) == 0 {
@@ -178,15 +172,14 @@ func BigPoint(idx int) {
 	// 积分查询任务
 	time.Sleep(2 * time.Second)
 	todayPoint := GetTodayPoint(idx)
-	if todayPoint == 45 || todayPoint == 50 {
+	if todayPoint >= 45 {
 		fmt.Printf("今日获取积分【%d】，跳过检测观看结果\n", todayPoint)
 
-	} else if todayPoint == 0 {
+	} else if todayPoint < 35 {
+		fmt.Printf("今日获取积分【%d】, 未达到预期 ×", todayPoint)
+	} else {
 		fmt.Printf("今日获取积分【%d】, 部分任务未成功 ×", todayPoint)
 		fmt.Printf("可能是完成获取，但是接口数据延迟。")
-
-	} else {
-		fmt.Printf("今日获取积分【%d】, 未达到预期 ×", todayPoint)
 	}
 
 }
@@ -240,19 +233,6 @@ func ReceiveTask(idx int, taskCode string) int {
 
 // 不知道api，先放弃
 // 观看剧集10分钟
-func completeWatch(idx int, taskCode string) int {
-	// access_key=88b1b9650860fe65157260671b4a08c1CjDoqALz57SiAU1mVyrqM2_RVbMsf1CKqStfqdV6YaKuDs-PLS6SIaLlMU9W5CIE5cwSVmJOUE5sbHE0OWxIVHB3ZmVTbzJsQ0V0dmVZLVRkYkFWLWhOSlVUWW1aN2F4ZnpCRWhRYkFNbi1DZmRhX3Yyd1dpMXJYaVFvU3hZZnEzaW5rV0hJLU1nIIEC&appkey=1d8b6e7d45233436&build=8020300&c_locale=zh_CN&channel=yingyongbao&disable_rcmd=0&mobi_app=android&platform=android&s_locale=zh_CN&statistics=%7B%22appId%22%3A1%2C%22platform%22%3A3%2C%22version%22%3A%228.2.0%22%2C%22abtest%22%3A%22%22%7D&task_id=4320003&task_sign=c84a181f1d444de9aae5e997d97fa608&timestamp=1735336015845&token=87fae0a447&ts=1735336015&sign=de689ce6002440a7b47cd130a37b53df
-	g1 := strconv.Itoa(int(time.Now().Unix()))
-	g1 = g1 + "#df2a46fd53&"
-	//m := md5.New()
-	//m.Write([]byte(text))
-	//
-	//hashBytes := m.Sum(nil)
-	//
-	//hashString := hex.EncodeToString(hashBytes)
-
-	return 0
-}
 
 // 浏览追番页面10s    jp_channel
 // 浏览影视界面10s    tv_channel

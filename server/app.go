@@ -7,6 +7,7 @@ import (
 	"charge/pkg"
 	"charge/pkg/LotteryGroup"
 	"charge/pkg/LotteryUp"
+	"charge/pkg/common"
 	utils2 "charge/pkg/utils"
 	"charge/router"
 	"fmt"
@@ -38,7 +39,7 @@ func Run() error {
 	//tw.AddTimer(8*60*time.Minute, 2, listenUpForLottery.BalanceLottery()) // 设置每日转发lottery (会删除，因此要最后进行)
 
 	// DailyTask。每8个小时运行一次
-	//tw.AddTimer(8*60*time.Minute, true, 0, 8*60*time.Minute, true, "DailyTask", common.DailyTask())
+	tw.AddTimer(8*60*time.Minute, true, 0, 8*60*time.Minute, true, "DailyTask", common.DailyTask())
 
 	//todo 多账号监听up充电
 	//todo

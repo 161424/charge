@@ -89,7 +89,6 @@ func (tw *TimingWheel) AddTimer(duration time.Duration, isCircle bool, execType 
 		execTime:   execTime, // 循环时间间隔
 		desp:       desp,     // 函数文字描述
 	}
-	fmt.Printf("%+v\n", timer)
 	// 将定时任务添加到对应槽的末尾
 	fmt.Printf("[%s]已经添加到格子%d，可能在%d:%d执行\n", desp, position, position/60, position%60)
 	tw.buckets[position].PushBack(timer)

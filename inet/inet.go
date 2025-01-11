@@ -41,6 +41,7 @@ type ckStatus struct {
 	Status           atomic.Bool // true表示正在占用中
 	Uid              string
 	Csrf             string
+	Access_key       string
 	Alive            bool
 	DynamicSleep     bool
 	DynamicSleepTime time.Time
@@ -76,6 +77,7 @@ func (d *defaultClient) ReFresh() {
 		DefaultClient.Cks[i].Ck = _u[i].Ck
 		DefaultClient.Cks[i].Uid = utils.CutUid(_u[i].Ck)
 		DefaultClient.Cks[i].Csrf = utils.CutCsrf(_u[i].Ck) // csrf可能为空，注意验证
+		DefaultClient.Cks[i].Access_key = _u[i].Access_key
 	}
 	DefaultClient.HandCheckAlive()
 }
@@ -115,7 +117,7 @@ func (d *defaultClient) CheckFirst(url string) []byte {
 		return nil
 	}
 	d.RunTime[d.Cks[0].Uid]++
-	fmt.Println("访问次数：", d.RunT())
+	d.RunT()
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	return body
@@ -136,7 +138,7 @@ func (d *defaultClient) CheckSelect(url string, idx int) []byte {
 		return nil
 	}
 	d.RunTime[d.Cks[idx].Uid]++
-	fmt.Println("访问次数：", d.RunT())
+	d.RunT()
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 
@@ -169,7 +171,42 @@ func (d *defaultClient) CheckSelectPost(url string, contentType, referer, ua str
 		return nil
 	}
 	d.RunTime[d.Cks[idx].Uid]++
-	fmt.Println("访问次数：", d.RunT())
+	d.RunT()
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	return body
+}
+
+func (d *defaultClient) APPCheckSelectPost(url string, contentType, referer, ua string, idx int, rbody io.Reader) []byte {
+	if d.Cks[idx].Access_key == "" {
+		return nil
+	}
+	req, err := http.NewRequest(http.MethodPost, url, rbody)
+	if err != nil {
+		return nil
+	}
+	if contentType != "" {
+		req.Header.Set("Content-Type", contentType)
+	} else {
+		req.Header.Set("Content-Type", "application/json")
+	}
+	if referer == "" {
+		referer = "https://www.bilibili.com/"
+	}
+	if ua == "" {
+		ua = config.Cfg.WebUserAgent
+	}
+	req.Header.Set("Referer", referer)
+	req.Header.Set("User-Agent", ua)
+	req.Header.Set("Connection", "keep-alive")
+	req.Header.Set("Cookie", d.Cks[idx].Ck+"; access_key="+d.Cks[idx].Access_key)
+
+	resp, err := d.Client.Do(req)
+	if err != nil {
+		return nil
+	}
+	d.RunTime[d.Cks[idx].Uid]++
+	d.RunT()
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	return body
@@ -194,7 +231,7 @@ func (d *defaultClient) CheckSelectPost2(url string, idx int, ck string, rbody i
 		return nil, nil
 	}
 	d.RunTime[d.Cks[idx].Uid]++
-	fmt.Println("访问次数：", d.RunT())
+	d.RunT()
 	defer resp.Body.Close()
 	cookies := resp.Header.Values("set-cookie")
 	body, err := io.ReadAll(resp.Body)
@@ -348,13 +385,16 @@ func (d *defaultClient) JoinChargeLottery(csrf, businessId string) []byte {
 	return body
 }
 
-func (d *defaultClient) RunT() string {
+func (d *defaultClient) RunT() {
+	if config.Cfg.Model == "test" {
+		return
+	}
 	w := []string{}
 	for _, k := range d.Cks {
 		w = append(w, k.Uid+":"+strconv.Itoa(d.RunTime[k.Uid]))
 	}
 	s := strings.Join(w, "; ")
-	return s
+	fmt.Println("访问次数：", s)
 }
 
 func (d *defaultClient) Sleep(idx int, td time.Duration) {

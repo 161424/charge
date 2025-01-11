@@ -208,7 +208,7 @@ func getAidByRecommend(idx int) {
 			fmt.Printf("视频【%d】投币失败。code:%d; msg：%s。\n", item.Id, aC.Code, aC.Message) // code:-403; msg：账号异常,操作失败。
 		}
 
-		// 观看任务
+		// 观看任务。好像没啥用
 		watchTargetVideoCommon(idx, item.Bvid)
 
 		if state <= 0 {

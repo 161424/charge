@@ -67,6 +67,9 @@ func DailyTask() func() {
 				// 10Experience
 				BigExperience(idx)
 				// 大会员线下活动监听
+
+				// 看视频40经验
+				watchRandomEp(idx)
 			}
 
 			// 风纪会员栏目
