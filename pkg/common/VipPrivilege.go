@@ -62,15 +62,15 @@ type bsState struct {
 	Msg  string
 	Data struct {
 		Result []struct {
-			couponDueTime int64 // 过期时间
-			receiveTime   int64 // 领取时间
-			Status        int   // 0：未使用，2：已使用，3：已过期
-		}
-	}
+			CouponDueTime int64 `json:"couponDueTime"` // 过期时间
+			ReceiveTime   int64 `json:"receiveTime"`   // 领取时间
+			Status        int   `json:"status"`        // 0：未使用，2：已使用，3：已过期
+		} `json:"result"`
+	} `json:"data"`
 }
 
 type pReceive struct {
-	code    int
+	Code    int
 	Message string
 }
 
@@ -105,21 +105,29 @@ func VipPrivilege(idx int) int {
 }
 
 // B币券监听和使用
+// 通过扫码进行登录获取到的ck无法使用.不是，需要将SESSDATA中的，换成%2C就可以了
 func BCoinState(idx int) string {
 	url := "https://pay.bilibili.com/paywallet/coupon/listForUserCoupons"
-	resp := inet.DefaultClient.CheckSelect(url, idx)
+	t := time.Now()
+	te := t.Format("2006-01-02")
+	ts := t.Add(-1 * time.Hour * 24 * 35).Format("2006-01-02")
+	tm := t.UnixMilli()
+	s := fmt.Sprintf(`{"currentPage":1,"pageSize":10,"beginTime":"%s 00:00:00","endTime":"%s 23:59:59","traceId":%d,"timestamp":%d,"version":"1.0"}`, ts, te, tm, tm)
+	resp := inet.DefaultClient.CheckSelectPost(url, "", "https://pay.bilibili.com/pay-v2-web/bcoin_record", "", idx, strings.NewReader(s))
 	bcS := &bsState{}
 	err := json.Unmarshal(resp, &bcS)
 	if err != nil {
 		return fmt.Sprintf(utils.ErrMsg["json"], "BCoinState", err.Error(), string(resp))
 	}
 	if bcS.Code != 0 {
-		return fmt.Sprintf(utils.ErrMsg["code"], "B币券监听", bcS.Code, bcS.Msg)
+		return fmt.Sprintf(utils.ErrMsg["code"], "B币券监听", bcS.Code, string(resp))
 	}
-	if len(bcS.Data.Result) == 0 || bcS.Data.Result[0].couponDueTime < time.Now().UnixMilli() {
+	// code==0，但是message=“内部错误”
+	fmt.Printf("%+v\n", bcS)
+	if len(bcS.Data.Result) == 0 || bcS.Data.Result[0].CouponDueTime < time.Now().UnixMilli() {
 		return BCoinReceive(idx)
 	}
-	expireTime := time.UnixMilli(bcS.Data.Result[0].couponDueTime)
+	expireTime := time.UnixMilli(bcS.Data.Result[0].CouponDueTime)
 	expireDay := expireTime.Sub(time.Now()).Hours() / 24
 	if expireDay < 3 {
 		BCoinExpiringSoon = true
@@ -144,11 +152,11 @@ func BCoinReceive(idx int) string {
 	if err != nil {
 		return fmt.Sprintf(utils.ErrMsg["json"], "BCoinReceive", err.Error(), string(resp))
 	}
-	if pR.code == 69801 {
+	if pR.Code == 69801 {
 		return "你已领取过该权益"
-	} else if pR.code == 69824 {
+	} else if pR.Code == 69824 {
 		return "领取太频繁,请稍后再试!"
-	} else if pR.code == 0 {
+	} else if pR.Code == 0 {
 		return "B币券领取成功"
 	} else {
 		return fmt.Sprintf(utils.ErrMsg["code"], "B币券领取", pR.Message, string(resp))
@@ -162,9 +170,9 @@ func BCoinExchangeForUp(idx int) string {
 	reqBody := url2.Values{}
 	reqBody.Set("bp_num", "5")                 // 充电 b 币数量
 	reqBody.Set("is_bp_remains_prior", "true") //B币充电请选择true
-	reqBody.Set("up_mid", "349869794")         // 充电对象用户UID
+	reqBody.Set("up_mid", "74199115")          // 充电对象用户UID
 	reqBody.Set("otype", "up")                 // 充电来源 up：空间充电 archive：视频充电
-	reqBody.Set("oid", "349869794")            // 充电来源代码 空间充电：充电对象用户mid 视频充电：稿件avid
+	reqBody.Set("oid", "74199115")             // 充电来源代码 空间充电：充电对象用户mid 视频充电：稿件avid
 	reqBody.Set("csrf", utils.CutCsrf(inet.DefaultClient.Cks[idx].Ck))
 	resp := inet.DefaultClient.CheckSelectPost(url, utils.ContentType["x"], "https://www.bilibili.com/", "", idx, strings.NewReader(reqBody.Encode()))
 	cU := &ChargeUp{}

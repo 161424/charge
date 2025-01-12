@@ -134,7 +134,7 @@ func WatchRandomEp(idx int) {
 	url := "https://api.bilibili.com/pgc/activity/deliver/material/receive"
 	b := BangumiList.Random()
 	reqBody := url2.Values{}
-	reqBody.Set("access_key", "c36372f25f8cbd568b7a506e86c65711CjA5U6SXRli12mz7hDToIAIIAbcix8ujBSoTKKQGWvz8h1krr5eQ9rEimbUu2vXSNzMSVldPRDZQWGo2UmphdXBEa0NTTzZmNjhEUkU0TWs0cmwzeENZYTlwS2ptcXk1dmk4WGRMSEpsXzVJWU1kTFJ5NmFvbWc5ZG5HN3NhSkNydGlucW1POERBIIEC")
+	//reqBody.Set("access_key", "c36372f25f8cbd568b7a506e86c65711CjA5U6SXRli12mz7hDToIAIIAbcix8ujBSoTKKQGWvz8h1krr5eQ9rEimbUu2vXSNzMSVldPRDZQWGo2UmphdXBEa0NTTzZmNjhEUkU0TWs0cmwzeENZYTlwS2ptcXk1dmk4WGRMSEpsXzVJWU1kTFJ5NmFvbWc5ZG5HN3NhSkNydGlucW1POERBIIEC")
 	reqBody.Set("spmid", "united.player-video-detail.0.0")
 	reqBody.Set("season_id", strconv.Itoa(BangumiList.Season))
 	reqBody.Set("activity_code", "")
@@ -150,8 +150,8 @@ func WatchRandomEp(idx int) {
 	}
 	if watchReceiveResp.Code != 0 {
 		fmt.Printf("观看视频%s失败.res Code:%d,res Message:%s", BangumiList.Name, watchReceiveResp.Code, watchReceiveResp.Message)
-
 	}
+	fmt.Println(idx, watchReceiveResp.Data.WatchCountDownCfg.Token, watchReceiveResp.Data.WatchCountDownCfg.TaskId)
 	// 异步执行
 	go func() {
 		time.Sleep(10 * time.Minute)
@@ -168,8 +168,8 @@ func WatchMovie(idx int, token, taskId string) int {
 	tm := fmt.Sprintf("%d", time.Now().UnixMilli())
 	url := "https://api.bilibili.com/pgc/activity/deliver/task/complete"
 	reqBody := url2.Values{}
-	reqBody.Set("access_key", "c36372f25f8cbd568b7a506e86c65711CjA5U6SXRli12mz7hDToIAIIAbcix8ujBSoTKKQGWvz8h1krr5eQ9rEimbUu2vXSNzMSVldPRDZQWGo2UmphdXBEa0NTTzZmNjhEUkU0TWs0cmwzeENZYTlwS2ptcXk1dmk4WGRMSEpsXzVJWU1kTFJ5NmFvbWc5ZG5HN3NhSkNydGlucW1POERBIIEC")
-	reqBody.Set("ts", fmt.Sprintf("%d", t))
+	//reqBody.Set("access_key", "c36372f25f8cbd568b7a506e86c65711CjA5U6SXRli12mz7hDToIAIIAbcix8ujBSoTKKQGWvz8h1krr5eQ9rEimbUu2vXSNzMSVldPRDZQWGo2UmphdXBEa0NTTzZmNjhEUkU0TWs0cmwzeENZYTlwS2ptcXk1dmk4WGRMSEpsXzVJWU1kTFJ5NmFvbWc5ZG5HN3NhSkNydGlucW1POERBIIEC")
+	reqBody.Set("csrf", inet.DefaultClient.Cks[idx].Csrf)
 	reqBody.Set("timestamp", tm)
 	//reqBody.Set("appkey", "1d8b6e7d45233436")
 	reqBody.Set("task_id", taskId)                   //

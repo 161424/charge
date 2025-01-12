@@ -115,11 +115,11 @@ func GetCoinExp(idx int) int {
 	b := &body{}
 	err := json.Unmarshal(resp, b)
 	if err != nil {
-		fmt.Println(utils.ErrMsg["json"], "GetCoinExp", err.Error(), string(resp))
+		fmt.Printf(utils.ErrMsg["json"], "GetCoinExp", err.Error(), string(resp))
 		return -1
 	}
 	if b.Code != 0 {
-		fmt.Println(utils.ErrMsg["code"], "GetCoinExp", b.Code, b.Message)
+		fmt.Printf(utils.ErrMsg["code"], "GetCoinExp", b.Code, b.Message)
 		return -1
 	}
 	if b.Data >= 50 { //  已经通过硬币获得50经验
@@ -144,11 +144,11 @@ func getAidByRecommend(idx int) {
 	r := &recommend{}
 	err := json.Unmarshal(resp, r)
 	if err != nil {
-		fmt.Println(utils.ErrMsg["json"], "getAidByRecommend", err.Error(), string(resp))
+		fmt.Printf(utils.ErrMsg["json"], "getAidByRecommend", err.Error(), string(resp))
 		return
 	}
 	if r.Code != 0 {
-		fmt.Println(utils.ErrMsg["code"], "getAidByRecommend", r.Code, r.Message)
+		fmt.Printf(utils.ErrMsg["code"], "getAidByRecommend", r.Code, r.Message)
 		return
 	}
 
@@ -161,11 +161,11 @@ func getAidByRecommend(idx int) {
 		ad := &aid{}
 		err = json.Unmarshal(resp, ad)
 		if err != nil {
-			fmt.Println(utils.ErrMsg["json"], "getAidByRecommend", err.Error(), string(resp))
+			fmt.Printf(utils.ErrMsg["json"], "getAidByRecommend", err.Error(), string(resp))
 			continue
 		}
 		if ad.Code != 0 {
-			fmt.Println(utils.ErrMsg["code"], "getAidByRecommend", ad.Code, ad.Data)
+			fmt.Printf(utils.ErrMsg["code"], "getAidByRecommend", ad.Code, ad.Data)
 			continue
 		}
 		//aid: 113672986822554
@@ -195,7 +195,7 @@ func getAidByRecommend(idx int) {
 		aC := &addCoin{}
 		err = json.Unmarshal(resp, aC)
 		if err != nil {
-			fmt.Println(utils.ErrMsg["json"], "getAidByRecommend", err.Error(), string(resp))
+			fmt.Printf(utils.ErrMsg["json"], "getAidByRecommend", err.Error(), string(resp))
 			continue
 		}
 		//fmt.Println("ac", aC, string(resp), item)

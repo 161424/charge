@@ -18,13 +18,25 @@ type UserInfo struct {
 			CurrentExp   int         `json:"current_exp"`   //    当前等级经验
 			NextExp      interface{} `json:"next_exp"`      //   到下一个等级所需升级经验
 		}
-		Mid              int
-		Uname            string `json:"uname"`
-		Money            int    // 硬币数量
-		VipStatus        int    // 0 不是大会员，1是大会员
-		VipDueDate       int64  // 大会员到期时间
-		Is_senior_member int    // 1硬核会员
-		Is_jury          bool   // true 风纪委员
+		Mid        int
+		Uname      string  `json:"uname"`
+		Money      float64 // 硬币数量
+		VipStatus  int     // 0 不是大会员，1是大会员
+		VipDueDate int64   // 大会员到期时间
+
+		VipLabel struct {
+			Text       string `json:"text"`        // 会员名称
+			LabelTheme string `json:"label_theme"` // vip：大会员annual_vip：年度大会员ten_annual_vip：十年大会员hundred_annual_vip：百年大会员
+		} `json:"vip_label"`
+
+		Wallet struct {
+			BcoinBalance  int `json:"bcoin_balance"`
+			CouponBalance int `json:"coupon_balance"`
+			CouponDueTime int `json:"coupon_due_time"`
+		} `json:"wallet"`
+
+		Is_senior_member int  // 1硬核会员
+		Is_jury          bool // true 风纪委员
 	}
 }
 

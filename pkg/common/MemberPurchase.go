@@ -196,7 +196,6 @@ func MemberRegister(idx int) {
 	resp := inet.DefaultClient.APPCheckSelect(url, mUa, "https://mall.bilibili.com/", idx)
 	err := json.Unmarshal(resp, memberSign)
 	if err != nil {
-		fmt.Println(1, string(resp))
 		fmt.Printf(utils2.ErrMsg["json"], "MemberRegister", err.Error(), string(resp))
 		return
 	}
@@ -206,7 +205,7 @@ func MemberRegister(idx int) {
 	}
 	todayG := 0
 	if memberSign.Data.IsSigned {
-		todayG = memberSign.Data.SignList[memberSign.Data.CurrDay].PrizeList[0].PrizeNum
+		todayG = memberSign.Data.SignList[memberSign.Data.CurrDay-1].PrizeList[0].PrizeNum
 	}
 
 	// 获取任务id
@@ -217,7 +216,6 @@ func MemberRegister(idx int) {
 	err = json.Unmarshal(resp, &memberQuery)
 
 	if err != nil {
-		fmt.Println(2, string(resp))
 		fmt.Printf(utils2.ErrMsg["json"], "MemberRegister", err.Error(), string(resp))
 		return
 	}
@@ -240,7 +238,6 @@ func MemberRegister(idx int) {
 	err = json.Unmarshal(resp, &memberResp)
 
 	if err != nil {
-		fmt.Println(3, string(resp))
 		fmt.Printf(utils2.ErrMsg["json"], "MemberRegister", err.Error(), string(resp))
 		return
 	}
@@ -298,10 +295,10 @@ func mDispatch(url string, idx int) int {
 	t := &T{}
 	err = json.Unmarshal(resp, &t)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Printf(utils2.ErrMsg["json"], "mDispatch", err.Error(), string(resp))
 	}
 	if t.Code != 0 {
-		fmt.Printf("%+v", t)
+		fmt.Printf(utils2.ErrMsg["Code"], "mReceive", t.Code, string(resp))
 	}
 	return t.Code
 }
@@ -331,8 +328,12 @@ func mReceive(idx int, activityId string, nodeId int) int {
 		fmt.Printf(utils2.ErrMsg["json"], "mReceive", err.Error(), string(resp))
 		return -1
 	}
+	if mReca.Code != 0 {
+		fmt.Printf("%+v", mReca)
+		return -1
+	}
 	url = "https://show.bilibili.com/api/activity/hercules/task/reward/query"
-	s = fmt.Sprintf(`{"activityId":"%s","nodeId":%d,"taskId":"%s","receiveAssocIds":%d}`, activityId, nodeId, mReca.Data.TaskId, mReca.Data.ReceiveAssocIds)
+	s = fmt.Sprintf(`{"activityId":"%s","nodeId":%d,"taskId":"%s","receiveAssocIds":%d}`, activityId, nodeId, mReca.Data.TaskId, mReca.Data.ReceiveAssocIds) // mReca获取失败
 	mRecq := mRecQ{}
 	resp = inet.DefaultClient.CheckSelectPost(url, "", "https://mall.bilibili.com/", "", idx, strings.NewReader(s))
 	err = json.Unmarshal(resp, &mRecq)
