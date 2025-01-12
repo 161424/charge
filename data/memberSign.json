@@ -1,0 +1,115 @@
+{
+  "code": 0,
+  "data": {
+    "batchId": 1,
+    "isSigned": true,
+    "currDay": 3,
+    "currDate": 20250112,
+    "totalDay": 7,
+    "rewardTips": "明日可领{{福利日历金币}}奖励",
+    "headerImg": "//i0.hdslb.com/bfs/openplatform/202306/U77qDibN1686128067624.png",
+    "desc": "",
+    "signList": [
+      {
+        "day": 1,
+        "status": true,
+        "text": "",
+        "desc": "本期累计已领5金币，明日可领6金币",
+        "prizeList": [
+          {
+            "prizeImg": "//i1.hdslb.com/bfs/openplatform/202303/7yDg8N111680275296091.png",
+            "prizeName": "福利日历金币",
+            "prizeNum": 5
+          }
+        ],
+        "big": false
+      },
+      {
+        "day": 2,
+        "status": true,
+        "text": "",
+        "desc": "本期累计已领11金币，明日可领15金币",
+        "prizeList": [
+          {
+            "prizeImg": "//i1.hdslb.com/bfs/openplatform/202303/7yDg8N111680275296091.png",
+            "prizeName": "福利日历金币",
+            "prizeNum": 6
+          }
+        ],
+        "big": false
+      },
+      {
+        "day": 3,
+        "status": true,
+        "text": "",
+        "desc": "本期累计已领26金币，明日可领5金币",
+        "prizeList": [
+          {
+            "prizeImg": "//i1.hdslb.com/bfs/openplatform/202303/7yDg8N111680275296091.png",
+            "prizeName": "福利日历金币",
+            "prizeNum": 15
+          }
+        ],
+        "big": false
+      },
+      {
+        "day": 4,
+        "status": false,
+        "text": "",
+        "desc": "本期累计已领31金币，明日可领6金币",
+        "prizeList": [
+          {
+            "prizeImg": "//i1.hdslb.com/bfs/openplatform/202303/7yDg8N111680275296091.png",
+            "prizeName": "福利日历金币",
+            "prizeNum": 5
+          }
+        ],
+        "big": false
+      },
+      {
+        "day": 5,
+        "status": false,
+        "text": "",
+        "desc": "本期累计已领37金币，明日可领8金币",
+        "prizeList": [
+          {
+            "prizeImg": "//i1.hdslb.com/bfs/openplatform/202303/7yDg8N111680275296091.png",
+            "prizeName": "福利日历金币",
+            "prizeNum": 6
+          }
+        ],
+        "big": false
+      },
+      {
+        "day": 6,
+        "status": false,
+        "text": "",
+        "desc": "明日可获7天连签奖励，记得来哟！",
+        "prizeList": [
+          {
+            "prizeImg": "//i1.hdslb.com/bfs/openplatform/202303/7yDg8N111680275296091.png",
+            "prizeName": "福利日历金币",
+            "prizeNum": 8
+          }
+        ],
+        "big": false
+      },
+      {
+        "day": 7,
+        "status": false,
+        "text": "",
+        "desc": "喜获7天连签大礼，明天继续新的一轮！",
+        "prizeList": [
+          {
+            "prizeImg": "//i1.hdslb.com/bfs/openplatform/202303/7yDg8N111680275296091.png",
+            "prizeName": "福利日历金币",
+            "prizeNum": 50
+          }
+        ],
+        "big": true
+      }
+    ]
+  },
+  "errtag": 0,
+  "message": "SUCCESS"
+}

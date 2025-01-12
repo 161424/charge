@@ -12,6 +12,64 @@ import (
 
 var active = map[string]string{"浏览新人专区": "jump", "分享可爱fufu~": "jump", "浏览欧气专区": "jump", "浏览周边特惠频道": "jump"}
 
+type MemberSign struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+	Data    struct {
+		BatchId    int    `json:"batchId"`
+		IsSigned   bool   `json:"isSigned"` // 是否签到
+		CurrDay    int    `json:"currDay"`  // 签到天数
+		CurrDate   int    `json:"currDate"` // 2025112
+		TotalDay   int    `json:"totalDay"`
+		RewardTips string `json:"rewardTips"` // 明日可领{{福利日历金币}}奖励
+		HeaderImg  string `json:"headerImg"`
+		Desc       string `json:"desc"`
+		SignList   []struct {
+			Day       int    `json:"day"`
+			Status    bool   `json:"status"` // 签到状态
+			Text      string `json:"text"`
+			Desc      string `json:"desc"`
+			PrizeList []struct {
+				PrizeImg  string `json:"prizeImg"`
+				PrizeName string `json:"prizeName"`
+				PrizeNum  int    `json:"prizeNum"` // 金币个数
+			} `json:"prizeList"`
+			Big bool `json:"big"` // day=7时为true。
+		} `json:"signList"`
+	} `json:"data"`
+	Errtag int `json:"errtag"`
+}
+
+type MemberQuery struct {
+	Code int `json:"code"`
+	Data struct {
+		RuleUrl            string `json:"ruleUrl"`
+		MallUrl            string `json:"mallUrl"`
+		TaskActivityId     string `json:"taskActivityId"` // tx7cfe2ej2
+		Tips               string `json:"tips"`           // 标题
+		ChipBatchId        int    `json:"chipBatchId"`
+		SignTaskId         string `json:"signTaskId"`
+		ExchangeActivityId string `json:"exchangeActivityId"` // 2022110432139002
+		CartUrl            string `json:"cartUrl"`
+	} `json:"data"`
+	Message string      `json:"message"`
+	Errtag  interface{} `json:"errtag"`
+	Errno   int         `json:"errno"`
+}
+
+type MemberChip struct {
+	Code    int    `json:"code"`
+	Errno   int    `json:"errno"`
+	Msg     string `json:"msg"`
+	Message string `json:"message"`
+	ShowMsg string `json:"showMsg"`
+	Errtag  int    `json:"errtag"`
+	Data    struct {
+		EffectiveChips int  `json:"effectiveChips"`
+		Exchange       bool `json:"exchange"`
+	} `json:"data"`
+}
+
 type MemberResp struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
@@ -103,6 +161,9 @@ type MGoods struct {
 }
 
 func MemberGoodsInfo(idx int) {
+	// 粘土人4000金币。每日任务55金币，一个月有效期，最多1650.签到一个星期95金币，至少签到24.7个星期再能兑换(灬ꈍ ꈍ灬)
+	// （55*7=385+95=480）魔晶240兑换4个，魔晶签到第七天有15个，大会员500积分可以换5魔晶。拢共24魔晶。3.78魔晶可以抵1元，拢共抵挡6.34
+
 	t := time.Now().UnixMilli()
 	url := fmt.Sprintf("https://mall.bilibili.com/activity/game/exchange_shop/prize_list?shopType=1&_=%d", t) // 浏览欧气专区
 	mGoods := MGoods{}
@@ -113,28 +174,78 @@ func MemberGoodsInfo(idx int) {
 		return
 	}
 	desp := ""
+	for _, item := range mGoods.Data.ItemAreas[0].ItemList {
+		s := item.Title + fmt.Sprintf("【价格：%d】。", item.Price) + item.PrizeDesc + item.PrizeSpec
+		desp += "- " + s + "\n"
+	}
 	fmt.Println(desp)
 
 }
 
+var mUa = "Mozilla/5.0 (Linux; Android 12; 24031PN0DC Build/V417IR; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/101.0.4951.61 Safari/537.36 BiliApp/8020300 mobi_app/android isNotchWindow/0 NotchHeight=1 mallVersion/8020300 mVersion/263 disable_rcmd/0"
+var stop = 0
+
 // 可以完成任务，但是领取金币需要access_key
 func MemberRegister(idx int) {
-
-	// 获取当前硬币个数
-
-	// 做任务赚金币目录
-	url := "https://show.bilibili.com/api/activity/hercules/task/get?activityId=tx7cfe2ej2"
-	memberResp := MemberResp{}
-	resp := inet.DefaultClient.CheckSelect(url, idx)
-	err := json.Unmarshal(resp, &memberResp)
-	fmt.Println(memberResp)
-	fmt.Println(string(resp))
+	// 签到一星期获得5 + 6 + 15 + 5 + 6 + 8 + 50 = 95，过期时间180天
+	// 签到查询
+	url := "https://show.bilibili.com/api/activity/v2/continue/sign/detail?activityId=calendar_sign"
+	memberSign := &MemberSign{}
+	ck := "DedeUserID=74199115; DedeUserID__ckMd5=8d1ad2254e14c603; Buvid=XU812D18534B34C4113916044792A64880198; _uuid=6180244D-1D23-2C6B-CE8E-52D113290AE349556infoc; buvid3=4616F554-6664-69BD-1912-F10E5684BBCA53302infoc; b_nut=1735292951; buvid4=3AA1D37C-0024-6BBB-9A3C-12E73C5D1CB453302-124122709-2pYlC6oBw0BIh9CxzJk%2Bhg%3D%3D; rpdid=|(J~R~kJku)R0J'u~JlkmlRlu; buvid_fp=36cf03397e36ee7d0a86202fd4b298d9; SESSDATA=7abed2d8%2C1752043934%2C10075912CjAEsSdR8ZB9r43ioovjrb8C6a8VIZ3eIpcVPpoU025pTWimh4Lq_7zi7_d2z-bb-5oSVnY4TE0yeHlaQXBDQTFhWnYtUk1Dc1pIWk9Ka1o0VnlKOHdDams1OFlWTGZjMEIxQzV5aERwWWYxU2lMWlNMcm5aSFNvZ1FNb3A0S2pvb05VN3pfR3RBIIEC; bili_jct=79e9794f54da7228883a55319dcaf0d0; themeType=1; kfcFrom=Myth_favorite; deviceFingerprint=XU812D18534B34C4113916044792A64880198; access_key=145bd3d747fba3cfdf8160e783020f12CjAEsSdR8ZB9r43ioovjrb8C6a8VIZ3eIpcVPpoU025pTWimh4Lq_7zi7_d2z-bb-5oSVnY4TE0yeHlaQXBDQTFhWnYtUk1Dc1pIWk9Ka1o0VnlKOHdDams1OFlWTGZjMEIxQzV5aERwWWYxU2lMWlNMcm5aSFNvZ1FNb3A0S2pvb05VN3pfR3RBIIEC; sid=fk08i07m; b_lsid=FD4AABF1_1944F35EF4C; bili_ticket=eyJhbGciOiJIUzI1NiIsImtpZCI6InMwMyIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzY3NTQ5MjYsImlhdCI6MTczNjQ5NTY2NiwicGx0IjotMX0.qW7Q7Fb8HAQhstPy9Nz1NJnRNqQ8II20wPSyvKDUJ_4; bili_ticket_expires=1736754866; identify=appkey%3D1d8b6e7d45233436%26ts%3D1736507111263%26sign%3Da14ec29f6656ff718b4c32c05558593b"
+	inet.DefaultClient.Cks[idx].Ck = ck
+	resp := inet.DefaultClient.APPCheckSelect(url, mUa, "https://mall.bilibili.com/", idx)
+	err := json.Unmarshal(resp, memberSign)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println(1, string(resp))
+		fmt.Printf(utils2.ErrMsg["json"], "MemberRegister", err.Error(), string(resp))
+		return
+	}
+	if memberSign.Code != 0 {
+		fmt.Printf(utils2.ErrMsg["Code"], "MemberRegister", memberSign.Code, string(resp))
+		return
+	}
+	todayG := 0
+	if memberSign.Data.IsSigned {
+		todayG = memberSign.Data.SignList[memberSign.Data.CurrDay].PrizeList[0].PrizeNum
+	}
+
+	// 获取任务id
+	url = "https://show.bilibili.com/api/activity/v2/basic-config/query"
+	s := `{"type":1}`
+	memberQuery := &MemberQuery{}
+	resp = inet.DefaultClient.APPCheckSelectPost(url, utils2.ContentType["json"], "https://mall.bilibili.com/", "", idx, strings.NewReader(s))
+	err = json.Unmarshal(resp, &memberQuery)
+
+	if err != nil {
+		fmt.Println(2, string(resp))
+		fmt.Printf(utils2.ErrMsg["json"], "MemberRegister", err.Error(), string(resp))
+		return
+	}
+	if memberQuery.Code != 0 {
+		fmt.Printf(utils2.ErrMsg["Code"], "MemberRegister", memberQuery.Code, string(resp))
+		return
+	}
+	activityId := memberQuery.Data.TaskActivityId
+	objectsGameId := memberQuery.Data.ExchangeActivityId
+	// 获取当前硬币个数
+	num1, ok := memberGold(idx, objectsGameId)
+	if ok == false {
+		return
+	}
+
+	// 做任务赚金币目录。任务每日获得55金币。有效期30天
+	url = "https://show.bilibili.com/api/activity/hercules/task/get?activityId=" + activityId
+	memberResp := MemberResp{}
+	resp = inet.DefaultClient.CheckSelect(url, idx)
+	err = json.Unmarshal(resp, &memberResp)
+
+	if err != nil {
+		fmt.Println(3, string(resp))
+		fmt.Printf(utils2.ErrMsg["json"], "MemberRegister", err.Error(), string(resp))
+		return
 	}
 
 	for _, mt := range memberResp.Data.Tasks {
-		fmt.Printf("%+v\n", mt)
 		if _, ok := active[mt.Description]; ok {
 			v := mt.Action
 			// url = "https://mall.bilibili.com/act/aicms/ab0edacaa9b.html?herculesId=htask_xborcfl2xib&rmsource=calendar_task" // 浏览欧气专区
@@ -142,17 +253,19 @@ func MemberRegister(idx int) {
 				re := regexp.MustCompile("herculesId=[A-Za-z0-9_]+")
 				herculesId := re.FindString(mt.Data.Url)
 				if herculesId == "" { //  当任务完成后即v == "receive"时，url就已经变了，匹配不到herculesId
+					fmt.Println("匹配不到herculesId。可能是接口改变")
 					continue
 				} else {
 					herculesId = strings.Replace(herculesId, "herculesId=", "", -1)
 				}
-				fmt.Println(v, herculesId)
 				t := time.Now().UnixMilli()
 				urlR := fmt.Sprintf("https://show.bilibili.com/api/activity/hercules/task/report-detail?taskId=%s&_=%d", herculesId, t) // 浏览欧气专区
 				mDispatch(urlR, idx)
-				mReceive(idx, "tx7cfe2ej2", mt.NodeId)
+				time.Sleep(time.Second * 3)
+				mReceive(idx, activityId, mt.NodeId)
 			} else if v == "receive" { // 表示任务已经完成，但还未领取奖励
-				mReceive(idx, "tx7cfe2ej2", mt.NodeId)
+				time.Sleep(time.Second)
+				mReceive(idx, activityId, mt.NodeId)
 			} else if v == "done" { // 表示任务已经完成，已领取奖励
 				continue
 			} else {
@@ -160,7 +273,10 @@ func MemberRegister(idx int) {
 			}
 		}
 	}
-
+	num2, ok := memberGold(idx, objectsGameId)
+	fmt.Printf("会员购签到完毕。今日已获得%d金币\n", num2-num1+todayG)
+	time.Sleep(time.Second * 3)
+	MemberGoodsInfo(idx)
 	// 奖励领取
 	// POST /api/activity/hercules/task/receive HTTP/1.1  {"activityId":"tx7cfe2ej2","nodeId":3452}
 	//{"code":0,"message":"SUCCESS","data":{"receiveAssocIds":[235219],"nodeId":3452,"taskId":"htask_6i0yskdmetw"},"errtag":0,"ttl":1736496434487}
@@ -181,7 +297,6 @@ func mDispatch(url string, idx int) int {
 	resp = inet.DefaultClient.CheckSelectPost(url, utils2.ContentType["json"], "https://mall.bilibili.com/", "", idx, strings.NewReader(s))
 	t := &T{}
 	err = json.Unmarshal(resp, &t)
-	fmt.Println(url, s, string(resp))
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -191,6 +306,7 @@ func mDispatch(url string, idx int) int {
 	return t.Code
 }
 
+// 412
 func mReceive(idx int, activityId string, nodeId int) int {
 	/*	url := "https://show.bilibili.com/api/activity/hercules/task/receive" //
 		req, err := http.NewRequest(http.MethodOptions, url, nil)
@@ -206,14 +322,13 @@ func mReceive(idx int, activityId string, nodeId int) int {
 		fmt.Println(",,,", string(body))*/
 
 	// 需要access_key
-	url := "https://show.bilibili.com/api/activity/hercules/task/receive"
+	url := "https://show.bilibili.com/api/activity/hercules/task/receive" // 获取id信息
 	s := fmt.Sprintf(`{"activityId":"%s","nodeId":%d}`, activityId, nodeId)
 	mReca := mRecA{}
 	resp := inet.DefaultClient.APPCheckSelectPost(url, "", "https://mall.bilibili.com/", "", idx, strings.NewReader(s))
 	err := json.Unmarshal(resp, &mReca)
-	fmt.Println(url, s, string(resp))
 	if err != nil {
-		fmt.Println(err)
+		fmt.Printf(utils2.ErrMsg["json"], "mReceive", err.Error(), string(resp))
 		return -1
 	}
 	url = "https://show.bilibili.com/api/activity/hercules/task/reward/query"
@@ -223,15 +338,41 @@ func mReceive(idx int, activityId string, nodeId int) int {
 	err = json.Unmarshal(resp, &mRecq)
 	fmt.Println(url, s, string(resp))
 	if err != nil {
-		fmt.Println(err)
+		fmt.Printf(utils2.ErrMsg["json"], "mReceive", err.Error(), string(resp))
 		return -1
 	}
-	if mRecq.Code != 0 {
-		fmt.Printf("%+v", mRecq)
+	if mRecq.Code == 8004070020 { // "前方拥堵，请稍后重试",
+		stop++
+		if stop > 3 {
+			return -1
+		}
+		time.Sleep(time.Second * 3)
+		return mReceive(idx, activityId, nodeId)
+	} else if mRecq.Code != 0 {
+		fmt.Printf(utils2.ErrMsg["Code"], "mReceive", mRecq.Code, string(resp))
 		return -1
 	}
 	fmt.Println("已领取")
 	return 0
+}
+
+// 查看金币数量
+func memberGold(idx int, objectsGameId string) (num int, re bool) {
+	url := "https://show.bilibili.com/api/activity/v2/calendar/chip"
+	s := fmt.Sprintf(`{"objectsGameId":"%s"}`, objectsGameId)
+	resp := inet.DefaultClient.APPCheckSelectPost(url, "", "https://mall.bilibili.com/", "", idx, strings.NewReader(s))
+	memberChip := &MemberChip{}
+	err := json.Unmarshal(resp, &memberChip)
+	if err != nil {
+		fmt.Println(4, string(resp))
+		fmt.Printf(utils2.ErrMsg["json"], "MemberRegister", err.Error(), string(resp))
+		return
+	}
+	if memberChip.Code != 0 {
+		fmt.Printf(utils2.ErrMsg["Code"], "watchExp", memberChip.Code, string(resp))
+		return
+	}
+	return memberChip.Data.EffectiveChips, true
 }
 
 func BlindBoxRegister(idx int) {

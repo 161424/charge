@@ -139,8 +139,8 @@ func BigPoint(idx int) {
 						if code == 0 {
 							// 执行任务
 							if task.Task_code == "ogvwatchnew" {
-								// 10分钟观影任务
-								watchRandomEp(idx)
+								// 10分钟观影任务 ,看视频40积分
+								WatchRandomEp(idx)
 							} else if task.Task_code == "vipmallview" {
 								// 会员购
 								if VipMallView(idx) == 0 {

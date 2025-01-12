@@ -7,6 +7,7 @@ import (
 	"os"
 	"strings"
 	"testing"
+	"time"
 )
 
 func TestTask(t *testing.T) {
@@ -61,4 +62,10 @@ func TestTask2(t *testing.T) {
 
 func TestWatchExp(t *testing.T) {
 	common.WatchExp(3)
+}
+
+func TestWatchRandomEp(t *testing.T) {
+	common.WatchRandomEp(0)
+	time.Sleep(10 * time.Minute)
+	time.Sleep(10 * time.Second)
 }

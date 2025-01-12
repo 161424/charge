@@ -129,6 +129,7 @@ func (d *defaultClient) CheckSelect(url string, idx int) []byte {
 	if err != nil {
 		return nil
 	}
+
 	req.Header.Set("User-Agent", config.Cfg.WebUserAgent)
 	req.Header.Set("Connection", "keep-alive")
 	req.Header.Set("Cookie", d.Cks[idx].Ck)
@@ -174,6 +175,41 @@ func (d *defaultClient) CheckSelectPost(url string, contentType, referer, ua str
 	d.RunT()
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
+	return body
+}
+
+func (d *defaultClient) APPCheckSelect(url, ua, re string, idx int) []byte {
+	if d.Cks[idx].Access_key == "" {
+		return nil
+	}
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return nil
+	}
+	if ua == "" {
+		ua = config.Cfg.WebUserAgent
+	}
+	if re != "" {
+		req.Header.Set("Referer", re)
+	}
+	req.Header.Set("User-Agent", ua)
+	req.Header.Set("Connection", "keep-alive")
+	req.Header.Set("Cookie", d.Cks[idx].Ck+"; access_key="+d.Cks[idx].Access_key)
+	req.Header.Set("Accept", "application/json, text/plain, */*")
+	req.Header.Set("Accept-Language", "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7")
+	resp, err := d.Client.Do(req)
+	if err != nil {
+		fmt.Println(err.Error())
+		return nil
+	}
+	d.RunTime[d.Cks[idx].Uid]++
+	d.RunT()
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Println(err.Error())
+		return nil
+	}
 	return body
 }
 
@@ -317,8 +353,8 @@ func (d *defaultClient) HandCheckAlive() {
 	d.AliveNum = len(d.Cks)
 	for idx := 0; idx < len(d.Cks); idx++ {
 		uid = utils.CutUid(d.Cks[idx].Ck)
-		code := Refresh(idx)
-		if code == 0 { // 0 表示登录或ck刷新成功，无需再确定活性
+		code := Refresh(idx) // Refresh中的刷新函数会刷新失败，报错-101，但是仍能访问个人空间。想当于失效了一半，但是在访问某些内容会-101未登录。可以看出csrf可用，但别的风控失效
+		if code == 0 {       // 0 表示登录或ck刷新成功，无需再确定活性
 			d.Cks[idx].Alive = true
 			msg += fmt.Sprintf("%d. %s又苟过一天. 存活状态：%t\n", idx, uid, d.Cks[idx].Alive)
 			continue
@@ -347,6 +383,7 @@ func (d *defaultClient) HandCheckAlive() {
 			d.AliveNum--
 			continue
 		}
+		// refresh可能返回-101未登录，但是在访问个人空间时，仍可以访问。
 		if d.Unav(unav, idx) {
 			msg += fmt.Sprintf("%d. %s又苟过一天. 存活状态：%t\n", idx, uid, d.Cks[idx].Alive)
 		} else {

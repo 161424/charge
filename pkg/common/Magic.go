@@ -46,7 +46,7 @@ type mgR struct {
 	Errtag  int         `json:"errtag"M`
 }
 
-// 也不知道成功了没有
+// 好像签到成功了
 func MagicRegister(idx int) {
 	url := "https://mall.bilibili.com/magic-c/sign/achieve"
 	//reqBody := url2.Values{}

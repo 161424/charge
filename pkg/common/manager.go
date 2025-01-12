@@ -1,6 +1,7 @@
 package common
 
 import (
+	"charge/config"
 	"charge/inet"
 	"charge/sender"
 	"fmt"
@@ -45,6 +46,14 @@ func DailyTask() func() {
 				}
 			}
 
+			// app内容，需要access_key
+			if config.Cfg.BUserCk[idx].Access_key != "" {
+				// 会员购签到
+				MemberRegister(idx)
+				// 魔晶签到
+				MagicRegister(idx)
+			}
+
 			// 银瓜子兑换硬币？  银瓜子快绝版了，没啥用了
 
 			// shareAndWatch
@@ -68,8 +77,6 @@ func DailyTask() func() {
 				BigExperience(idx)
 				// 大会员线下活动监听
 
-				// 看视频40经验
-				watchRandomEp(idx)
 			}
 
 			// 风纪会员栏目

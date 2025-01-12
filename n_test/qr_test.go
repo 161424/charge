@@ -13,7 +13,9 @@ func TestQr(t *testing.T) {
 }
 
 func TestRe(t *testing.T) {
-	inet.Refresh(3)
+	inet.Refresh(0)
+	re := inet.DefaultClient.CheckSelect("https://api.bilibili.com/x/web-interface/nav", 0)
+	fmt.Printf(string(re))
 }
 
 func TestReh(t *testing.T) {

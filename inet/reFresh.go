@@ -47,9 +47,9 @@ var uid string
 var csrf string
 
 // 检测ck是否需要刷新
-func Refresh(idx int) int {
 
-	url := "https://passport.bilibili.com/x/passport-login/web/cookie/info?csrf=" // 检查是否需要刷新
+func Refresh(idx int) int {
+	url := "https://passport.bilibili.com/x/passport-login/web/cookie/info?csrf=" // 检查是否需要刷新。代表csrf可用
 	resp := DefaultClient.CheckSelect(url, idx)
 	t := &T{}
 	err := json.Unmarshal(resp, t)
@@ -94,10 +94,12 @@ func Refresh(idx int) int {
 func refresh(idx int, token string) bool {
 	correspondPath := CorrespondPath()
 	if correspondPath == "" {
+		fmt.Println("correspondPath is empty")
 		return false
 	}
 	refreshCsrf := RefreshCsrf(correspondPath, idx)
 	if refreshCsrf == "" {
+		fmt.Println("refreshCsrf is empty")
 		return false
 	}
 	refreshTokenOld := token // 这一步必须保存旧的 refresh_token 备用
@@ -114,10 +116,11 @@ func refresh(idx int, token string) bool {
 	rt := &Rt{}
 	err := json.Unmarshal(refreshToken, rt)
 	if err != nil {
-		fmt.Println(string(refreshToken), rt)
+		fmt.Printf(utils.ErrMsg["json"], "refresh", err.Error(), string(refreshToken))
 		return false
 	}
 	if rt.Code != 0 || len(cookie) == 0 {
+		fmt.Printf(utils.ErrMsg["Code"], "refresh", rt.Code, string(refreshToken))
 		return false
 	}
 
@@ -199,10 +202,11 @@ func refreshConfirm(csrf, refreshToken, ck string) int {
 	rc := &rC{}
 	err := json.Unmarshal(resp, rc)
 	if err != nil {
+		fmt.Printf(utils.ErrMsg["json"], "refreshConfirm", err.Error(), string(refreshToken))
 		return -1
 	}
 	if rc.Code != 0 {
-		fmt.Println(rc.Code, rc.Message)
+		fmt.Printf(utils.ErrMsg["Code"], "refreshConfirm", rc.Code, string(resp))
 		return rc.Code
 	} else {
 		fmt.Println("刷新成功")

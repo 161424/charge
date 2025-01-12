@@ -105,37 +105,6 @@ func RandomTime() (re []int) {
 	return
 }
 
-// 不知道干咩用的
-func watchRandomEp(idx int) {
-	url := "https://api.bilibili.com/pgc/activity/deliver/material/receive"
-	b := BangumiList.Random()
-	reqBody := url2.Values{}
-	reqBody.Set("access_key", "c36372f25f8cbd568b7a506e86c65711CjA5U6SXRli12mz7hDToIAIIAbcix8ujBSoTKKQGWvz8h1krr5eQ9rEimbUu2vXSNzMSVldPRDZQWGo2UmphdXBEa0NTTzZmNjhEUkU0TWs0cmwzeENZYTlwS2ptcXk1dmk4WGRMSEpsXzVJWU1kTFJ5NmFvbWc5ZG5HN3NhSkNydGlucW1POERBIIEC")
-	reqBody.Set("spmid", "united.player-video-detail.0.0")
-	reqBody.Set("season_id", strconv.Itoa(BangumiList.Season))
-	reqBody.Set("activity_code", "")
-	reqBody.Set("ep_id", strconv.Itoa(b.Id))
-	reqBody.Set("from_spmid", "search.search-result.0.0")
-	resp := inet.DefaultClient.CheckSelectPost(url, utils.ContentType["x"], "", "", idx, strings.NewReader(reqBody.Encode()))
-	fmt.Printf("正在观看:%s·《%s》\n", BangumiList.Name, b.Show_title)
-	watchReceiveResp := &WatchReceiveResp{}
-	err := json.Unmarshal(resp, &watchReceiveResp)
-	if err != nil {
-		fmt.Printf(utils.ErrMsg["json"], "watchRandomEp", err.Error(), string(resp))
-		return
-	}
-	if watchReceiveResp.Code != 0 {
-		fmt.Printf("观看视频%s失败.res Code:%d,res Message:%s", BangumiList.Name, watchReceiveResp.Code, watchReceiveResp.Message)
-
-	}
-	// 异步执行
-	go func() {
-		time.Sleep(10 * time.Minute)
-		WatchMovie(idx, watchReceiveResp.Data.WatchCountDownCfg.Token, watchReceiveResp.Data.WatchCountDownCfg.TaskId)
-	}()
-
-}
-
 func WatchExp(idx int) int {
 	url := "https://api.bilibili.com/x/report/web/heartbeat"
 	reqBody := url2.Values{}
@@ -160,8 +129,41 @@ func WatchExp(idx int) int {
 	return re.Code
 }
 
-func WatchMovie(idx int, token, taskId string) int {
+// 不知道干咩用的
+func WatchRandomEp(idx int) {
+	url := "https://api.bilibili.com/pgc/activity/deliver/material/receive"
+	b := BangumiList.Random()
+	reqBody := url2.Values{}
+	reqBody.Set("access_key", "c36372f25f8cbd568b7a506e86c65711CjA5U6SXRli12mz7hDToIAIIAbcix8ujBSoTKKQGWvz8h1krr5eQ9rEimbUu2vXSNzMSVldPRDZQWGo2UmphdXBEa0NTTzZmNjhEUkU0TWs0cmwzeENZYTlwS2ptcXk1dmk4WGRMSEpsXzVJWU1kTFJ5NmFvbWc5ZG5HN3NhSkNydGlucW1POERBIIEC")
+	reqBody.Set("spmid", "united.player-video-detail.0.0")
+	reqBody.Set("season_id", strconv.Itoa(BangumiList.Season))
+	reqBody.Set("activity_code", "")
+	reqBody.Set("ep_id", strconv.Itoa(b.Id))
+	reqBody.Set("from_spmid", "search.search-result.0.0")
+	resp := inet.DefaultClient.CheckSelectPost(url, utils.ContentType["x"], "", "", idx, strings.NewReader(reqBody.Encode()))
+	fmt.Printf("正在观看:%s·《%s》\n", BangumiList.Name, b.Show_title)
+	watchReceiveResp := &WatchReceiveResp{}
+	err := json.Unmarshal(resp, &watchReceiveResp)
+	if err != nil {
+		fmt.Printf(utils.ErrMsg["json"], "WatchRandomEp", err.Error(), string(resp))
+		return
+	}
+	if watchReceiveResp.Code != 0 {
+		fmt.Printf("观看视频%s失败.res Code:%d,res Message:%s", BangumiList.Name, watchReceiveResp.Code, watchReceiveResp.Message)
 
+	}
+	// 异步执行
+	go func() {
+		time.Sleep(10 * time.Minute)
+		code := WatchMovie(idx, watchReceiveResp.Data.WatchCountDownCfg.Token, watchReceiveResp.Data.WatchCountDownCfg.TaskId)
+		if code == 0 {
+			fmt.Println("10分钟视频观看完毕，获得40积分")
+		}
+	}()
+
+}
+
+func WatchMovie(idx int, token, taskId string) int {
 	t := time.Now().Unix()
 	tm := fmt.Sprintf("%d", time.Now().UnixMilli())
 	url := "https://api.bilibili.com/pgc/activity/deliver/task/complete"
@@ -181,12 +183,13 @@ func WatchMovie(idx int, token, taskId string) int {
 	re := &reSign{}
 	err := json.Unmarshal(resp, re)
 	if err != nil {
-		fmt.Printf(utils.ErrMsg["json"], "watchExp", err.Error(), string(resp))
+		fmt.Printf(utils.ErrMsg["json"], "WatchMovie", err.Error(), string(resp))
 		return -1
 	}
 	if re.Code != 0 {
-		fmt.Printf(utils.ErrMsg["Code"], "watchExp", re.Code, string(resp))
+		fmt.Printf(utils.ErrMsg["Code"], "WatchMovie", re.Code, string(resp))
 	}
+
 	return re.Code
 }
 
