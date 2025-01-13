@@ -63,10 +63,11 @@ func ListenUpForLottery(Uid []string, cmp chan struct{}) []string {
 				if strings.Contains(his, item.OpusID) {
 					skip = true
 				}
-				fmt.Printf("正在查看第【%d】页内容，是否跳过【%t】。\n", counter, skip)
+				//fmt.Printf("正在查看第【%d】页内容，是否跳过【%t】。\n", counter, skip)
 				if skip {
 					continue
 				}
+
 				f := DaleyTime(time.Now()) // 做个延时，减少风控几率
 				// https://www.bilibili.com/opus/1009676614375571474
 				_url := SpaceUrl + item.OpusID
@@ -81,7 +82,7 @@ func ListenUpForLottery(Uid []string, cmp chan struct{}) []string {
 				if len(lTime) > 10 {
 					lTime = lTime[:10] + "..."
 				}
-				fmt.Printf("文章id：%s；文章标题《%s》；%s\n", item.OpusID, item.Content, lTime)
+				fmt.Printf("正在查看第【%d】页内容。文章id：%s；文章标题《%s》；%s\n", counter, item.OpusID, item.Content, lTime)
 				inet.DefaultClient.ArticleLike(item.OpusID)
 				doc.Find(".opus-module-content > p").Each(func(i int, s *goquery.Selection) {
 					//fmt.Println(1, s.Get(i), s.Text())
@@ -138,7 +139,7 @@ func ListenUpForLottery(Uid []string, cmp chan struct{}) []string {
 			for _, v := range opus {
 				lotteryRepetitionRate += v
 			}
-			fmt.Printf("目前总取到Lottery个数：%d，重复率是%f。\n", len(opus), float64(lotteryRepetitionRate)/float64(len(opus)))
+			fmt.Printf("目前统计到%d个Lottery，重复率是%f。\n", len(opus), float64(lotteryRepetitionRate)/float64(len(opus)))
 		}
 		go func() {
 			<-cmp

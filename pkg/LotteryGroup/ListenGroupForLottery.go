@@ -91,7 +91,7 @@ func ReadGroup(size int) {
 		}
 	}
 	lastTime = groupContent[0].Timestamp //  完全执行完毕后才会记录lastTime
-	fmt.Println("ListenLotteryGroup complete。从lottery(ByGroup)获取到的有效动态数:", ExecFreq, time.Unix(lastTime, 0))
+	fmt.Printf("ListenLotteryGroup complete。从lottery(ByGroup)获取到的有效动态数:【%d】，上一次读取Group时间是: 【%s】\n", ExecFreq, time.Unix(lastTime, 0).Format("2006-01-02 15:04:05"))
 	if ExecFreq > 0 {
 		//monitor.Desp = fmt.Sprintf("从group获的【%d】个lottery", ExecFreq)
 		monitor.Desp = fmt.Sprintf("%slottery(ByGroup)新增【%d】个lottery。", t.Format("2006-01-02"), ExecFreq)

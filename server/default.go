@@ -94,9 +94,9 @@ func (tw *TimingWheel) AddTimer(duration time.Duration, isCircle bool, execType 
 	tw.buckets[position].PushBack(timer)
 
 	// 如果任务即将到期（在当前槽或下一个槽），则立即处理，否则等待时间轮转动到该槽
-	if firstRun == true {
-		go tw.processTimersAtPosition(position) // 采用相对时间会直接执行一次
-	}
+	//if firstRun == true {
+	//	go tw.processTimersAtPosition(position) // 采用相对时间会直接执行一次
+	//}
 
 }
 

@@ -14,7 +14,6 @@ import (
 // 2. 积分兑换
 
 var task_code = map[string]string{"dress-view": "浏览装扮商城主页", "vipmallview": "浏览会员购页面10秒", "filmtab": "浏览影视频道页10秒", "ogvwatchnew": "观看剧集内容"}
-var free_point = 75
 
 type VipTask struct {
 	Code    int

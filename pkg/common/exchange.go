@@ -88,9 +88,6 @@ func ExchangePoint(idx int) int {
 		}
 		for j := 0; j < len(sku.Data.Skus); j++ {
 			_iurl := fmt.Sprintf(iurl, sku.Data.Skus[j].Token, config.Cfg.BUserCk[idx].Access_key)
-			//if isMonday {
-			//	exchangeGoodsNotify(_iurl, idx)
-			//}
 
 			skuInfo := &SkuInfo{}
 			resp := inet.DefaultClient.CheckSelect(_iurl, idx)
@@ -104,19 +101,22 @@ func ExchangePoint(idx int) int {
 				continue
 			}
 			s := ""
-			for i := 0; i < len(skuInfo.Data.Rights_detail); i++ {
-				if skuInfo.Data.Rights_detail[i].Type == "text" {
-					if len(skuInfo.Data.Rights_detail[i].Content) <= 2 {
+			for k := 0; k < len(skuInfo.Data.Rights_detail); k++ {
+				if skuInfo.Data.Rights_detail[k].Type == "text" {
+					if len(skuInfo.Data.Rights_detail[k].Content) <= 2 {
 						continue
 					}
-					s += skuInfo.Data.Rights_detail[i].Content
+					if strings.Contains(skuInfo.Data.Rights_detail[k].Content, "7天试用装扮") {
+						continue
+					}
+					s += skuInfo.Data.Rights_detail[k].Content
 				}
 			}
 
 			notifyDesp += fmt.Sprintf("- 【%s】:%s\n", skuInfo.Data.Title, s)
 
 			// 商品页面
-			fmt.Println(skuInfo.Data.Title, skuInfo.Data.Token)
+			//fmt.Println(skuInfo.Data.Title, skuInfo.Data.Token)
 			if _, ok := goods[skuInfo.Data.Title]; ok == false {
 				continue
 			}
