@@ -41,6 +41,18 @@ func CutCsrf(s string) string {
 	return nre[1]
 }
 
+func RandomStr(num int, toLow bool) string {
+	chars := "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	var result uint8
+	for i := 0; i < num; i++ {
+		result += chars[rand.Intn(62)]
+	}
+	if toLow == true {
+		return strings.ToLower(string(result))
+	}
+	return string(result)
+}
+
 // 只能睡眠整数秒，放弃
 //func Sleep(t time.Duration) {
 //	rand.Seed(time.Now().Unix()) //Seed生成的随机数

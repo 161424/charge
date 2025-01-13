@@ -43,7 +43,7 @@ type mgR struct {
 	Code    int         `json:"code"`
 	Message string      `json:"message"`
 	Data    interface{} `json:"data"`
-	Errtag  int         `json:"errtag"M`
+	Errtag  int         `json:"errtag"`
 }
 
 // 好像签到成功了
@@ -80,5 +80,13 @@ func MagicRegister(idx int) {
 	}
 	//url = "https://mall.bilibili.com/magic-c/sign/detail"
 	//  好像只有一个请求？
-	fmt.Println(mgr, string(resp))
+	pr := ""
+	for k := range mgDetail.Data.SignConfigs {
+		if mgDetail.Data.SignConfigs[k].Achieve == 1 && (k == len(mgDetail.Data.SignConfigs) || mgDetail.Data.SignConfigs[k+1].Achieve == 2) {
+			for _, m := range mgDetail.Data.SignConfigs[k].Imgs {
+				pr += fmt.Sprintf("%s*%d;", m.Img, m.Count)
+			}
+		}
+	}
+	fmt.Println("今日魔晶签到完毕，获得奖励：", pr)
 }

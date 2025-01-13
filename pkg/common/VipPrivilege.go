@@ -6,7 +6,9 @@ import (
 	"charge/utils"
 	"encoding/json"
 	"fmt"
+	"math/rand"
 	url2 "net/url"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -123,7 +125,6 @@ func BCoinState(idx int) string {
 		return fmt.Sprintf(utils.ErrMsg["code"], "B币券监听", bcS.Code, string(resp))
 	}
 	// code==0，但是message=“内部错误”
-	fmt.Printf("%+v\n", bcS)
 	if len(bcS.Data.Result) == 0 || bcS.Data.Result[0].CouponDueTime < time.Now().UnixMilli() {
 		return BCoinReceive(idx)
 	}
@@ -192,4 +193,58 @@ func BCoinExchangeForUp(idx int) string {
 	}
 
 	return fmt.Sprintf("BCoinExchangeForUp出现未知错误。%s，%p", string(resp), cU)
+}
+
+func BCoinExchangeForBattery(idx int) int {
+	pay_bp := strconv.Itoa(5 * 1000)
+	url := "https://api.live.bilibili.com/xlive/revenue/v1/order/createOrder"
+	reqBody := url2.Values{}
+	reqBody.Set("platform", "pc")
+	reqBody.Set("pay_bp", pay_bp)
+	reqBody.Set("context_id", "10231093")
+	reqBody.Set("context_type", "1")
+	reqBody.Set("goods_id", "1")
+	reqBody.Set("goods_num", "5")
+	reqBody.Set("goods_type", "2")
+	reqBody.Set("ios_bp", "0")
+	reqBody.Set("common_bp", pay_bp)
+	reqBody.Set("csrf_tokens_bp", inet.DefaultClient.Cks[idx].Csrf)
+	reqBody.Set("csrf", inet.DefaultClient.Cks[idx].Csrf)
+	reqBody.Set("visit_id", createVisitId())
+	pR := &pReceive{}
+	resp := inet.DefaultClient.CheckSelectPost(url, "", "https://www.bilibili.com/", "", idx, strings.NewReader(reqBody.Encode()))
+	err := json.Unmarshal(resp, &pR)
+	if err != nil {
+		fmt.Printf(utils.ErrMsg["json"], "ExchangePoint", err.Error(), string(resp))
+		return -1
+	}
+	if pR.Code != 0 {
+		fmt.Printf(utils.ErrMsg["code"], "exchangePoint", pR.Code, pR.Message)
+		return pR.Code
+	}
+	fmt.Println("用户【74】为直播间【10231093】充电成功")
+	return pR.Code
+}
+
+func createVisitId() string {
+	// 1 ~ 9
+	randomNum := rand.Intn(9) + 1
+	// 10 位随机数字字母字符串
+	randomStr := utils.RandomStr(10, true)
+	return fmt.Sprintf("%d%s0", randomNum, randomStr)
+}
+
+func BigMeeting(idx int) {
+	// 非常庞大的resp
+	url := "https://api.bilibili.com/x/vip/web/vip_center/v2?"
+	url += "access_key=&"
+	url += "csrf=&"
+	url += "act_id=334"
+	url += ""
+
+	url = "https://www.bilibili.com/blackboard/activity-g97AHtCUsb.html?"
+	url += "source_from=666.146.selfDef.slideBannerClick&native.theme=1"
+	// 目前先使用此数据。该数据由前面的url获得
+	url += `order_report_params={"exp_group_tag":"def","exp_tag":"def","material_type":"3","position_id":"13","request_id":"6bbcd7210dd62e0011c75b485e6784b8","tips_id":"89714","tips_repeat_key":"89714:13:1736751193:74199115","unit_id":"23221","vip_status":"1","vip_type":"2"}`
+
 }

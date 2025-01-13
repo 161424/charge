@@ -77,7 +77,7 @@ func DailyTask() func() {
 
 			// shareAndWatch
 
-			// like  点赞
+			// like 点赞
 
 			// manga    没漫画需求，先不做吧。漫画积分以及兑换品都会失效
 
@@ -91,7 +91,7 @@ func DailyTask() func() {
 				// BB券充电。检测到马上过期，会自动充电
 				if BCoinExpiringSoon {
 					if cks[idx].Uid == "74199115" { // 无法为自己充电，只能冲电池
-
+						BCoinExchangeForBattery(idx)
 					} else {
 						BCoinExchangeForUp(idx)
 					}
@@ -99,13 +99,15 @@ func DailyTask() func() {
 				}
 				// 10Experience
 				BigExperience(idx)
-				// 大会员线下活动监听
-
+				// 大会员线下点映会监听?
+				// 往期回顾都是图片+按钮组成
+				// 火热报名中还未找到有效数据
+				//BigMeeting(idx)
 			}
 
 			// 风纪会员栏目
 			if userInfo.Data.Is_jury == true {
-				// pass  没活动了
+				// pass 没活动了
 			}
 
 			fmt.Printf("第【%d】个账号的每日任务执行完毕\n", idx+1)
