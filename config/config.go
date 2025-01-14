@@ -3,17 +3,18 @@ package config
 import (
 	"charge/utils"
 	"fmt"
+	"github.com/jinzhu/copier"
 	"gopkg.in/yaml.v3"
 	"io"
 	"log"
 	"os"
+	"reflect"
 	"strings"
 )
 
 type config struct {
 	WebPort string `yaml:"WebPort"`
-
-	Redis struct {
+	Redis   struct {
 		Addr           string `yaml:"Addr"`
 		Port           string `yaml:"Port"`
 		Password       string `yaml:"Password"`
@@ -82,7 +83,6 @@ func init() {
 	if err != nil {
 		log.Fatalf("解析 YAML 失败: %v", err)
 	}
-
 	fmt.Println(Cfg)
 }
 
@@ -104,7 +104,7 @@ func Write() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("保存配置成功")
+	fmt.Println("config保存配置成功")
 
 }
 
@@ -144,4 +144,49 @@ func SetUck(tp string, value, uid string) {
 	}
 
 	Write()
+}
+
+func UpdateConfigExample() func() {
+	return func() {
+		newCfg := &config{}
+		err := copier.CopyWithOption(&newCfg, &Cfg, copier.Option{CaseSensitive: true, DeepCopy: true})
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+		newCfg.BUserCk = append(newCfg.BUserCk[:1], newCfg.BUserCk[len(newCfg.BUserCk):]...)
+		setDefaultValues(newCfg.BUserCk[0])
+		setDefaultValues(newCfg.DDNS)
+		setDefaultValues(newCfg.Server3)
+		setDefaultValues(newCfg.Redis)
+
+		o, err := yaml.Marshal(Cfg)
+		data, err := os.OpenFile(Path+"/config/config.example.yaml", os.O_RDWR|os.O_TRUNC, 777)
+		if err != nil {
+			log.Fatalf("读取文件失败: %v", err)
+		}
+		defer data.Close()
+		_, err = data.Write(o)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println("config.example保存配置成功")
+	}
+}
+func setDefaultValues(obj interface{}) {
+	val := reflect.ValueOf(obj).Elem()
+	typ := val.Type()
+
+	for i := 0; i < val.NumField(); i++ {
+		field := val.Field(i)
+		fieldType := typ.Field(i)
+
+		// 获取字段的零值
+		zeroValue := reflect.Zero(fieldType.Type).Interface()
+
+		// 设置字段值为零值
+		if field.CanSet() {
+			field.Set(reflect.ValueOf(zeroValue))
+		}
+	}
 }

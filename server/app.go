@@ -23,10 +23,15 @@ func Start() {
 	utils2.SetDefaultUid("")
 }
 
+var Tw *TimingWheel
+
 // 启动后端
 func Run() error {
 	router.Run()
 	tw := NewTimingWheel()
+	// 更新config配置
+	tw.AddTimer(10*time.Hour, true, 0, 24*time.Hour, true, "UpdateConfigExample", config.UpdateConfigExample())
+
 	// 600/1440  对应10点钟
 	//tw.AddTimer(10*60*time.Minute, 1, 1, "GetChargeFromMonitorDefaultUsersDynamic", getcharge.GetChargeFromMonitorDefaultUsersDynamic()) // 监听固定用户的动态
 	// 10点钟
@@ -40,7 +45,7 @@ func Run() error {
 
 	// DailyTask。每8个小时运行一次
 	tw.AddTimer(8*60*time.Minute, true, 0, 12*60*time.Minute, true, "DailyTask", common.DailyTask())
-
+	Tw = tw
 	//todo 多账号监听up充电
 	//todo
 	fmt.Println("执行AddTimer")

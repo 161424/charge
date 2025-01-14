@@ -1,5 +1,5 @@
 /config/config.yaml
-/pkg/ql/
+/ql/
 /data/
 /dao/qrCode/
 /ipv6_test/
