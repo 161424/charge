@@ -95,7 +95,6 @@ func Start() {
 // 有一些bug，在覆盖yaml后，yaml总会多一些重复的内容
 func Write() {
 	o, err := yaml.Marshal(Cfg)
-	fmt.Printf("%+v", Cfg)
 	data, err := os.OpenFile(Path+"/config/config.yaml", os.O_RDWR|os.O_TRUNC, 777)
 	if err != nil {
 		log.Fatalf("读取文件失败: %v", err)

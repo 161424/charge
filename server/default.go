@@ -131,7 +131,7 @@ func (tw *TimingWheel) processTimersAtPosition(position int) {
 		if time.Now().Minute()+time.Now().Hour()*60+1 >= timer.expiry {
 			go timer.callback() // 在新goroutine中执行回调，以避免阻塞时间轮
 			next := e.Next()
-			fmt.Println("当前正在执行任务：" + timer.desp)
+			fmt.Printf("现在是 %s，当前正在执行任务【%s】", time.Now().Format(time.DateTime), timer.desp)
 			if timer.isCircle { // 24小时一循环
 				tw.AddTimer((timer.circleTime+timer.execTime)%(24*time.Hour), timer.isCircle, timer.execType, timer.execTime, false, timer.desp, timer.callback)
 			} else {

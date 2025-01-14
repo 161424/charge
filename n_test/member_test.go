@@ -18,9 +18,9 @@ func TestMember(t *testing.T) {
 	//}
 	//fmt.Println(memberSign)
 
-	common.MemberRegister(0)
+	common.MemberRegister(3)
 }
 
 func TestMagicRegister(t *testing.T) {
-	common.MagicRegister(0)
+	common.MagicRegister(3)
 }

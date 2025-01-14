@@ -1,10 +1,10 @@
 package common
 
 import (
-	"charge/config"
 	"charge/inet"
 	"charge/sender"
 	"fmt"
+	"math/rand"
 	"time"
 )
 
@@ -14,7 +14,7 @@ type note struct {
 }
 
 var Note note
-
+var User = map[string]UserInfo{} //
 func init() {
 	go func() {
 		Note = note{}
@@ -52,6 +52,7 @@ func DailyTask() func() {
 			}
 			// userinfo
 			userInfo := GetUserInfo(idx) // 获取user基本信息
+			User[cks[idx].Uid] = *userInfo
 			if userInfo.Message != "" {
 				Note.AddString(userInfo.Message)
 			}
@@ -67,14 +68,14 @@ func DailyTask() func() {
 				t := time.UnixMilli(userInfo.Data.VipDueDate)
 				t1 := t.Format("2006-01-02")
 				t2 := int(t.Sub(time.Now()).Hours() / 24)
-				Note.AddString("尊敬的 %s-【%s】您好,您的大会员在 %s 到期，还剩 %d 天。", userInfo.Data.VipLabel.Text, userInfo.Data.Uname,
+				Note.AddString("尊敬的 %s-【%s】您好,您的大会员在 %s 到期，还剩 %d 天。\n", userInfo.Data.VipLabel.Text, userInfo.Data.Uname,
 					t1, t2)
 			} else {
-				Note.AddString("尊敬的【%s】您好。", userInfo.Data.Uname)
+				Note.AddString("尊敬的【%s】您好。\n", userInfo.Data.Uname)
 			}
 
 			if userInfo.Data.Wallet.BcoinBalance != 0 {
-				Note.AddString("您共有%d个B币，其中大会员赠送的B币有%d个", userInfo.Data.Wallet.BcoinBalance, userInfo.Data.Wallet.CouponBalance)
+				Note.AddString("您共有%d个B币，其中大会员赠送的B币有%d个\n", userInfo.Data.Wallet.BcoinBalance, userInfo.Data.Wallet.CouponBalance)
 			}
 			// Experience  登录和观看视频的10经验不知道怎么搞
 			// coin
@@ -94,13 +95,11 @@ func DailyTask() func() {
 				continue
 			}
 
-			// app内容，需要access_key
-			if config.Cfg.BUserCk[idx].Access_key != "" {
-				// 会员购签到
-				MemberRegister(idx)
-				// 魔晶签到
-				MagicRegister(idx)
-			}
+			// 会员购签到
+			MemberRegister(idx)
+
+			// 魔晶签到
+			MagicRegister(idx)
 
 			// 银瓜子兑换硬币？  银瓜子快绝版了，没啥用了
 
@@ -143,11 +142,28 @@ func DailyTask() func() {
 			Note.Once = false
 
 		}
+		//  使用随机账户查看信息
+		if k := randomCk(len(cks)); k >= 0 {
+			// 会员购兑换物品通知
+			MemberGoodsInfo(k)
+		}
+
+		// 每日远程通知一次
 		if Note.Once {
 			fmt.Println(Note.String())
 		}
 
 	}
+}
+
+func randomCk(num int) int {
+	for i := 0; i < num; i++ {
+		k := rand.Intn(num)
+		if inet.DefaultClient.Cks[k].Alive == true {
+			return k
+		}
+	}
+	return -1
 }
 
 // https://passport.bilibili.com/x/passport-login/web/cookie/info?web_location=333.1296&csrf=731d82eaf23deac60ab3516967a0107a

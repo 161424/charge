@@ -168,10 +168,8 @@ func WatchMovie(idx int, token, taskId string) int {
 	tm := fmt.Sprintf("%d", time.Now().UnixMilli())
 	url := "https://api.bilibili.com/pgc/activity/deliver/task/complete"
 	reqBody := url2.Values{}
-	//reqBody.Set("access_key", "c36372f25f8cbd568b7a506e86c65711CjA5U6SXRli12mz7hDToIAIIAbcix8ujBSoTKKQGWvz8h1krr5eQ9rEimbUu2vXSNzMSVldPRDZQWGo2UmphdXBEa0NTTzZmNjhEUkU0TWs0cmwzeENZYTlwS2ptcXk1dmk4WGRMSEpsXzVJWU1kTFJ5NmFvbWc5ZG5HN3NhSkNydGlucW1POERBIIEC")
 	reqBody.Set("csrf", inet.DefaultClient.Cks[idx].Csrf)
 	reqBody.Set("timestamp", tm)
-	//reqBody.Set("appkey", "1d8b6e7d45233436")
 	reqBody.Set("task_id", taskId)                   //
 	reqBody.Set("task_sign", GetTaskSign(tm, token)) // md5(`${timestamp}#df2a46fd53&${token}`)
 	reqBody.Set("token", token)                      //
@@ -187,7 +185,7 @@ func WatchMovie(idx int, token, taskId string) int {
 		return -1
 	}
 	if re.Code != 0 {
-		fmt.Printf(utils.ErrMsg["Code"], "WatchMovie", re.Code, string(resp))
+		fmt.Printf(utils.ErrMsg["code"], "WatchMovie", re.Code, string(resp))
 	}
 
 	return re.Code

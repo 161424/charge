@@ -47,29 +47,18 @@ type mgR struct {
 }
 
 // 好像签到成功了
-// 每周一刷新签到
-func MagicRegister(idx int) {
-	url := "https://mall.bilibili.com/magic-c/sign/detail" // 获取taskId
-	mgDetail := &MgDetail{}
-	resp := inet.DefaultClient.APPCheckSelectPost(url, "", "https://mall.bilibili.com/neul-next/index.html?noTitleBar=1&from=newhomepage&page=magic-list_actSquare&track_id=mall_home_tab&msource=mall_home_mine&outsideMall=no",
-		"", idx, nil)
-	err := json.Unmarshal(resp, mgDetail)
-	if err != nil {
-		fmt.Printf(utils.ErrMsg["json"], "getAidByRecommend", err.Error(), string(resp))
-		return
-	}
-	if mgDetail.Code != 0 {
-		fmt.Printf(utils.ErrMsg["code"], "getAidByRecommend", mgDetail.Code, string(resp))
-		return
-	}
 
-	url = "https://mall.bilibili.com/magic-c/sign/achieve"
+func MagicRegister(idx int) {
+	// 任务id会进行刷新
+	taskId := magicRegister(idx, false)
+
+	url := "https://mall.bilibili.com/magic-c/sign/achieve"
 	//reqBody := url2.Values{}
-	s := fmt.Sprintf(`{"taskId":"%s"}`, mgDetail.Data.TaskId)
-	resp = inet.DefaultClient.APPCheckSelectPost(url, "", "https://mall.bilibili.com/neul-next/index.html?noTitleBar=1&from=mall_home_mine&page=magic-list_actSquare&track_id=mall_home_tab&msource=bilibiliapp&outsideMall=no",
+	s := fmt.Sprintf(`{"taskId":"%s"}`, taskId)
+	resp := inet.DefaultClient.CheckSelectPost(url, "", "https://mall.bilibili.com/neul-next/index.html?noTitleBar=1&from=mall_home_mine&page=magic-list_actSquare&track_id=mall_home_tab&msource=bilibiliapp&outsideMall=no",
 		"", idx, strings.NewReader(s))
 	mgr := &mgR{}
-	err = json.Unmarshal(resp, mgr)
+	err := json.Unmarshal(resp, mgr)
 	if err != nil {
 		fmt.Printf(utils.ErrMsg["json"], "getAidByRecommend", err.Error(), string(resp))
 		return
@@ -78,15 +67,37 @@ func MagicRegister(idx int) {
 		fmt.Printf(utils.ErrMsg["code"], "getAidByRecommend", mgr.Code, mgr.Message)
 		return
 	}
-	//url = "https://mall.bilibili.com/magic-c/sign/detail"
-	//  好像只有一个请求？
-	pr := ""
-	for k := range mgDetail.Data.SignConfigs {
-		if mgDetail.Data.SignConfigs[k].Achieve == 1 && (k == len(mgDetail.Data.SignConfigs) || mgDetail.Data.SignConfigs[k+1].Achieve == 2) {
-			for _, m := range mgDetail.Data.SignConfigs[k].Imgs {
-				pr += fmt.Sprintf("%s*%d;", m.Name, m.Count)
+
+	// 第二次访问是为了获取签到后的数据
+	magicRegister(idx, true)
+
+}
+
+func magicRegister(idx int, note bool) string {
+	url := "https://mall.bilibili.com/magic-c/sign/detail" // 获取taskId
+	mgDetail := &MgDetail{}
+	resp := inet.DefaultClient.CheckSelectPost(url, "", "https://mall.bilibili.com/neul-next/index.html?noTitleBar=1&from=newhomepage&page=magic-list_actSquare&track_id=mall_home_tab&msource=mall_home_mine&outsideMall=no",
+		"", idx, nil)
+	err := json.Unmarshal(resp, mgDetail)
+	if err != nil {
+		fmt.Printf(utils.ErrMsg["json"], "getAidByRecommend", err.Error(), string(resp))
+		return ""
+	}
+	if mgDetail.Code != 0 {
+		fmt.Printf(utils.ErrMsg["code"], "getAidByRecommend", mgDetail.Code, string(resp))
+		return ""
+	}
+	if note {
+		pr := ""
+		for k := range mgDetail.Data.SignConfigs {
+			if mgDetail.Data.SignConfigs[k].Achieve == 1 && (k == len(mgDetail.Data.SignConfigs) || mgDetail.Data.SignConfigs[k+1].Achieve == 2) {
+				for _, m := range mgDetail.Data.SignConfigs[k].Imgs {
+					pr += fmt.Sprintf("%s*%d;", m.Name, m.Count)
+				}
+				break
 			}
 		}
+		fmt.Println("今日魔晶签到完毕，获得奖励: ", pr)
 	}
-	fmt.Println("今日魔晶签到完毕，获得奖励：", pr)
+	return mgDetail.Data.TaskId
 }
