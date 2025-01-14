@@ -1,0 +1,41 @@
+redis:
+  Addr:  ""
+  Password: ""
+  Port: ""
+  IsIpv6: false
+  StaticIpv6Addr: "2409:8a44:4b12:c6e0:92bc:2bba:ec96:4424"
+  DynamicIpv6: ""
+  Id_rsa: ""
+
+mongodb:
+  Addr:     ""
+  Password: ""
+
+Port: ""
+CKs:
+  - ""
+UserAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0"
+ChargeUid:
+  - "2149231"
+LotteryUid:
+  - "226257459"    # 大锦鲤
+  - "100680137"    #你的工具人老公
+
+FakeLotteryUid:
+  - "3546609705028467"
+  - "1619305144"
+  - "1713150198"
+
+DDNS:
+  ZoneID: ""          # Cloudflare域名的Zone ID
+  DnsRecordId: ""     #DNS记录的ID
+  ApiToken: "q" # Cloudflare的API Token
+  Type: "AAAA"
+  Name: ""
+
+DelayTime: 20000
+Server3: ""  # server3酱的秘钥
+
+
+ToCoinUid: ""
+

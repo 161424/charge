@@ -1,0 +1,14 @@
+[2024-12-30 02:55:07] [WARNING]: 已生成配置文件 conf.toml 。 
+[2024-12-30 02:55:07] [INFO]: 请修改 setting.json 后重新启动。 
+[2024-12-30 02:55:07] [INFO]: 程序 10 秒后退出 
+[2024-12-30 02:56:21] [INFO]: 端口号 8443 
+[2024-12-30 02:56:21] [ERROR]: failed to serve http, err: open ssl证书文件路径: The system cannot find the file specified. 
+[2024-12-30 02:56:21] [ERROR]: goroutine 50 [running]:
+github.com/2mf8/Go-QQ-SDK/webhook.FatalError({0x16a1280, 0xc000690570})
+	C:/Users/11251/go/pkg/mod/github.com/2mf8/!go-!q!q-!s!d!k@v0.0.6/webhook/webhook.go:233 +0x72
+github.com/2mf8/Go-QQ-SDK/webhook.RunGin.func1()
+	C:/Users/11251/go/pkg/mod/github.com/2mf8/!go-!q!q-!s!d!k@v0.0.6/webhook/webhook.go:188 +0x19e
+created by github.com/2mf8/Go-QQ-SDK/webhook.RunGin in goroutine 16
+	C:/Users/11251/go/pkg/mod/github.com/2mf8/!go-!q!q-!s!d!k@v0.0.6/webhook/webhook.go:181 +0xc5
+ 
+[2024-12-30 02:56:54] [INFO]: 端口号 8443 
