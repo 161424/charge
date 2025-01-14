@@ -5,7 +5,7 @@ Redis:
     Password: ""
     IsIpv6: false
     StaticIpv6Addr: ""
-    DynamicIpv6: ""
+    DynamicIpv6: "like.151580.xyz"
     Id_rsa: ""
 Mongodb:
     Addr: ""
