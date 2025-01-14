@@ -137,8 +137,12 @@ func LotteryDetail(ctx context.Context, modelTP, lottery string, t time.Time) (r
 			}
 			if !(_detail.Code == 0 || _detail.Code == 200) {
 				fmt.Println(3, "10分钟大休息。err code: ", _detail.Code, _detail.Message) // 管抽访问太频繁会风控
-				// 3 err code:  4101152
+				// 3 err code:  4101152  动态不见了
 				// 3 err code:  500
+				if _detail.Code == 4101152 {
+					time.Sleep(1 * time.Minute)
+					continue
+				}
 				time.Sleep(10 * time.Minute)
 			}
 			LotteryData.CreateTime = _detail.Data.Item.Modules.Module_author.Pub_ts

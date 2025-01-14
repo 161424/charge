@@ -4,6 +4,7 @@ import (
 	"charge/pkg/common"
 	"fmt"
 	"testing"
+	"time"
 )
 
 func TestBigpoint(t *testing.T) {
@@ -49,4 +50,19 @@ func TestDailyTask(t *testing.T) {
 func TestExchangePoint(t *testing.T) {
 	code := common.ExchangePoint(0)
 	fmt.Println(code)
+}
+
+func TestGetUserInfo(t *testing.T) {
+	userInfo := common.GetUserInfo(0) // 获取user基本信息
+
+	// 打印目前用户信息
+	fmt.Printf("%+v", userInfo)
+	if userInfo.Data.VipStatus == 1 {
+		n := time.UnixMilli(userInfo.Data.VipDueDate)
+		fmt.Println(n)
+		t1 := n.Format("2006-01-02")
+		t2 := int(n.Sub(time.Now()).Hours() / 24)
+		fmt.Printf("尊敬的 %s-【%s】您好,您的大会员在 %s 到期，还剩 %d 天。", userInfo.Data.VipLabel.Text, userInfo.Data.Uname,
+			t1, t2)
+	}
 }

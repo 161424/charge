@@ -10,7 +10,8 @@ import (
 	"time"
 )
 
-var active = map[string]string{"浏览新人专区": "jump", "分享可爱fufu~": "jump", "浏览欧气专区": "jump", "浏览周边特惠频道": "jump"}
+// 活动日历会变化，因此采用排除法
+var NotActive = map[string]struct{}{"会员购下单": struct{}{}}
 
 type MemberSign struct {
 	Code    int    `json:"code"`
@@ -243,10 +244,10 @@ func MemberRegister(idx int) {
 	}
 
 	for _, mt := range memberResp.Data.Tasks {
-		if _, ok := active[mt.Description]; ok {
-			v := mt.Action
-			// url = "https://mall.bilibili.com/act/aicms/ab0edacaa9b.html?herculesId=htask_xborcfl2xib&rmsource=calendar_task" // 浏览欧气专区
-			if v == "jump" { // 任务还未完成
+		if _, ok := NotActive[mt.TaskTitle]; ok == false {
+			action := mt.Action
+			if action == "jump" { // 任务还未完成
+				fmt.Printf("正在进行任务-%s，预计获得%d金币\n", mt.Description, mt.Prize.PrizeNum)
 				re := regexp.MustCompile("herculesId=[A-Za-z0-9_]+")
 				herculesId := re.FindString(mt.Data.Url)
 				if herculesId == "" { //  当任务完成后即v == "receive"时，url就已经变了，匹配不到herculesId
@@ -258,15 +259,16 @@ func MemberRegister(idx int) {
 				t := time.Now().UnixMilli()
 				urlR := fmt.Sprintf("https://show.bilibili.com/api/activity/hercules/task/report-detail?taskId=%s&_=%d", herculesId, t) // 浏览欧气专区
 				mDispatch(urlR, idx)
-				time.Sleep(time.Second * 3)
+				time.Sleep(time.Second * 5)
+				// 有概率遇到任务执行完毕后，领取失败的问题
 				mReceive(idx, activityId, mt.NodeId)
-			} else if v == "receive" { // 表示任务已经完成，但还未领取奖励
+			} else if action == "receive" { // 表示任务已经完成，但还未领取奖励
 				time.Sleep(time.Second)
 				mReceive(idx, activityId, mt.NodeId)
-			} else if v == "done" { // 表示任务已经完成，已领取奖励
+			} else if action == "done" { // 表示任务已经完成，已领取奖励
 				continue
 			} else {
-				fmt.Printf("%+v", v)
+				fmt.Printf("%+v", action)
 			}
 		}
 	}
@@ -277,7 +279,6 @@ func MemberRegister(idx int) {
 	// 奖励领取
 	// POST /api/activity/hercules/task/receive HTTP/1.1  {"activityId":"tx7cfe2ej2","nodeId":3452}
 	//{"code":0,"message":"SUCCESS","data":{"receiveAssocIds":[235219],"nodeId":3452,"taskId":"htask_6i0yskdmetw"},"errtag":0,"ttl":1736496434487}
-
 }
 
 func mDispatch(url string, idx int) int {

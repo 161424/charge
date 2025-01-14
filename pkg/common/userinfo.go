@@ -22,7 +22,7 @@ type UserInfo struct {
 		Uname      string  `json:"uname"`
 		Money      float64 // 硬币数量
 		VipStatus  int     // 0 不是大会员，1是大会员
-		VipDueDate int64   // 大会员到期时间
+		VipDueDate int64   `json:"vipDueDate"` // 大会员到期时间
 
 		VipLabel struct {
 			Text       string `json:"text"`        // 会员名称

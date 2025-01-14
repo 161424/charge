@@ -76,12 +76,8 @@ func (tw *TimingWheel) AddTimer(duration time.Duration, isCircle bool, execType 
 
 	position := expiry % wheelSize
 	//ticksUntilExpiry := int(expiry/wheelSize) - (tw.current / wheelSize)
-	if firstRun == true {
-		expiry = time.Now().Minute() + time.Now().Hour()*60 + 1
-	}
 
 	timer := &Timer{
-		expiry:     expiry,   //   函数执行所在的格子
 		callback:   callback, // 回调函数
 		isCircle:   isCircle, // 是否循环
 		circleTime: duration, //
@@ -89,14 +85,21 @@ func (tw *TimingWheel) AddTimer(duration time.Duration, isCircle bool, execType 
 		execTime:   execTime, // 循环时间间隔
 		desp:       desp,     // 函数文字描述
 	}
+	if firstRun == true {
+		timer.expiry = time.Now().Minute() + time.Now().Hour()*60 + 1
+		timer.isCircle = false
+		tw.buckets[position].PushBack(timer)
+		go tw.processTimersAtPosition(position) // 采用相对时间会直接执行一次
+		fmt.Printf("正在执行初始化任务[%s]\n", desp)
+	}
+	time.Sleep(1 * time.Second)
 	// 将定时任务添加到对应槽的末尾
+	timer.expiry = expiry //   函数执行所在的格子
+	timer.isCircle = isCircle
 	fmt.Printf("[%s]已经添加到格子%d，可能在%d:%d执行\n", desp, position, position/60, position%60)
 	tw.buckets[position].PushBack(timer)
 
 	// 如果任务即将到期（在当前槽或下一个槽），则立即处理，否则等待时间轮转动到该槽
-	//if firstRun == true {
-	//	go tw.processTimersAtPosition(position) // 采用相对时间会直接执行一次
-	//}
 
 }
 

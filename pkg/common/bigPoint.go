@@ -288,13 +288,7 @@ func VipMallView(idx int) int {
 	_url := "https://show.bilibili.com/api/activity/fire/common/event/dispatch"
 	reqBody := `{"eventId":"hevent_oy4b7h3epeb"}`
 	resp := inet.DefaultClient.CheckSelectPost(_url, "", "", "", idx, strings.NewReader(reqBody))
-	//"code": 0,
-	//	"message": "SUCCESS",
-	//	"data": null,
-	//	"errtag": 0,
-	//	"ttl": 1735110697189"
 	reS := &reSign{}
-	//fmt.Println(string(resp), reS)
 	err := json.Unmarshal(resp, reS)
 	if err != nil {
 		fmt.Println(err)

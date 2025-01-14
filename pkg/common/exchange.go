@@ -100,13 +100,13 @@ func ExchangePoint(idx int) int {
 				fmt.Printf(utils.ErrMsg["code"], "exchangePoint", skuInfo.Code, skuInfo.Message)
 				continue
 			}
+			if strings.Contains(sku.Data.Skus[j].Title, "7天试用装扮") { // 去除7天试用装扮
+				continue
+			}
 			s := ""
 			for k := 0; k < len(skuInfo.Data.Rights_detail); k++ {
 				if skuInfo.Data.Rights_detail[k].Type == "text" {
 					if len(skuInfo.Data.Rights_detail[k].Content) <= 2 {
-						continue
-					}
-					if strings.Contains(skuInfo.Data.Rights_detail[k].Content, "7天试用装扮") {
 						continue
 					}
 					s += skuInfo.Data.Rights_detail[k].Content

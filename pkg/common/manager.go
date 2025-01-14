@@ -35,7 +35,7 @@ func (n note) String() string {
 func (n note) AddString(format string, a ...any) {
 	s := fmt.Sprintf(format, a...)
 	n.Desc += s
-	fmt.Println(s)
+	fmt.Printf(s)
 }
 
 func DailyTask() func() {
@@ -45,7 +45,7 @@ func DailyTask() func() {
 		cks := inet.DefaultClient.Cks
 		for idx := range len(cks) {
 			Note.AddString("---------------------------\n")
-			Note.AddString("正在执行第%d个账号【%s】的每日任务\n", idx+1, cks[idx].Uid)
+			Note.AddString("现在是%s，正在执行第%d个账号【%s】的每日任务\n", time.Now().Format(time.DateTime), idx+1, cks[idx].Uid)
 			if cks[idx].Alive == false {
 				Note.AddString("第%d个账号【%s】Ck已失活\n", idx+1, cks[idx].Uid)
 				continue
@@ -64,7 +64,7 @@ func DailyTask() func() {
 			// 打印目前用户信息
 
 			if userInfo.Data.VipStatus == 1 {
-				t := time.UnixMicro(userInfo.Data.VipDueDate)
+				t := time.UnixMilli(userInfo.Data.VipDueDate)
 				t1 := t.Format("2006-01-02")
 				t2 := int(t.Sub(time.Now()).Hours() / 24)
 				Note.AddString("尊敬的 %s-【%s】您好,您的大会员在 %s 到期，还剩 %d 天。", userInfo.Data.VipLabel.Text, userInfo.Data.Uname,

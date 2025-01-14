@@ -116,11 +116,11 @@ func refresh(idx int, token string) bool {
 	rt := &Rt{}
 	err := json.Unmarshal(refreshToken, rt)
 	if err != nil {
-		fmt.Printf(utils.ErrMsg["json"], "refresh", err.Error(), string(refreshToken))
+		fmt.Printf(utils.ErrMsg["json"], "refresh1", err.Error(), string(refreshToken))
 		return false
 	}
 	if rt.Code != 0 || len(cookie) == 0 {
-		fmt.Printf(utils.ErrMsg["Code"], "refresh", rt.Code, string(refreshToken))
+		fmt.Printf(utils.ErrMsg["Code"], "refresh2", rt.Code, string(refreshToken))
 		return false
 	}
 
