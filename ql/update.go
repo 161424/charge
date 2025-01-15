@@ -1,6 +1,6 @@
 package ql
 
 
-func init() {
+func Update() {
 
 }

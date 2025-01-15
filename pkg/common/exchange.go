@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 	"fmt"
 	url2 "net/url"
-	"sort"
 	"strings"
 )
 
@@ -182,31 +181,15 @@ func exchangeGoodsNotify(url string, idx int) {
 
 }
 
-func Appkey() {
-	params := map[string]string{}
-	pl := []string{"id", "str", "test", "appkey"}
-	params["id"] = "114514"
-	params["str"] = "1919810"
-	params["test"] = "いいよ，こいよ"
-	params["appkey"] = "1d8b6e7d45233436"
+func Appkey(s string) string {
+
 	appsec := "560c52ccd288fed045859ed18bffd973"
-
-	sort.Strings(pl)
-	s := ""
-	for _, v := range pl {
-		s += v + "=" + url2.QueryEscape(params[v]) + "&"
-	}
-	s = s[:len(s)-1]
-
 	s += appsec
-	fmt.Println(s)
-
 	data := []byte(s) //切片
 	has := md5.Sum(data)
 	md5str := fmt.Sprintf("%x", has) //将[]byte转成16进制
 	fmt.Println(md5str)
-	fmt.Println(has)
-
+	return md5str
 }
 
 func ExchangeManga(a, b, c, d int) {

@@ -213,7 +213,7 @@ func (d *defaultClient) APPCheckSelect(url, ua, re string, idx int) []byte {
 	return body
 }
 
-func (d *defaultClient) APPCheckSelectPost(url string, contentType, referer, ua string, idx int, rbody io.Reader) []byte {
+func (d *defaultClient) APPCheckSelectPost(url string, contentType, referer, ua string, other map[string]string, idx int, rbody io.Reader) []byte {
 	if d.Cks[idx].Access_key == "" {
 		return nil
 	}
@@ -236,7 +236,9 @@ func (d *defaultClient) APPCheckSelectPost(url string, contentType, referer, ua 
 	req.Header.Set("User-Agent", ua)
 	req.Header.Set("Connection", "keep-alive")
 	req.Header.Set("Cookie", d.Cks[idx].Ck+"; access_key="+d.Cks[idx].Access_key)
-
+	for k, v := range other {
+		req.Header.Set(k, v)
+	}
 	resp, err := d.Client.Do(req)
 	if err != nil {
 		return nil
