@@ -28,12 +28,7 @@ type config struct {
 		Password string `yaml:"Password"`
 	} `yaml:"Mongodb"`
 
-	BUserCk []struct {
-		Ck         string `yaml:"Ck"`
-		Token      string `yaml:"Token"`
-		Access_key string `yaml:"Access_key"`
-		Group      string `yaml:"Group"`
-	} `yaml:"BUserCk"`
+	BUserCk []BUserCk `yaml:"BUserCk"`
 
 	ChargeUid       []string `yaml:"ChargeUid"`
 	LotteryUid      []string `yaml:"LotteryUid"`
@@ -53,7 +48,20 @@ type config struct {
 	DaleyTime int64  `yaml:"DaleyTime"`
 	Server3   string `yaml:"Server3"`
 	Exchange  string `yaml:"Exchange"`
-	Model     string `yaml:"Model"`
+	Ql        struct {
+		Addr         string `yaml:"Addr"`
+		ClientId     string `yaml:"ClientId"`
+		ClientSecret string `yaml:"ClientSecret"`
+	} `yaml:"Ql"`
+
+	Model string `yaml:"Model"`
+}
+
+type BUserCk struct {
+	Ck         string `yaml:"Ck"`
+	Token      string `yaml:"Token"`
+	Access_key string `yaml:"Access_key"`
+	Group      string `yaml:"Group"`
 }
 
 var Cfg = &config{}

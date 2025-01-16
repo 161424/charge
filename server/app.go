@@ -30,7 +30,7 @@ func Run() error {
 	router.Run()
 	tw := NewTimingWheel()
 	// 更新config配置
-	tw.AddTimer(10*time.Hour, true, 0, 24*time.Hour, true, "UpdateConfigExample", config.UpdateConfigExample())
+	//tw.AddTimer(10*time.Hour, true, 0, 24*time.Hour, true, "UpdateConfigExample", config.UpdateConfigExample())
 
 	// 600/1440  对应10点钟
 	//tw.AddTimer(10*60*time.Minute, 1, 1, "GetChargeFromMonitorDefaultUsersDynamic", getcharge.GetChargeFromMonitorDefaultUsersDynamic()) // 监听固定用户的动态

@@ -53,8 +53,7 @@ func DailyTask() func() {
 			// userinfo
 			userInfo := GetUserInfo(idx) // 获取user基本信息
 			User[cks[idx].Uid] = *userInfo
-			if userInfo.Message != "" {
-				fmt.Printf("?")
+			if userInfo.Message != "0" {
 				Note.AddString(userInfo.Message)
 			}
 			if userInfo.Data.IsLogin == false {

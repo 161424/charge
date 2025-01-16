@@ -120,7 +120,7 @@ func refresh(idx int, token string) bool {
 		return false
 	}
 	if rt.Code != 0 || len(cookie) == 0 {
-		fmt.Printf(utils.ErrMsg["Code"], "refresh2", rt.Code, string(refreshToken))
+		fmt.Printf(utils.ErrMsg["code"], "refresh2", rt.Code, string(refreshToken))
 		return false
 	}
 
