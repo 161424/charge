@@ -4,7 +4,6 @@ import (
 	"charge/inet"
 	"charge/utils"
 	"encoding/json"
-	"fmt"
 )
 
 type UserInfo struct {
@@ -40,28 +39,24 @@ type UserInfo struct {
 	}
 }
 
-//
-//type UserInfo struct {
-//	Code    int    `json:"code"`
-//	Message string `json:"message"`
-//}
-
 func GetUserInfo(idx int) *UserInfo {
+	Note.Register("用户信息")
 	userinfo := &UserInfo{}
 	url := "https://api.bilibili.com/x/web-interface/nav"
-	//userinfoResp := &userInfoResp{}
 	resp := inet.DefaultClient.CheckSelect(url, idx)
 	err := json.Unmarshal(resp, userinfo)
-	//fmt.Println(userinfo, string(resp))
 	if err != nil {
-		userinfo.Message = fmt.Sprintf(utils.ErrMsg["json"], "GetUserInfo", err.Error(), string(resp))
-		return userinfo
+		Note.StatusAddString(utils.ErrMsg["json"], "GetUserInfo", err.Error(), string(resp))
+		return nil
 	}
 	if userinfo.Code != 0 {
-		userinfo.Message = fmt.Sprintf(utils.ErrMsg["code"], "GetUserInfo", userinfo.Code, userinfo.Message)
-		return userinfo
+		Note.StatusAddString(utils.ErrMsg["code"], "GetUserInfo", userinfo.Code, userinfo.Message)
+		return nil
 	}
-	//fmt.Println(userinfo)
-	return userinfo
 
+	if userinfo.Data.IsLogin == false {
+		Note.StatusAddString("第%d个账号Ck【uid：%s】已失活。原因是：%s\n", idx+1, inet.DefaultClient.Cks[idx].Uid, userinfo.Message)
+		return nil
+	}
+	return userinfo
 }

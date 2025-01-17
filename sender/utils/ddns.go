@@ -9,7 +9,7 @@ import (
 	"io"
 	"net"
 	"net/http"
-	"net/url"
+	url2 "net/url"
 )
 
 // Cloudflare API的设置
@@ -35,55 +35,53 @@ func GetCurrentIp() string {
 	defer resp.Body.Close()
 	body, _ := io.ReadAll(resp.Body)
 	gci := &GCI{}
-	json.Unmarshal(body, gci)
+	err = json.Unmarshal(body, gci)
+	if err != nil {
+		return ""
+	}
 	return gci.IP
 }
 
-func UpdateDnsRecode(ip string) {
-	url := "https://api.cloudflare.com/client/v4/zones/%s/dns_records/%s"
-	//comment:"Domain verification record"
-	//content:"2409:8a44:4b12:c6e0:69ec:d9ee:89b:7879"
-	//data:{}
-	//id:"3a72b0ea38ec3da31ee10d3b6068c5c1"
-	//name:"like.151580.xyz"
-	//proxiable:true
-	//proxied:false
-	//settings:{}
-	//tags:[]
-	//ttl:1
-	//type:"AAAA"
-	//zone_id:"f460ccc93a56c41d9b52de75087dca75"
-	//zone_name:"151580.xyz"
-	ddns := config.Cfg.DDNS
-	monitor := sender.Monitor{}
-	monitor.Tag = "DDNS"
-	monitor.Title = "Ipv6"
-	data := map[string]interface{}{
-		"type":    ddns.Type,
-		"name":    ddns.Name, // 设置你的子域名
-		"content": ip,
-		"ttl":     1, // 自动TTL
-	}
-	body, _ := json.Marshal(data)
-	client := &http.Client{}
-	req, _ := http.NewRequest("PATCH", fmt.Sprintf(url, ddns.ZoneID, ddns.DnsRecordId), bytes.NewBuffer(body))
-	req.Header.Add("Authorization", "Bearer "+ddns.ApiToken)
-	fmt.Println(req)
-	resp, _ := client.Do(req)
-	defer resp.Body.Close()
+func UpdateDnsRecode() func() {
+	return func() {
+		url := "https://api.cloudflare.com/client/v4/zones/%s/dns_records/%s"
+		ddns := config.Cfg.DDNS
+		monitor := sender.Monitor{}
+		monitor.Tag = "DDNS"
+		monitor.Title = "Ipv6"
+		ip := GetCurrentIp()
+		if ip == "" {
+			monitor.Desp = fmt.Sprintf("ipv6的ip获取失败")
+			monitor.PushS()
+			return
+		}
+		data := map[string]interface{}{
+			"type":    ddns.Type,
+			"name":    ddns.Name, // 设置你的子域名
+			"content": ip,
+			"ttl":     1, // 自动TTL
+		}
+		body, _ := json.Marshal(data)
+		client := &http.Client{}
+		req, _ := http.NewRequest("PATCH", fmt.Sprintf(url, ddns.ZoneID, ddns.DnsRecordId), bytes.NewBuffer(body))
+		req.Header.Add("Authorization", "Bearer "+ddns.ApiToken)
+		resp, _ := client.Do(req)
+		defer resp.Body.Close()
 
-	if resp.StatusCode == 200 {
-		fmt.Println(ip)
-		monitor.Desp = fmt.Sprintf("AAAA %s更新为%s")
-	} else {
-		monitor.Desp = fmt.Sprintf("AAAA %s更新失败。err data： %s")
+		if resp.StatusCode == 200 {
+			fmt.Println(ip)
+			monitor.Desp = fmt.Sprintf("AAAA %s更新为%s", ddns.Name, ip)
+		} else {
+			u, _ := io.ReadAll(resp.Body)
+			monitor.Desp = fmt.Sprintf("AAAA %s更新失败。err data： %s", ddns.Name, string(u))
+		}
+		monitor.PushS()
 	}
-
 }
 
 func DDNSCheck(u string) string {
 	rawURL := "http://" + u + ":8080"
-	parsedURL, err := url.Parse(rawURL)
+	parsedURL, err := url2.Parse(rawURL)
 	if err != nil {
 		fmt.Println("Error parsing URL:", err)
 		return ""

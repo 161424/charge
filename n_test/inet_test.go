@@ -20,7 +20,7 @@ var modelTp = "test"
 func TestDDNS(t *testing.T) {
 	ip := utils.GetCurrentIp()
 	fmt.Println(ip)
-	utils.UpdateDnsRecode(ip)
+	utils.UpdateDnsRecode()
 }
 
 func TestCheck(t *testing.T) {

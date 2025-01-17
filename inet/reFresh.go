@@ -206,7 +206,7 @@ func refreshConfirm(csrf, refreshToken, ck string) int {
 		return -1
 	}
 	if rc.Code != 0 {
-		fmt.Printf(utils.ErrMsg["Code"], "refreshConfirm", rc.Code, string(resp))
+		fmt.Printf(utils.ErrMsg["code"], "refreshConfirm", rc.Code, string(resp))
 		return rc.Code
 	} else {
 		fmt.Println("刷新成功")

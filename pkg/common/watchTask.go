@@ -194,7 +194,7 @@ func WatchRandomEp(idx int) {
 	reqBody.Set("scene_type", "0")
 	reqBody.Set("ts", strconv.FormatInt(time.Now().Unix(), 10))
 	s := reqBody.Encode()
-	s = Appkey(s)
+	s = APPKey(s)
 	reqBody.Set("sign", s)
 	url += "?" + reqBody.Encode()
 	ogvCards := &OgvCards{}
@@ -228,7 +228,7 @@ func WatchRandomEp(idx int) {
 	reqBody.Set("statistics", "{\"appId\":1,\"platform\":3,\"version\":\"8.2.0\",\"abtest\":\"\"}")
 	reqBody.Set("ts", strconv.FormatInt(time.Now().Unix(), 10))
 	s = reqBody.Encode()
-	s = Appkey(s)
+	s = APPKey(s)
 	reqBody.Set("sign", s)
 	other := map[string]string{}
 	other["APP-KEY"] = "android"
@@ -248,8 +248,6 @@ func WatchRandomEp(idx int) {
 		fmt.Printf(utils.ErrMsg["json"], "WatchRandomEp", err.Error(), string(resp))
 		return
 	}
-	fmt.Println(idx, string(resp), watchReceiveResp)
-
 	if watchReceiveResp.Code != 0 {
 		fmt.Printf("观看视频%s失败.res Code:%d,res Message:%s", BangumiList.Name, watchReceiveResp.Code, watchReceiveResp.Message)
 		return

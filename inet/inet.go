@@ -355,8 +355,9 @@ func (d *defaultClient) HandCheckAlive() {
 	d.AliveNum = len(d.Cks)
 	for idx := 0; idx < len(d.Cks); idx++ {
 		uid = utils.CutUid(d.Cks[idx].Ck)
-		code := Refresh(idx) // Refresh中的刷新函数会刷新失败，报错-101，但是仍能访问个人空间。想当于失效了一半，但是在访问某些内容会-101未登录。可以看出csrf可用，但别的风控失效
-		if code == 0 {       // 0 表示登录或ck刷新成功，无需再确定活性
+		//code := Refresh(idx) // Refresh中的刷新函数会刷新失败，报错-101，但是仍能访问个人空间。想当于失效了一半，但是在访问某些内容会-101未登录。可以看出csrf可用，但别的风控失效
+		code := -1
+		if code == 0 { // 0 表示登录或ck刷新成功，无需再确定活性
 			d.Cks[idx].Alive = true
 			msg += fmt.Sprintf("%d. %s又苟过一天. 存活状态：%t\n", idx, uid, d.Cks[idx].Alive)
 			continue

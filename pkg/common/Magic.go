@@ -50,6 +50,9 @@ type mgR struct {
 
 func MagicRegister(idx int) {
 	// 任务id会进行刷新
+	if Note.Register("魔晶签到") { // 在第一轮执行无误后会跳过
+		return
+	}
 	taskId := magicRegister(idx, false)
 
 	url := "https://mall.bilibili.com/magic-c/sign/achieve"
@@ -60,11 +63,11 @@ func MagicRegister(idx int) {
 	mgr := &mgR{}
 	err := json.Unmarshal(resp, mgr)
 	if err != nil {
-		fmt.Printf(utils.ErrMsg["json"], "getAidByRecommend", err.Error(), string(resp))
+		Note.StatusAddString(utils.ErrMsg["json"], "getAidByRecommend", err.Error(), string(resp))
 		return
 	}
 	if mgr.Code != 0 {
-		fmt.Printf(utils.ErrMsg["code"], "getAidByRecommend", mgr.Code, mgr.Message)
+		Note.StatusAddString(utils.ErrMsg["code"], "getAidByRecommend", mgr.Code, mgr.Message)
 		return
 	}
 
@@ -80,11 +83,11 @@ func magicRegister(idx int, note bool) string {
 		"", idx, nil)
 	err := json.Unmarshal(resp, mgDetail)
 	if err != nil {
-		fmt.Printf(utils.ErrMsg["json"], "getAidByRecommend", err.Error(), string(resp))
+		Note.StatusAddString(utils.ErrMsg["json"], "getAidByRecommend", err.Error(), string(resp))
 		return ""
 	}
 	if mgDetail.Code != 0 {
-		fmt.Printf(utils.ErrMsg["code"], "getAidByRecommend", mgDetail.Code, string(resp))
+		Note.StatusAddString(utils.ErrMsg["code"], "getAidByRecommend", mgDetail.Code, string(resp))
 		return ""
 	}
 	if note {
@@ -97,7 +100,7 @@ func magicRegister(idx int, note bool) string {
 				break
 			}
 		}
-		fmt.Println("今日魔晶签到完毕，获得奖励: ", pr)
+		Note.AddString("今日魔晶签到完毕，获得奖励: %s\n", pr)
 	}
 	return mgDetail.Data.TaskId
 }

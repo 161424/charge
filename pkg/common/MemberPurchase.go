@@ -192,34 +192,37 @@ var stop = 0
 func MemberRegister(idx int) {
 	// 签到一星期获得5 + 6 + 15 + 5 + 6 + 8 + 50 = 95，过期时间180天
 	// 签到查询
-	fmt.Printf("正在执行会员购签到任务...\n")
+	if Note.Register("会员购签到") { // 在第一轮执行无误后会跳过
+		return
+	}
+
 	ok, objectsGameId := memberRegister(idx)
 	if ok == false {
+		Note.StatusAddString("会员购签到任务领取失败（任务领取阶段失败） ×\n")
 		return
 	}
 	// 获取任务执行前的的金币个数
 	time.Sleep(5 * time.Second)
 	num1, ok := memberGold(idx, objectsGameId)
 	if ok == false {
+		Note.StatusAddString("会员购签到任务执行失败（初始金币查询阶段失败） ×\n")
 		return
 	}
+	time.Sleep(5 * time.Second)
 	// 在任务执行完毕后领取金币会遇到领取失败的问题，因此采用分开处理
 	ok, _ = memberRegister(idx)
 	if ok == false {
+		Note.StatusAddString("会员购签到任务执行失败（任务领取阶段失败） ×\n")
 		return
 	}
 	time.Sleep(5 * time.Second)
 	// 获取任务执行后的的金币个数
 	num2, ok := memberGold(idx, objectsGameId)
 	if ok == false {
+		Note.StatusAddString("会员购签到任务执行失败（最终金币查询阶段失败） ×\n")
 		return
 	}
-	fmt.Printf("会员购签到完毕。今日已获得%d金币\n", num2-num1+todayG) // 统计不准,尝试做一下延迟
-	time.Sleep(time.Second * 3)
-
-	// 奖励领取
-	// POST /api/activity/hercules/task/receive HTTP/1.1  {"activityId":"tx7cfe2ej2","nodeId":3452}
-	//{"code":0,"message":"SUCCESS","data":{"receiveAssocIds":[235219],"nodeId":3452,"taskId":"htask_6i0yskdmetw"},"errtag":0,"ttl":1736496434487}
+	Note.AddString("会员购签到完毕。今日已获得%d金币\n", num2-num1+todayG) // 统计不准,尝试做一下延迟
 }
 
 func memberRegister(idx int) (req bool, rs string) {
@@ -228,11 +231,11 @@ func memberRegister(idx int) (req bool, rs string) {
 	resp := inet.DefaultClient.CheckSelect(url, idx)
 	err := json.Unmarshal(resp, memberSign)
 	if err != nil {
-		fmt.Printf(utils2.ErrMsg["json"], "memberRegister", err.Error(), string(resp))
+		Note.StatusAddString(utils2.ErrMsg["json"], "memberRegister", err.Error(), string(resp))
 		return
 	}
 	if memberSign.Code != 0 {
-		fmt.Printf(utils2.ErrMsg["Code"], "memberRegister", memberSign.Code, string(resp))
+		Note.StatusAddString(utils2.ErrMsg["code"], "memberRegister", memberSign.Code, string(resp))
 		return
 	}
 
@@ -246,13 +249,12 @@ func memberRegister(idx int) (req bool, rs string) {
 	memberQuery := &MemberQuery{}
 	resp = inet.DefaultClient.CheckSelectPost(url, utils2.ContentType["json"], "https://mall.bilibili.com/", "", idx, strings.NewReader(s))
 	err = json.Unmarshal(resp, &memberQuery)
-
 	if err != nil {
-		fmt.Printf(utils2.ErrMsg["json"], "memberRegister", err.Error(), string(resp))
+		Note.StatusAddString(utils2.ErrMsg["json"], "memberRegister", err.Error(), string(resp))
 		return
 	}
 	if memberQuery.Code != 0 {
-		fmt.Printf(utils2.ErrMsg["Code"], "memberRegister", memberQuery.Code, string(resp))
+		Note.StatusAddString(utils2.ErrMsg["code"], "memberRegister", memberQuery.Code, string(resp))
 		return
 	}
 	activityId := memberQuery.Data.TaskActivityId
@@ -265,7 +267,7 @@ func memberRegister(idx int) (req bool, rs string) {
 	err = json.Unmarshal(resp, &memberResp)
 
 	if err != nil {
-		fmt.Printf(utils2.ErrMsg["json"], "memberRegister", err.Error(), string(resp))
+		Note.StatusAddString(utils2.ErrMsg["json"], "memberRegister", err.Error(), string(resp))
 		return
 	}
 
@@ -276,7 +278,7 @@ func memberRegister(idx int) (req bool, rs string) {
 				re := regexp.MustCompile("herculesId=[A-Za-z0-9_]+")
 				herculesId := re.FindString(mt.Data.Url)
 				if herculesId == "" { //  当任务完成后即v == "receive"时，url就已经变了，匹配不到herculesId
-					fmt.Printf("会员购任务【%s】匹配不到herculesId。可能是接口改变.url:%s\n", mt.Description, mt.Data.Url)
+					Note.StatusAddString("会员购任务【%s】匹配不到herculesId。可能是接口改变.url:%s\n", mt.Description, mt.Data.Url)
 					continue
 				} else {
 					herculesId = strings.Replace(herculesId, "herculesId=", "", -1)
@@ -285,26 +287,25 @@ func memberRegister(idx int) (req bool, rs string) {
 				urlR := fmt.Sprintf("https://show.bilibili.com/api/activity/hercules/task/report-detail?taskId=%s&_=%d", herculesId, t) // 浏览欧气专区
 				code := mDispatch(urlR, idx)
 				if code == 0 {
-					fmt.Printf("会员购任务【%s】执行成功，预计获得%d金币\n", mt.Description, mt.Prize.PrizeNum)
+					Note.AddString("会员购任务【%s】执行成功，预计获得%d金币\n", mt.Description, mt.Prize.PrizeNum)
 				} else {
-					fmt.Printf("会员购任务【%s】执行失败\n", mt.Description)
+					Note.StatusAddString("会员购任务【%s】执行失败。\n", mt.Description)
 				}
 				time.Sleep(time.Second * 5)
-
 			} else if action == "receive" { // 表示任务已经完成，但还未领取奖励
-				fmt.Printf("正在领取任务-%s的%d个金币\n", mt.Description, mt.Prize.PrizeNum)
+				Note.AddString("正在领取任务-%s的%d个金币\n", mt.Description, mt.Prize.PrizeNum)
 				time.Sleep(time.Second)
 				code := mReceive(idx, activityId, mt.NodeId)
 				if code == 0 {
-					fmt.Printf("会员购任务【%s】成功领取%d个金币 √\n", mt.Description, mt.Prize.PrizeNum)
+					Note.AddString("会员购任务【%s】成功领取%d个金币 √\n", mt.Description, mt.Prize.PrizeNum)
 				} else {
-					fmt.Printf("会员购任务【%s】领取%d个金币失败 X\n", mt.Description, mt.Prize.PrizeNum)
+					Note.StatusAddString("会员购任务【%s】领取%d个金币失败 X\n", mt.Description, mt.Prize.PrizeNum)
 				}
 			} else if action == "done" { // 表示任务已经完成，已领取奖励
-				fmt.Printf("会员购任务【%s】已成功领取%d个金币\n", mt.Description, mt.Prize.PrizeNum)
+				Note.AddString("会员购任务【%s】已成功领取%d个金币\n", mt.Description, mt.Prize.PrizeNum)
 				continue
 			} else {
-				fmt.Printf("%+v", action)
+				Note.StatusAddString("未知错误。%+v\n", action)
 			}
 		}
 	}
@@ -319,20 +320,19 @@ func mDispatch(url string, idx int) int {
 	memberReporter := MemberReporter{}
 	err := json.Unmarshal(resp, &memberReporter)
 	if err != nil {
-		fmt.Println(err)
+		Note.StatusAddString(utils2.ErrMsg["json"], "mDispatch", err.Error(), string(resp))
 	}
 	time.Sleep(11 * time.Second)
 	url = "https://show.bilibili.com/api/activity/fire/common/event/dispatch"
 	s := fmt.Sprintf(`{"eventId":"%s"}`, memberReporter.Data.EventId)
-	fmt.Println(url, s, string(resp))
 	resp = inet.DefaultClient.CheckSelectPost(url, utils2.ContentType["json"], "https://mall.bilibili.com/", "", idx, strings.NewReader(s))
 	t := &T{}
 	err = json.Unmarshal(resp, &t)
 	if err != nil {
-		fmt.Printf(utils2.ErrMsg["json"], "mDispatch", err.Error(), string(resp))
+		Note.StatusAddString(utils2.ErrMsg["json"], "mDispatch", err.Error(), string(resp))
 	}
 	if t.Code != 0 {
-		fmt.Printf(utils2.ErrMsg["Code"], "mReceive", t.Code, string(resp))
+		Note.StatusAddString(utils2.ErrMsg["code"], "mReceive", t.Code, string(resp))
 	}
 	return t.Code
 }
@@ -345,11 +345,11 @@ func mReceive(idx int, activityId string, nodeId int) int {
 	resp := inet.DefaultClient.CheckSelectPost(url, "", "https://mall.bilibili.com/", "", idx, strings.NewReader(s))
 	err := json.Unmarshal(resp, &mReca)
 	if err != nil {
-		fmt.Printf(utils2.ErrMsg["json"], "mReceive", err.Error(), string(resp))
+		Note.StatusAddString(utils2.ErrMsg["json"], "mReceive", err.Error(), string(resp))
 		return -1
 	}
 	if mReca.Code != 0 {
-		fmt.Printf("%+v", mReca)
+		Note.StatusAddString("未知错误。%+v\n", mReca)
 		return -1
 	}
 	url = "https://show.bilibili.com/api/activity/hercules/task/reward/query"
@@ -359,7 +359,7 @@ func mReceive(idx int, activityId string, nodeId int) int {
 	err = json.Unmarshal(resp, &mRecq)
 	//fmt.Println(url, s, string(resp))
 	if err != nil {
-		fmt.Printf(utils2.ErrMsg["json"], "mReceive", err.Error(), string(resp))
+		Note.StatusAddString(utils2.ErrMsg["json"], "mReceive", err.Error(), string(resp))
 		return -1
 	}
 	if mRecq.Code == 8004070020 { // "前方拥堵，请稍后重试",
@@ -370,10 +370,9 @@ func mReceive(idx int, activityId string, nodeId int) int {
 		time.Sleep(time.Second * 3)
 		return mReceive(idx, activityId, nodeId)
 	} else if mRecq.Code != 0 {
-		fmt.Printf(utils2.ErrMsg["Code"], "mReceive", mRecq.Code, string(resp))
+		Note.StatusAddString(utils2.ErrMsg["code"], "mReceive", mRecq.Code, string(resp))
 		return -1
 	}
-	fmt.Println("已领取")
 	return 0
 }
 
@@ -385,11 +384,11 @@ func memberGold(idx int, objectsGameId string) (num int, re bool) {
 	memberChip := &MemberChip{}
 	err := json.Unmarshal(resp, &memberChip)
 	if err != nil {
-		fmt.Printf(utils2.ErrMsg["json"], "memberGold", err.Error(), string(resp))
+		Note.StatusAddString(utils2.ErrMsg["json"], "memberGold", err.Error(), string(resp))
 		return
 	}
 	if memberChip.Code != 0 {
-		fmt.Printf(utils2.ErrMsg["Code"], "memberGold", memberChip.Code, string(resp))
+		Note.StatusAddString(utils2.ErrMsg["code"], "memberGold", memberChip.Code, string(resp))
 		return
 	}
 	return memberChip.Data.EffectiveChips, true

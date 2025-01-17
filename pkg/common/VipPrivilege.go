@@ -108,7 +108,10 @@ func VipPrivilege(idx int) int {
 
 // B币券监听和使用
 // 通过扫码进行登录获取到的ck无法使用.不是，需要将SESSDATA中的，换成%2C就可以了
-func BCoinState(idx int) string {
+func BCoinState(idx int) {
+	if Note.Register("B币券监听和兑换") {
+		return
+	}
 	url := "https://pay.bilibili.com/paywallet/coupon/listForUserCoupons"
 	t := time.Now()
 	te := t.Format("2006-01-02")
@@ -119,29 +122,31 @@ func BCoinState(idx int) string {
 	bcS := &bsState{}
 	err := json.Unmarshal(resp, &bcS)
 	if err != nil {
-		return fmt.Sprintf(utils.ErrMsg["json"], "BCoinState", err.Error(), string(resp))
+		Note.StatusAddString(utils.ErrMsg["json"], "BCoinState", err.Error(), string(resp))
+		return
 	}
 	if bcS.Code != 0 {
-		return fmt.Sprintf(utils.ErrMsg["code"], "B币券监听", bcS.Code, string(resp))
+		Note.StatusAddString(utils.ErrMsg["code"], "B币券监听", bcS.Code, string(resp))
+		return
 	}
 	// code==0，但是message=“内部错误”
 	if len(bcS.Data.Result) == 0 || bcS.Data.Result[0].CouponDueTime < time.Now().UnixMilli() {
-		return BCoinReceive(idx)
+		BCoinReceive(idx)
+		return
 	}
 	expireTime := time.UnixMilli(bcS.Data.Result[0].CouponDueTime)
 	expireDay := expireTime.Sub(time.Now()).Hours() / 24
 	if expireDay < 3 {
 		BCoinExpiringSoon = true
-		return fmt.Sprintf("B币券过期时间【%s】，距离过期还有%d天。即将为你充电", expireTime.Format("2006-01-02"), int(expireDay))
+		Note.AddString("B币券过期时间【%s】，距离过期还有%d天。即将为你充电\n", expireTime.Format("2006-01-02"), int(expireDay))
 	} else {
-		return fmt.Sprintf("B币券过期时间【%s】，距离过期还有%d天。", expireTime.Format("2006-01-02"), int(expireDay))
-
+		Note.AddString("B币券过期时间【%s】，距离过期还有%d天\n。", expireTime.Format("2006-01-02"), int(expireDay))
 	}
 }
 
 // B币券领取
-func BCoinReceive(idx int) string {
-	fmt.Println("正在领取B币券")
+func BCoinReceive(idx int) {
+	Note.AddString("正在领取B币券\n")
 	url := "https://api.bilibili.com/x/vip/privilege/receive"
 
 	reqBody := url2.Values{}
@@ -151,22 +156,22 @@ func BCoinReceive(idx int) string {
 	pR := &pReceive{}
 	err := json.Unmarshal(resp, &pR)
 	if err != nil {
-		return fmt.Sprintf(utils.ErrMsg["json"], "BCoinReceive", err.Error(), string(resp))
+		Note.StatusAddString(utils.ErrMsg["json"], "BCoinState", err.Error(), string(resp))
 	}
-	if pR.Code == 69801 {
-		return "你已领取过该权益"
-	} else if pR.Code == 69824 {
-		return "领取太频繁,请稍后再试!"
-	} else if pR.Code == 0 {
-		return "B币券领取成功"
+	if pR.Code == 69801 { // 重复领取
+		Note.AddString(utils.ErrMsg["code"], "B币券领取", pR.Code, pR.Message)
+	} else if pR.Code == 69824 { // 繁忙
+		Note.StatusAddString(utils.ErrMsg["code"], "B币券领取", pR.Code, pR.Message)
+	} else if pR.Code == 0 { // 领取成功
+		Note.AddString(utils.ErrMsg["code"], "B币券领取", pR.Code, pR.Message)
 	} else {
-		return fmt.Sprintf(utils.ErrMsg["code"], "B币券领取", pR.Message, string(resp))
+		Note.StatusAddString(utils.ErrMsg["code"], "B币券领取", pR.Code, string(resp))
 	}
 	//return VipPrivilege(idx)
 }
 
 // 默认充电
-func BCoinExchangeForUp(idx int) string {
+func BCoinExchangeForUp(idx int) {
 	url := "https://api.bilibili.com/x/ugcpay/web/v2/trade/elec/pay/quick"
 	reqBody := url2.Values{}
 	reqBody.Set("bp_num", "5")                 // 充电 b 币数量
@@ -179,23 +184,26 @@ func BCoinExchangeForUp(idx int) string {
 	cU := &ChargeUp{}
 	err := json.Unmarshal(resp, &cU)
 	if err != nil {
-		return fmt.Sprintf(utils.ErrMsg["json"], "BCoinExchangeForUp", err.Error(), string(resp))
+		Note.StatusAddString(utils.ErrMsg["json"], "BCoinExchangeForUp", err.Error(), string(resp))
+		return
 	}
 	if cU.Code != 0 {
-		return fmt.Sprintf(utils.ErrMsg["code"], "BCoinExchangeForUp", cU.Code, cU.Message)
+		Note.StatusAddString(utils.ErrMsg["code"], "BCoinExchangeForUp", cU.Code, cU.Message)
+		return
 	}
 	if cU.Data.Status == 4 {
-		return fmt.Sprintf("B币已为up【%s】充电成功", config.Cfg.Exchange)
+		Note.AddString("B币已为up【%s】充电成功\n", config.Cfg.Exchange)
 	} else if cU.Data.Status == -2 {
-		return fmt.Sprintf("B币为up【%s】充电失败，原因是低于20电池下限", config.Cfg.Exchange)
+		Note.StatusAddString("B币为up【%s】充电失败，原因是低于20电池下限\n", config.Cfg.Exchange)
 	} else if cU.Data.Status == -4 {
-		return fmt.Sprintf("B币为up【%s】充电失败，原因是B币不足", config.Cfg.Exchange)
+		Note.AddString("B币为up【%s】充电失败，原因是B币不足\n", config.Cfg.Exchange)
 	}
 
-	return fmt.Sprintf("BCoinExchangeForUp出现未知错误。%s，%p", string(resp), cU)
+	Note.StatusAddString("BCoinExchangeForUp出现未知错误。%s，%p\n", string(resp), cU)
 }
 
-func BCoinExchangeForBattery(idx int) int {
+// 电池
+func BCoinExchangeForBattery(idx int) {
 	pay_bp := strconv.Itoa(5 * 1000)
 	url := "https://api.live.bilibili.com/xlive/revenue/v1/order/createOrder"
 	reqBody := url2.Values{}
@@ -215,15 +223,14 @@ func BCoinExchangeForBattery(idx int) int {
 	resp := inet.DefaultClient.CheckSelectPost(url, "", "https://www.bilibili.com/", "", idx, strings.NewReader(reqBody.Encode()))
 	err := json.Unmarshal(resp, &pR)
 	if err != nil {
-		fmt.Printf(utils.ErrMsg["json"], "ExchangePoint", err.Error(), string(resp))
-		return -1
+		Note.StatusAddString(utils.ErrMsg["json"], "BCoinExchangeForBattery", err.Error(), string(resp))
+		return
 	}
 	if pR.Code != 0 {
-		fmt.Printf(utils.ErrMsg["code"], "exchangePoint", pR.Code, pR.Message)
-		return pR.Code
+		Note.StatusAddString(utils.ErrMsg["code"], "BCoinExchangeForBattery", pR.Code, pR.Message)
+		return
 	}
-	fmt.Println("用户【74】为直播间【10231093】充电成功")
-	return pR.Code
+	Note.AddString("用户【uid:%s】为直播间【10231093】充电成功\n", inet.DefaultClient.Cks[idx].Uid)
 }
 
 func createVisitId() string {

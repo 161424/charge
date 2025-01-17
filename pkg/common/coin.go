@@ -4,7 +4,6 @@ import (
 	"charge/inet"
 	"charge/utils"
 	"encoding/json"
-	"fmt"
 	url2 "net/url"
 	"strconv"
 	"strings"
@@ -79,29 +78,6 @@ func GainCoin(idx int) {
 	}
 }
 
-// 大会员经验10
-// /x/vip/experience/add
-//POST /x/vip/experience/add HTTP/1.1
-//native_api_from: h5
-//Cookie: SESSDATA=f961354b%2C1751046279%2C4b5918c1CjDrDF6Zjbtj8LtHjYiGQporM3gsHm5BsY0OQh7Ow82jvCiay_gsWG9n-dacE3ESExkSVmFUMkN5c1hSY3hJaWswWGNmQjJjR3NQVmMxSV83bEU4bldocDMycV95RjJ3MTVHcGRmeEgzeExaR3hVRG9CUzZhUjMyYWlLbFpTWHhvbUtQWVFSQ1h3IIEC; bili_jct=0b38ccc1c50be02b2cdf27f69bddfc8f; DedeUserID=74199115; DedeUserID__ckMd5=8d1ad2254e14c603; sid=4ra8ix9l; Buvid=XUF1B5AF0BF95BB6F1614E7BC40B3881EA6C6
-//buvid: XUF1B5AF0BF95BB6F1614E7BC40B3881EA6C6
-//Accept: application/json, text/plain, */*
-//Referer: https://big.bilibili.com/mobile/index?appId=125&appSubId=minetext&order_report_params=%7B%22act_id%22%3A%22691%22%2C%22buvid%22%3A%22XUF1B5AF0BF95BB6F1614E7BC40B3881EA6C6%22%2C%22exp_group_tag%22%3A%22def%22%2C%22exp_tag%22%3A%22def%22%2C%22material_type%22%3A%223%22%2C%22mid%22%3A%2274199115%22%2C%22position_id%22%3A%223%22%2C%22request_id%22%3A%225736d52cdfb9ae46358e0d3bcc67718a%22%2C%22source_from%22%3A%22vip.my-page.vip.entrance.click%22%2C%22tips_id%22%3A%2298257%22%2C%22tips_repeat_key%22%3A%2298257%3A3%3A1735494286%3A74199115%22%2C%22unit_id%22%3A%2225027%22%2C%22vip_status%22%3A%221%22%2C%22vip_type%22%3A%222%22%7D&source_from=vip.my-page.vip.entrance.click&exp_symbol=release_version&oflAb=1
-//User-Agent: Mozilla/5.0 (Linux; Android 12; 24031PN0DC Build/V417IR; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/101.0.4951.61 Safari/537.36 Mobile os/android model/24031PN0DC build/8020300 osVer/12 sdkInt/32 network/2 BiliApp/8020300 mobi_app/android channel/yingyongbao Buvid/XUF1B5AF0BF95BB6F1614E7BC40B3881EA6C6 sessionID/6ed164f5 innerVer/8020300 c_locale/zh_CN s_locale/zh_CN disable_rcmd/0 8.2.0 os/android model/24031PN0DC mobi_app/android build/8020300 channel/yingyongbao innerVer/8020300 osVer/12 network/2
-//x-bili-trace-id: d8ebfbe8b723add3703dd30b2c67718c:703dd30b2c67718c:0:0
-//x-bili-aurora-eid: VlAAT1gFB1Q=
-//x-bili-mid: 74199115
-//x-bili-aurora-zone:
-//x-bili-gaia-vtoken:
-//x-bili-ticket: eyJhbGciOiJIUzI1NiIsImtpZCI6InMwMyIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzU1MjI4MzAsImlhdCI6MTczNTQ5MzczMCwiYnV2aWQiOiJYVUYxQjVBRjBCRjk1QkI2RjE2MTRFN0JDNDBCMzg4MUVBNkM2In0.BieYqUC6s7xcV_YfcgPg9ybW6RYbLZAaGWBJDT8Tm7o
-//Content-Type: application/x-www-form-urlencoded; charset=utf-8
-//Content-Length: 546
-//Host: api.bilibili.com
-//Connection: Keep-Alive
-//Accept-Encoding: gzip
-
-// access_key=4ef65d25ac3c507599c65afca0f399c1CjDrDF6Zjbtj8LtHjYiGQporM3gsHm5BsY0OQh7Ow82jvCiay_gsWG9n-dacE3ESExkSVmFUMkN5c1hSY3hJaWswWGNmQjJjR3NQVmMxSV83bEU4bldocDMycV95RjJ3MTVHcGRmeEgzeExaR3hVRG9CUzZhUjMyYWlLbFpTWHhvbUtQWVFSQ1h3IIEC&appkey=1d8b6e7d45233436&buvid=XUF1B5AF0BF95BB6F1614E7BC40B3881EA6C6&csrf=0b38ccc1c50be02b2cdf27f69bddfc8f&disable_rcmd=0&mobi_app=android&platform=android&statistics=%7B%22appId%22%3A1%2C%22platform%22%3A3%2C%22version%22%3A%228.2.0%22%2C%22abtest%22%3A%22%22%7D&ts=1735494720&sign=46b155369b3f97d31208265940b3c2dd
-
 // 1. 获取今日已投币经验，获取推荐列表，查看是否投币
 // 2. 查看账号硬币个数
 // 3. 对列表视频进行投币
@@ -109,50 +85,45 @@ func GainCoin(idx int) {
 
 // 投币经验查询
 func GetCoinExp(idx int) int {
+	Note.Register("投币经验查询")
 	urlCoinExp := "https://api.bilibili.com/x/web-interface/coin/today/exp" // 获得的经验
-
 	resp := inet.DefaultClient.CheckSelect(urlCoinExp, idx)
 	b := &body{}
 	err := json.Unmarshal(resp, b)
 	if err != nil {
-		fmt.Printf(utils.ErrMsg["json"], "GetCoinExp", err.Error(), string(resp))
+		Note.StatusAddString(utils.ErrMsg["json"], "GetCoinExp", err.Error(), string(resp))
 		return -1
 	}
 	if b.Code != 0 {
-		fmt.Printf(utils.ErrMsg["code"], "GetCoinExp", b.Code, b.Message)
+		Note.StatusAddString(utils.ErrMsg["code"], "GetCoinExp", b.Code, b.Message)
 		return -1
 	}
-	if b.Data >= 50 { //  已经通过硬币获得50经验
-		// 获取账号硬币数量
-		// earn expire
-		fmt.Printf("已通过投币获得经验：%d\n", b.Data)
-		return 1
-	}
-	return 0
+	Note.AddString("今日已通过投币获得经验：%d\n", b.Data)
+	return b.Data
 }
 
-func SpendCoin(idx int) {
-	getAidByRecommend(idx)
-	GetCoinExp(idx)
+// 投币获取经验
+func SpendCoin(idx, coin int) int {
+	getAidByRecommend(idx, coin)
+	return GetCoinExp(idx)
 
 }
 
-func getAidByRecommend(idx int) {
-	// 获取推荐视频列表
+// 获取推荐视频列表
+func getAidByRecommend(idx, coin int) {
 	url := "https://api.bilibili.com/x/web-interface/index/top/rcmd?fresh_type=12&version=1&ps=4"
 	resp := inet.DefaultClient.CheckSelect(url, idx)
 	r := &recommend{}
 	err := json.Unmarshal(resp, r)
 	if err != nil {
-		fmt.Printf(utils.ErrMsg["json"], "getAidByRecommend", err.Error(), string(resp))
+		Note.StatusAddString(utils.ErrMsg["json"], "getAidByRecommend", err.Error(), string(resp))
 		return
 	}
 	if r.Code != 0 {
-		fmt.Printf(utils.ErrMsg["code"], "getAidByRecommend", r.Code, r.Message)
+		Note.StatusAddString(utils.ErrMsg["code"], "getAidByRecommend", r.Code, r.Message)
 		return
 	}
-
-	state := 5
+	state := coin / 10
 	for _, item := range r.Data.Item {
 		// 获取稿件投币数量
 		url = "https://api.bilibili.com/x/web-interface/archive/relation?aid="
@@ -161,26 +132,14 @@ func getAidByRecommend(idx int) {
 		ad := &aid{}
 		err = json.Unmarshal(resp, ad)
 		if err != nil {
-			fmt.Printf(utils.ErrMsg["json"], "getAidByRecommend", err.Error(), string(resp))
+			Note.StatusAddString(utils.ErrMsg["json"], "getAidByRecommend", err.Error(), string(resp))
 			continue
 		}
 		if ad.Code != 0 {
-			fmt.Printf(utils.ErrMsg["code"], "getAidByRecommend", ad.Code, ad.Data)
+			Note.StatusAddString(utils.ErrMsg["code"], "getAidByRecommend", ad.Code, ad.Data)
 			continue
 		}
-		//aid: 113672986822554
-		//multiply: 2
-		//select_like: 1
-		//cross_domain: true
-		//from_spmid: 333.1007.tianma.1-1-1.click
-		//spmid: 333.788.0.0
-		//statistics: {"appId":100,"platform":5}
-		//eab_x: 2
-		//ramval: 542
-		//source: web_normal
-		//ga: 1
-		//csrf: f8eb4c45f314c7c88539facb7e077c55
-		// 进行投币
+
 		ct := 1 // 投币数量
 		if state > 1 {
 			ct = 2
@@ -195,17 +154,17 @@ func getAidByRecommend(idx int) {
 		aC := &addCoin{}
 		err = json.Unmarshal(resp, aC)
 		if err != nil {
-			fmt.Printf(utils.ErrMsg["json"], "getAidByRecommend", err.Error(), string(resp))
+			Note.StatusAddString(utils.ErrMsg["json"], "getAidByRecommend", err.Error(), string(resp))
 			continue
 		}
 		//fmt.Println("ac", aC, string(resp), item)
 		if aC.Code == 0 {
-			fmt.Printf("视频【%d】投币成功。获得%d经验。\n", item.Id, ct*10)
+			Note.AddString("视频【%d】投币成功。获得%d经验。\n", item.Id, ct*10)
 			state -= 2
 		} else if aC.Code == 34005 {
-			fmt.Printf("视频【%d】投币已达到上限。\n", item.Id)
+			Note.AddString("视频【%d】投币已达到上限。\n", item.Id)
 		} else {
-			fmt.Printf("视频【%d】投币失败。code:%d; msg：%s。\n", item.Id, aC.Code, aC.Message) // code:-403; msg：账号异常,操作失败。
+			Note.AddString("视频【%d】投币失败。code:%d; msg：%s。\n", item.Id, aC.Code, aC.Message) // code:-403; msg：账号异常,操作失败。
 		}
 
 		// 观看任务。好像没啥用

@@ -38,16 +38,23 @@ func UpdateLocalEnv(token string) {
 		uids[c] = ""
 	}
 	for _, v := range qlEnvs.Data {
-		if v.Status == 1 {
+		if v.Status == 1 { // 表示禁用
 			continue
 		}
 		uid := strings.Split(v.Remarks, "_")[0]
-		if _, ok := uids[uid]; !ok {
+		if _, ok := uids[uid]; !ok { // 如果不存在则直接替换
 			nck := config.BUserCk{}
 			nck.Ck = v.Value
 			config.Cfg.BUserCk = append(config.Cfg.BUserCk, nck)
+		} else { // 如果存在呢？   会有很大问题。
+			tk := config.Cfg.BUserCk
+			fmt.Println(tk)
 		}
 	}
 	config.Write()
 	fmt.Println(string(resp), ok)
+}
+
+func UpdateQlEnv() {
+
 }

@@ -2,6 +2,7 @@ package common
 
 import (
 	"charge/inet"
+	"charge/utils"
 	"encoding/json"
 	"fmt"
 	url2 "net/url"
@@ -79,40 +80,40 @@ type PointList struct {
 }
 
 func BigPoint(idx int) {
+	if Note.Register("大会员积分签到") {
+		return
+	}
 	url := "https://api.bilibili.com/x/vip_point/task/combine"
 	vTask := &VipTask{}
 	resp := inet.DefaultClient.CheckSelect(url, idx)
 	err := json.Unmarshal(resp, vTask)
 	if err != nil {
-		fmt.Println(err)
+		Note.StatusAddString(utils.ErrMsg["json"], "BigPoint", err.Error(), string(resp))
 		return
 	}
 	if vTask.Code != 0 {
-		fmt.Println("vip task err code:", vTask.Code, vTask.Message)
+		Note.StatusAddString(utils.ErrMsg["code"], "BigPoint", vTask.Code, vTask.Message)
 		return
 	}
 	if len(vTask.Data.Task_info.Modules) == 0 {
-		fmt.Println("获取任务列表失败，列表为空")
+		Note.StatusAddString("%s获取任务列表失败，列表为空\n", "BigPoint")
+		//fmt.Println("获取任务列表失败，列表为空")
 		return
 	}
-	fmt.Printf("当前大会员积分：%d。其中", vTask.Data.Point_info.Point)
-	fmt.Printf("%d积分即将过期，剩余%d天\n", vTask.Data.Point_info.Expire_point, vTask.Data.Point_info.Expire_days)
-	if vTask.Data.Vip_info.Status == 0 || vTask.Data.Vip_info.Type == 0 {
-		fmt.Println("当前无大会员，无法继续执行任务")
-		return
-	}
+	Note.AddString("当前大会员积分：%d。其中%d积分即将过期，剩余%d天\n", vTask.Data.Point_info.Point, vTask.Data.Point_info.Expire_point, vTask.Data.Point_info.Expire_days)
+
 	day := time.Now().Format("2006-01-02")
 	for _, d := range vTask.Data.Task_info.Sing_task_item.Histories {
 		if d.Day == day {
 			if d.Signed == false {
 				if code := VSign(idx); code == 0 {
-					fmt.Println("今日份大会员签到成功 ✓")
+					Note.AddString("今日份大会员签到成功 ✓\n")
 				} else if code == -401 {
-					fmt.Println("出现非法访问异常，可能账号存在异常，放弃大积分任务")
+					Note.StatusAddString("出现非法访问异常，可能账号存在异常，放弃大积分任务\n")
 					return
 				}
 			} else {
-				fmt.Println("今日份大会员已签到 ✓")
+				Note.AddString("今日份大会员已签到 ✓\n")
 			}
 		}
 	}
@@ -120,7 +121,7 @@ func BigPoint(idx int) {
 	// 领取任务
 	for _, taskList := range vTask.Data.Task_info.Modules {
 		if len(taskList.Common_task_item) == 1 {
-			// 非日常任务
+			// 非日常任务即一次性任务，pass。
 			if taskList.Common_task_item[0].Complete_times == taskList.Common_task_item[0].Max_times {
 				continue
 			}
@@ -143,17 +144,17 @@ func BigPoint(idx int) {
 							} else if task.Task_code == "vipmallview" {
 								// 会员购
 								if VipMallView(idx) == 0 {
-									fmt.Println("浏览会员购每日任务 ✓")
+									Note.AddString("浏览会员购每日任务 ✓")
 								}
 							} else if task.Task_code == "dress-view" {
 								// 装扮商城
 								if CompleteTaskV2(idx, task.Task_code) == 0 {
-									fmt.Printf("【%s】任务完成 ✓\n", task_code[task.Task_code])
+									Note.AddString("【%s】任务完成 ✓\n", task_code[task.Task_code])
 								}
 							} else {
 								if CompleteTask(idx, task.Task_code) == 0 {
 									// 影视、番剧10s
-									fmt.Printf("【%s】任务完成 ✓\n", task_code[task.Task_code])
+									Note.AddString("【%s】任务完成 ✓\n", task_code[task.Task_code])
 								}
 							}
 						}
@@ -164,7 +165,7 @@ func BigPoint(idx int) {
 			// jp_channel任务 不在task目录中，奇怪  需要修改位置
 			if CompleteTask(idx, "jp_channel") == 0 {
 				// 影视、番剧10s
-				fmt.Printf("任务【%s】完成 ✓\n", "jp_channel")
+				Note.AddString("任务【%s】完成 ✓\n", "jp_channel")
 			}
 		}
 	}
@@ -172,15 +173,12 @@ func BigPoint(idx int) {
 	time.Sleep(2 * time.Second)
 	todayPoint := GetTodayPoint(idx)
 	if todayPoint >= 45 {
-		fmt.Printf("今日获取积分【%d】，跳过检测观看结果\n", todayPoint)
-
+		Note.AddString("今日获取积分【%d】，跳过检测观看结果\n", todayPoint)
 	} else if todayPoint < 35 {
-		fmt.Printf("今日获取积分【%d】, 未达到预期 ×", todayPoint)
+		Note.StatusAddString("今日获取积分【%d】, 未达到预期 ×。\n", todayPoint)
 	} else {
-		fmt.Printf("今日获取积分【%d】, 部分任务未成功 ×", todayPoint)
-		fmt.Printf("可能是完成获取，但是接口数据延迟。")
+		Note.StatusAddString("今日获取积分【%d】, 部分任务未成功（可能是完成获取，但是接口数据延迟） ×。\n", todayPoint)
 	}
-
 }
 
 // 签到
@@ -191,11 +189,11 @@ func VSign(idx int) int {
 	err := json.Unmarshal(resp, reS)
 	//fmt.Println(string(resp), reS)
 	if err != nil {
-		fmt.Println("签到失败:", err)
+		Note.StatusAddString(utils.ErrMsg["json"], "VSign", err.Error(), string(resp))
 		return -1
 	}
 	if reS.Code != 0 { // -401
-		fmt.Println("签到失败:res Code", reS.Code, reS.Message)
+		Note.StatusAddString(utils.ErrMsg["code"], "VSign", reS.Code, string(resp))
 		return reS.Code
 	}
 	return 0
@@ -210,22 +208,19 @@ func ReceiveTask(idx int, taskCode string) int {
 	refer := "https://big.bilibili.com/mobile/bigPoint/task"
 	url := "https://api.bilibili.com/pgc/activity/score/task/receive/v2"
 	reqBody := url2.Values{}
-	//reqBody.Add("csrf", taskCode)
 	reqBody.Add("taskCode", taskCode)
-	//reqBody.Add("ts", strconv.Itoa(int(time.Now().Unix())))
 	resp := inet.DefaultClient.CheckSelectPost(url, "application/x-www-form-urlencoded", refer, mobileUA, idx, strings.NewReader(reqBody.Encode()))
 	reS := &reSign{}
 	err := json.Unmarshal(resp, &reS)
-	//fmt.Println(string(resp), reS)
 	if err != nil {
-		fmt.Println(err)
+		Note.StatusAddString(utils.ErrMsg["json"], "ReceiveTask", err.Error(), string(resp))
 		return -1
 	}
 	if reS.Code != 0 {
-		fmt.Printf("领取任务%s失败.res Code:%d,res Message:%s\n", task_code[taskCode], reS.Code, reS.Message)
+		Note.StatusAddString("领取任务【%s】失败.res Code:%d,res Message:%s\n", task_code[taskCode], reS.Code, reS.Message)
 		return reS.Code
 	}
-	fmt.Printf("领取任务【%s】成功\n", task_code[taskCode])
+	Note.AddString("领取任务【%s】成功\n", task_code[taskCode])
 	return 0
 
 }
@@ -239,21 +234,20 @@ func CompleteTask(idx int, taskCode string) int {
 	url := "https://api.bilibili.com/pgc/activity/deliver/task/complete"
 	refer := "https://big.bilibili.com/mobile/bigPoint"
 	reqBody := url2.Values{}
-	//reqBody.Add("csrf", taskCode)
+	taskC := taskCode
 	if taskCode == "filmtab" {
-		taskCode = "tv_channel"
+		taskC = "tv_channel"
 	}
-	reqBody.Add("position", taskCode)
+	reqBody.Add("position", taskC)
 	resp := inet.DefaultClient.CheckSelectPost(url, "application/x-www-form-urlencoded", refer, "", idx, strings.NewReader(reqBody.Encode()))
 	reS := &reSign{}
 	err := json.Unmarshal(resp, &reS)
-	//fmt.Println(string(resp), reS, idx, taskCode)
 	if err != nil {
-		fmt.Println(err)
+		Note.StatusAddString(utils.ErrMsg["json"], "CompleteTask", err.Error(), string(resp))
 		return -1
 	}
 	if reS.Code != 0 {
-		fmt.Printf("任务[%s]完成失败.res Code:%d,res Message:%s\n", task_code[taskCode], reS.Code, reS.Message)
+		Note.StatusAddString("任务【%s】完成失败.res Code:%d,res Message:%s\n", task_code[taskCode], reS.Code, reS.Message)
 		return reS.Code
 	}
 	return 0
@@ -265,18 +259,16 @@ func CompleteTaskV2(idx int, taskCode string) int {
 	url := "https://api.bilibili.com/pgc/activity/score/task/complete/v2"
 	refer := "https://big.bilibili.com/mobile/bigPoint/task"
 	reqBody := url2.Values{}
-	//reqBody.Add("csrf", taskCode)
 	reqBody.Add("taskCode", taskCode)
 	resp := inet.DefaultClient.CheckSelectPost(url, "application/x-www-form-urlencoded", refer, "", idx, strings.NewReader(reqBody.Encode()))
 	reS := &reSign{}
 	err := json.Unmarshal(resp, &reS)
-	//fmt.Println(string(resp), reS)
 	if err != nil {
-		fmt.Println(err)
+		Note.StatusAddString(utils.ErrMsg["json"], "CompleteTaskV2", err.Error(), string(resp))
 		return -1
 	}
 	if reS.Code != 0 {
-		fmt.Printf("任务[%s]完成失败.res Code:%d,res Message:%s\n", task_code, reS.Code, reS.Message)
+		Note.StatusAddString("任务【%s】完成失败.res Code:%d,res Message:%s\n", task_code[taskCode], reS.Code, reS.Message)
 		return reS.Code
 	}
 	return 0
@@ -291,11 +283,11 @@ func VipMallView(idx int) int {
 	reS := &reSign{}
 	err := json.Unmarshal(resp, reS)
 	if err != nil {
-		fmt.Println(err)
+		Note.StatusAddString(utils.ErrMsg["json"], "CompleteTaskV2", err.Error(), string(resp))
 		return -1
 	}
 	if reS.Code != 0 {
-		fmt.Println("浏览会员购失败:", reS.Code, reS.Message)
+		Note.StatusAddString("任务【%s】完成失败.res Code:%d,res Message:%s\n", "浏览会员购", reS.Code, reS.Message)
 		return reS.Code
 
 	}
@@ -309,11 +301,11 @@ func GetTodayPoint(idx int) int {
 	resp := inet.DefaultClient.CheckSelect(url, idx)
 	err := json.Unmarshal(resp, &pointList)
 	if err != nil {
-		fmt.Println(err)
+		Note.StatusAddString(utils.ErrMsg["json"], "GetTodayPoint", err.Error(), string(resp))
 		return -1
 	}
 	if pointList.Code != 0 {
-		fmt.Printf("获取积分列表失败，res.Code：%d，res.Message：%s\n", pointList.Code, pointList.Message)
+		Note.StatusAddString("获取积分列表失败，res.Code：%d，res.Message：%s\n", pointList.Code, pointList.Message)
 		return -1
 	}
 
