@@ -173,7 +173,10 @@ func MemberGoodsInfo(idx int) {
 	resp := inet.DefaultClient.CheckSelect(url, idx)
 	err := json.Unmarshal(resp, &mGoods)
 	if err != nil {
-		fmt.Println(err)
+		Note.StatusAddString(utils2.ErrMsg["json"], "memberRegister", err.Error(), string(resp))
+		return
+	}
+	if mGoods.Data.ItemAreas == nil {
 		return
 	}
 	desp := ""
@@ -181,12 +184,13 @@ func MemberGoodsInfo(idx int) {
 		s := item.Title + fmt.Sprintf("【价格：%d】。", item.Price) + item.PrizeDesc + item.PrizeSpec
 		desp += "- " + s + "\n"
 	}
-	fmt.Println(desp)
+	Note.AddString(desp)
 
 }
 
 var mUa = "Mozilla/5.0 (Linux; Android 12; 24031PN0DC Build/V417IR; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/101.0.4951.61 Safari/537.36 BiliApp/8020300 mobi_app/android isNotchWindow/0 NotchHeight=1 mallVersion/8020300 mVersion/263 disable_rcmd/0"
 var stop = 0
+var hadReceive = true
 
 // 可以完成任务，但是领取金币需要access_key
 func MemberRegister(idx int) {
@@ -195,7 +199,7 @@ func MemberRegister(idx int) {
 	if Note.Register("会员购签到") { // 在第一轮执行无误后会跳过
 		return
 	}
-
+	hadReceive = true
 	ok, objectsGameId := memberRegister(idx)
 	if ok == false {
 		Note.StatusAddString("会员购签到任务领取失败（任务领取阶段失败） ×\n")
@@ -210,19 +214,25 @@ func MemberRegister(idx int) {
 	}
 	time.Sleep(5 * time.Second)
 	// 在任务执行完毕后领取金币会遇到领取失败的问题，因此采用分开处理
-	ok, _ = memberRegister(idx)
-	if ok == false {
-		Note.StatusAddString("会员购签到任务执行失败（任务领取阶段失败） ×\n")
-		return
+
+	if hadReceive == false {
+		ok, _ = memberRegister(idx)
+		if ok == false {
+			Note.StatusAddString("会员购签到任务执行失败（任务领取阶段失败） ×\n")
+			return
+		}
+		time.Sleep(5 * time.Second)
+		// 获取任务执行后的的金币个数
+		num2, ok := memberGold(idx, objectsGameId)
+		if ok == false {
+			Note.StatusAddString("会员购签到任务执行失败（最终金币查询阶段失败） ×\n")
+			return
+		}
+		Note.AddString("会员购签到完毕。今日已获得%d个金币\n", num2-num1+todayG) // 统计不准,尝试做一下延迟
+	} else {
+		Note.AddString("会员购签到完毕。现在有%d个金币\n", num1) // 统计不准,尝试做一下延迟
 	}
-	time.Sleep(5 * time.Second)
-	// 获取任务执行后的的金币个数
-	num2, ok := memberGold(idx, objectsGameId)
-	if ok == false {
-		Note.StatusAddString("会员购签到任务执行失败（最终金币查询阶段失败） ×\n")
-		return
-	}
-	Note.AddString("会员购签到完毕。今日已获得%d金币\n", num2-num1+todayG) // 统计不准,尝试做一下延迟
+
 }
 
 func memberRegister(idx int) (req bool, rs string) {
@@ -300,6 +310,7 @@ func memberRegister(idx int) (req bool, rs string) {
 					Note.AddString("会员购任务【%s】成功领取%d个金币 √\n", mt.Description, mt.Prize.PrizeNum)
 				} else {
 					Note.StatusAddString("会员购任务【%s】领取%d个金币失败 X\n", mt.Description, mt.Prize.PrizeNum)
+					hadReceive = false
 				}
 			} else if action == "done" { // 表示任务已经完成，已领取奖励
 				Note.AddString("会员购任务【%s】已成功领取%d个金币\n", mt.Description, mt.Prize.PrizeNum)

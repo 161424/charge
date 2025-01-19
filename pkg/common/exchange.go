@@ -84,7 +84,7 @@ func ExchangePoint(idx int) {
 			return
 		}
 		if sku.Code != 0 {
-			Note.StatusAddString(utils.ErrMsg["code"], "exchangePoint", sku.Code, sku.Message)
+			Note.StatusAddString(utils.ErrMsg["code"], "ExchangePoint", sku.Code, sku.Message)
 			return
 		}
 		for j := 0; j < len(sku.Data.Skus); j++ {
@@ -97,7 +97,7 @@ func ExchangePoint(idx int) {
 				continue
 			}
 			if skuInfo.Code != 0 {
-				Note.StatusAddString(utils.ErrMsg["code"], "exchangePoint", skuInfo.Code, skuInfo.Message)
+				Note.StatusAddString(utils.ErrMsg["code"], "ExchangePoint", skuInfo.Code, skuInfo.Message)
 				continue
 			}
 			if strings.Contains(sku.Data.Skus[j].Title, "7天试用装扮") { // 去除7天试用装扮

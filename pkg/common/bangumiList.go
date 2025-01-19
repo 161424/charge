@@ -2,7 +2,6 @@ package common
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"math/rand"
 	"os"
@@ -47,7 +46,6 @@ func init() {
 	}
 	path = strings.Join(npath, "/")
 
-	fmt.Println(path)
 	f, err := os.OpenFile(path+"/data/243343066.json", os.O_RDWR, 777)
 	if err != nil {
 		log.Fatalf("读取文件失败: %v", err)

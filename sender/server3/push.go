@@ -3,6 +3,7 @@ package server3
 import (
 	"charge/config"
 	"encoding/json"
+	"fmt"
 	serverchan_sdk "github.com/easychen/serverchan-sdk-golang"
 )
 
@@ -12,6 +13,7 @@ func Push(title, desp, tag string) {
 	})
 	if err != nil {
 		desp, _ := json.Marshal(resp)
+		fmt.Println(string(desp))
 		Push("发送错误", string(desp), "错误")
 	}
 	//fmt.Println(resp)

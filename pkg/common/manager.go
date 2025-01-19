@@ -103,35 +103,43 @@ func (n *note) AddString(format string, a ...any) {
 	fmt.Printf(s)
 }
 
+// 每日任务执行
+// serve酱的文本采用的是markdown格式，因此消息也是markdown格式
 func DailyTask() func() {
 	return func() {
 		mointer := sender.Monitor{}
 		mointer.Tag = "Daily Tasks"
 		cks := inet.DefaultClient.Cks
 		Note.Id++
+		Note.AddString("  --------  Daily Tasks  --------\n")
 		for idx := range len(cks) {
-			Note.AddString("  --------  Daily Tasks  --------\n")
-			Note.AddString("现在是%s，正在执行第%d个账号【%s】的每日任务\n", time.Now().Format(time.DateTime), idx+1, cks[idx].Uid)
+			var uS string
+			if v, ok := User[cks[idx].Uid]; ok {
+				uS = fmt.Sprintf("uname:%s uid:%d", v.Data.Uname, v.Data.Mid)
+			} else {
+				uS = fmt.Sprintf("uid:%d", v.Data.Mid)
+			}
 			if cks[idx].Alive == false {
-				Note.AddString("第%d个账号【%s】Ck已失活\n", idx+1, cks[idx].Uid)
+				Note.AddString("## 现在是%s，第%d个账号【%s】Ck已失活\n", time.Now().Format(time.DateTime), idx+1, uS)
 				continue
 			}
+			Note.AddString("## 现在是%s，正在执行第%d个账号【%s】的每日任务\n", time.Now().Format(time.DateTime), idx+1, uS)
+
 			// userinfo
 			userInfo := GetUserInfo(idx) // 获取user基本信息
 			if userInfo == nil {
 				continue
 			}
 			User[cks[idx].Uid] = *userInfo // 保存user基本信息
-			Note.AddString("用户【name:%s】[id:%d]信息获取成功。\n", userInfo.Data.Uname, userInfo.Data.Mid)
-
+			Note.AddString("用户【uname:%s】[uid:%d]信息获取成功。\n", userInfo.Data.Uname, userInfo.Data.Mid)
 			if userInfo.Data.VipStatus == 1 {
 				t := time.UnixMilli(userInfo.Data.VipDueDate)
 				t1 := t.Format("2006-01-02")
 				t2 := int(t.Sub(time.Now()).Hours() / 24)
-				Note.AddString("尊敬的 %s-【name:%s】您好,您的大会员在 %s 到期，还剩 %d 天。\n", userInfo.Data.VipLabel.Text, userInfo.Data.Uname,
+				Note.AddString("尊敬的 {%s}-【name:%s】您好,您的大会员在 %s 到期，还剩 %d 天。\n", userInfo.Data.VipLabel.Text, userInfo.Data.Uname,
 					t1, t2)
 			} else {
-				Note.AddString("尊敬的【%s】您好。\n", userInfo.Data.Uname)
+				Note.AddString("尊敬的【name:%s】您好。\n", userInfo.Data.Uname)
 			}
 
 			if userInfo.Data.Wallet.BcoinBalance != 0 {
@@ -147,7 +155,7 @@ func DailyTask() func() {
 				Note.AddString("当前用户等级【Lv%d】，以达到最大等级，无需升级\n", userInfo.Data.Level_info.CurrentLevel)
 			}
 			Note.AddString("当前用户有%.2f个硬币\n", userInfo.Data.Money)
-			if code := GetCoinExp(idx); code >= 0 && code != 50 { // 投币经验小于50
+			if code := GetCoinExp(idx); code >= 0 && code < 50 { // 投币经验小于50
 				if userInfo.Data.Level_info.CurrentLevel < 6 && userInfo.Data.Money > 5 { // 只在6级之下投币且硬币数量大于5个
 					coin := SpendCoin(idx, code) //  观看推荐视频，并点赞投币
 					if coin/10 < 5 {
@@ -206,13 +214,14 @@ func DailyTask() func() {
 
 		}
 		//  使用随机账户查看信息
+		Note.AddString("正在打印会员购兑换物品...")
 		if k := randomCk(len(cks)); k >= 0 {
 			// 会员购兑换物品通知
 			MemberGoodsInfo(k)
 		}
 
 		// 每日远程通知一次
-
+		fmt.Println("打印通知")
 		fmt.Println(Note.String())
 		mointer.Desp = Note.String()
 		mointer.PushS()

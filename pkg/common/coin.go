@@ -7,6 +7,7 @@ import (
 	url2 "net/url"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type body struct {
@@ -105,6 +106,7 @@ func GetCoinExp(idx int) int {
 // 投币获取经验
 func SpendCoin(idx, coin int) int {
 	getAidByRecommend(idx, coin)
+	time.Sleep(5 * time.Second)
 	return GetCoinExp(idx)
 
 }
@@ -123,7 +125,7 @@ func getAidByRecommend(idx, coin int) {
 		Note.StatusAddString(utils.ErrMsg["code"], "getAidByRecommend", r.Code, r.Message)
 		return
 	}
-	state := coin / 10
+	state := 5 - coin/10
 	for _, item := range r.Data.Item {
 		// 获取稿件投币数量
 		url = "https://api.bilibili.com/x/web-interface/archive/relation?aid="

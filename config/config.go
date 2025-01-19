@@ -3,7 +3,6 @@ package config
 import (
 	"charge/utils"
 	"fmt"
-	"github.com/jinzhu/copier"
 	"gopkg.in/yaml.v3"
 	"io"
 	"log"
@@ -160,17 +159,8 @@ func SetUck(tp string, value, uid string) {
 func UpdateConfigExample() func() {
 	return func() {
 		newCfg := &config{}
-		err := copier.CopyWithOption(&newCfg, &Cfg, copier.Option{CaseSensitive: true, DeepCopy: true})
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		newCfg.Redis = Redis{}
 		newCfg.BUserCk = []BUserCk{}
-		newCfg.DDNS = DDNS{}
-		newCfg.Server3 = ""
-
-		o, err := yaml.Marshal(Cfg)
+		o, err := yaml.Marshal(newCfg)
 		data, err := os.OpenFile(Path+"/config/config.example.yaml", os.O_RDWR|os.O_TRUNC, 777)
 		if err != nil {
 			log.Fatalf("读取文件失败: %v", err)

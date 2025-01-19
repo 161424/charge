@@ -84,7 +84,7 @@ func (tw *TimingWheel) AddTimer(duration, execTime time.Duration, isCircle bool,
 		}
 		tw.buckets[tw.current].PushBack(ftimer)
 		tw.processTimersAtPosition(tw.current)
-		expiry = int((duration + execTime) / tickDuration)
+		expiry = int((duration) / tickDuration)
 		if expiry < tw.current {
 			d := int(duration.Minutes())
 			e := int(execTime.Minutes())
@@ -96,7 +96,7 @@ func (tw *TimingWheel) AddTimer(duration, execTime time.Duration, isCircle bool,
 			}
 		}
 	}
-	if expiry > wheelSize {
+	if expiry >= wheelSize {
 		expiry -= wheelSize
 	}
 	position = expiry % wheelSize
@@ -127,7 +127,7 @@ func (tw *TimingWheel) run() {
 func (tw *TimingWheel) processTimersAtPosition(position int) {
 	lens := tw.buckets[position].Len()
 	if lens != 0 {
-		fmt.Printf("正在运行第%d个格子的任务\n", position)
+		fmt.Printf("正在运行第%d个格子,共有%d个任务\n", position, lens)
 	}
 	if position == 0 {
 		fmt.Printf("欢迎来到%s，又是充满希望的一天\n", time.Now().Format("2006-01-02"))

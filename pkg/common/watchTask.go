@@ -29,6 +29,7 @@ type videoView struct {
 			Duration int    //  视频长度：分钟
 		}
 	}
+	Message string
 }
 
 type reHeart struct {
@@ -111,15 +112,15 @@ func watchTargetVideoCommon(idx int, bvid string) {
 	vw := &videoView{}
 	err := json.Unmarshal(resp, vw)
 	if err != nil {
-		fmt.Println(err)
+		Note.StatusAddString(utils.ErrMsg["json"], "watchTargetVideoCommon", err.Error(), string(resp))
 		return
 	}
 	if vw.Code != 0 {
-		fmt.Println(vw.Code)
+		Note.StatusAddString(utils.ErrMsg["code"], "watchTargetVideoCommon", vw.Code, vw.Message)
 		return
 	}
 
-	fmt.Printf("正在观看:%s·《%s》\n", vw.Data.Title, vw.Data.Pages[0].Part)
+	Note.AddString("正在观看:%s·《%s》\n", vw.Data.Title, vw.Data.Pages[0].Part)
 
 	reqBody := url2.Values{}
 	rh := &reHeart{}
@@ -167,11 +168,11 @@ func WatchExp(idx int) int {
 	re := &reSign{}
 	err := json.Unmarshal(resp, re)
 	if err != nil {
-		fmt.Printf(utils.ErrMsg["json"], "watchExp", err.Error(), string(resp))
+		Note.StatusAddString(utils.ErrMsg["json"], "WatchExp", err.Error(), string(resp))
 		return -1
 	}
 	if re.Code != 0 {
-		fmt.Printf(utils.ErrMsg["Code"], "watchExp", re.Code, string(resp))
+		Note.StatusAddString(utils.ErrMsg["code"], "WatchExp", re.Code, re.Message)
 	}
 	return re.Code
 }
@@ -201,11 +202,11 @@ func WatchRandomEp(idx int) {
 	resp := inet.DefaultClient.CheckSelect(url, idx)
 	err := json.Unmarshal(resp, ogvCards)
 	if err != nil {
-		fmt.Printf(utils.ErrMsg["json"], "watchRandomEp", err.Error(), string(resp))
+		Note.StatusAddString(utils.ErrMsg["json"], "watchRandomEp", err.Error(), string(resp))
 		return
 	}
 	if ogvCards.Code != 0 {
-		fmt.Printf(utils.ErrMsg["code"], "watchRandomEp", ogvCards.Code, string(resp))
+		Note.StatusAddString(utils.ErrMsg["code"], "watchRandomEp", ogvCards.Code, string(resp))
 		return
 	}
 
@@ -245,11 +246,11 @@ func WatchRandomEp(idx int) {
 	watchReceiveResp := &WatchReceiveResp{}
 	err = json.Unmarshal(resp, &watchReceiveResp)
 	if err != nil {
-		fmt.Printf(utils.ErrMsg["json"], "WatchRandomEp", err.Error(), string(resp))
+		Note.StatusAddString(utils.ErrMsg["json"], "WatchRandomEp", err.Error(), string(resp))
 		return
 	}
 	if watchReceiveResp.Code != 0 {
-		fmt.Printf("观看视频%s失败.res Code:%d,res Message:%s", BangumiList.Name, watchReceiveResp.Code, watchReceiveResp.Message)
+		Note.StatusAddString("观看视频%s失败.res Code:%d,res Message:%s", BangumiList.Name, watchReceiveResp.Code, watchReceiveResp.Message)
 		return
 	}
 	// 异步执行
@@ -257,7 +258,7 @@ func WatchRandomEp(idx int) {
 		time.Sleep(10 * time.Minute)
 		code := WatchMovie(idx, watchReceiveResp.Data.WatchCountDownCfg.Token, watchReceiveResp.Data.WatchCountDownCfg.TaskId)
 		if code == 0 {
-			fmt.Println("10分钟视频观看完毕，获得40积分")
+			Note.AddString("10分钟视频观看完毕，获得40积分")
 		}
 	}()
 
@@ -281,11 +282,11 @@ func WatchMovie(idx int, token, taskId string) int {
 	re := &reSign{}
 	err := json.Unmarshal(resp, re)
 	if err != nil {
-		fmt.Printf(utils.ErrMsg["json"], "WatchMovie", err.Error(), string(resp))
+		Note.StatusAddString(utils.ErrMsg["json"], "WatchMovie", err.Error(), string(resp))
 		return -1
 	}
 	if re.Code != 0 {
-		fmt.Printf(utils.ErrMsg["code"], "WatchMovie", re.Code, string(resp))
+		Note.StatusAddString(utils.ErrMsg["code"], "WatchMovie", re.Code, string(resp))
 	}
 
 	return re.Code

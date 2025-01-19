@@ -82,7 +82,7 @@ func ListenUpForLottery(Uid []string, cmp chan struct{}) []string {
 				if len(lTime) > 10 {
 					lTime = lTime[:10] + "..."
 				}
-				fmt.Printf("正在查看第【%d】页内容。文章id：%s；文章标题《%s》；%s\n", counter, item.OpusID, item.Content, lTime)
+				fmt.Printf("正在查看第【%d】页内容。文章id：%s；文章标题《%s》；%s\n", counter, item.OpusID, item.Content[:10], lTime)
 				inet.DefaultClient.ArticleLike(item.OpusID)
 				doc.Find(".opus-module-content > p").Each(func(i int, s *goquery.Selection) {
 					//fmt.Println(1, s.Get(i), s.Text())

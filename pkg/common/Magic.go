@@ -93,7 +93,7 @@ func magicRegister(idx int, note bool) string {
 	if note {
 		pr := ""
 		for k := range mgDetail.Data.SignConfigs {
-			if mgDetail.Data.SignConfigs[k].Achieve == 1 && (k == len(mgDetail.Data.SignConfigs) || mgDetail.Data.SignConfigs[k+1].Achieve == 2) {
+			if mgDetail.Data.SignConfigs[k].Achieve == 1 && (k == len(mgDetail.Data.SignConfigs)-1 || mgDetail.Data.SignConfigs[k+1].Achieve == 2) {
 				for _, m := range mgDetail.Data.SignConfigs[k].Imgs {
 					pr += fmt.Sprintf("%s*%d;", m.Name, m.Count)
 				}

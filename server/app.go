@@ -49,7 +49,7 @@ func Run() error {
 	//tw.AddTimer(8*60*time.Minute, 2, listenUpForLottery.BalanceLottery()) // 设置每日转发lottery (会删除，因此要最后进行)
 
 	// DailyTask。每8个小时运行一次
-	tw.AddTimer(8*60*time.Minute, 2*60*time.Minute, true, "DailyTask", common.DailyTask())
+	tw.AddTimer(8*60*time.Minute, 12*60*time.Minute, true, "DailyTask", common.DailyTask())
 
 	Tw = tw
 	//todo 多账号监听up充电
