@@ -2,20 +2,16 @@ package n
 
 import (
 	"charge/pkg/common"
-	"fmt"
 	"testing"
 )
 
 func TestBCoinExchangeForUp(t *testing.T) {
-	s := common.BCoinExchangeForUp(0)
-	fmt.Println(s)
+	common.BCoinExchangeForUp(0, 5)
 
 }
 
 func TestBCoinState(t *testing.T) {
-	s := common.BCoinState(0)
-	fmt.Println(s)
-
+	common.BCoinState(0)
 }
 
 //nable_web_push=DISABLE; header_theme_version=CLOSE; LIVE_BUVID=AUTO6817258668713773; buvid_fp_plain=undefined; CURRENT_BLACKGAP=0; hit-dyn-v2=1; CURRENT_QUALITY=116; fingerprint=d2bb79ad289465b816cc4c155fc421db; share_source_origin=COPY; dy_spec_agreed=1; home_feed_column=5; browser_resolution=1854-905; PVID=3; bsource=search_bing; bp_t_offset_74199115=1018989782774054912; CURRENT_FNVAL=16;

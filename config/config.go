@@ -29,10 +29,10 @@ type config struct {
 
 	DDNS DDNS `yaml:"DDNS"`
 
-	DaleyTime int64  `yaml:"DaleyTime"`
-	Server3   string `yaml:"Server3"`
-	Exchange  string `yaml:"Exchange"`
-	Ql        Ql     `yaml:"Ql"`
+	DaleyTime     int64  `yaml:"DaleyTime"`
+	Server3       string `yaml:"Server3"`
+	BCoinExchange string `yaml:"BCoinExchange"`
+	Ql            Ql     `yaml:"Ql"`
 
 	Model string `yaml:"Model"`
 }

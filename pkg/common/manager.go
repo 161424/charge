@@ -1,6 +1,7 @@
 package common
 
 import (
+	"charge/config"
 	"charge/inet"
 	"charge/sender"
 	"fmt"
@@ -189,10 +190,10 @@ func DailyTask() func() {
 				BCoinState(idx)
 				// BB券充电。检测到马上过期，会自动充电
 				if BCoinExpiringSoon {
-					if cks[idx].Uid == "74199115" { // 无法为自己充电，只能冲电池
-						BCoinExchangeForBattery(idx) // 即将过期的b币为自己换成电池
+					if cks[idx].Uid == config.Cfg.BCoinExchange { // 无法为自己充电，只能冲电池
+						BCoinExchangeForBattery(idx, userInfo.Data.Wallet.CouponBalance) // 即将过期的b币为自己换成电池
 					} else {
-						BCoinExchangeForUp(idx) // 即将过期的b币为别人充电
+						BCoinExchangeForUp(idx, userInfo.Data.Wallet.CouponBalance) // 即将过期的b币为别人充电
 					}
 
 				}

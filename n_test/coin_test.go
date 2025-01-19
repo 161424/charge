@@ -8,7 +8,7 @@ import (
 )
 
 func TestCoin(t *testing.T) {
-	common.SpendCoin(0)
+	common.SpendCoin(0, 5)
 }
 
 func TestW(t *testing.T) {

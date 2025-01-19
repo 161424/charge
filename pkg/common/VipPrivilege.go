@@ -171,14 +171,15 @@ func BCoinReceive(idx int) {
 }
 
 // 默认充电
-func BCoinExchangeForUp(idx int) {
+func BCoinExchangeForUp(idx int, bnum int) {
+	upMid := config.Cfg.BCoinExchange
 	url := "https://api.bilibili.com/x/ugcpay/web/v2/trade/elec/pay/quick"
 	reqBody := url2.Values{}
-	reqBody.Set("bp_num", "5")                 // 充电 b 币数量
+	reqBody.Set("bp_num", strconv.Itoa(bnum))  // 充电 b 币数量
 	reqBody.Set("is_bp_remains_prior", "true") //B币充电请选择true
-	reqBody.Set("up_mid", "74199115")          // 充电对象用户UID
+	reqBody.Set("up_mid", upMid)               // 充电对象用户UID
 	reqBody.Set("otype", "up")                 // 充电来源 up：空间充电 archive：视频充电
-	reqBody.Set("oid", "74199115")             // 充电来源代码 空间充电：充电对象用户mid 视频充电：稿件avid
+	reqBody.Set("oid", upMid)                  // 充电来源代码 空间充电：充电对象用户mid 视频充电：稿件avid
 	reqBody.Set("csrf", utils.CutCsrf(inet.DefaultClient.Cks[idx].Ck))
 	resp := inet.DefaultClient.CheckSelectPost(url, utils.ContentType["x"], "https://www.bilibili.com/", "", idx, strings.NewReader(reqBody.Encode()))
 	cU := &ChargeUp{}
@@ -192,24 +193,24 @@ func BCoinExchangeForUp(idx int) {
 		return
 	}
 	if cU.Data.Status == 4 {
-		Note.AddString("B币已为up【%s】充电成功\n", config.Cfg.Exchange)
+		Note.AddString("B币已为up【%s】充电成功\n", upMid)
 	} else if cU.Data.Status == -2 {
-		Note.StatusAddString("B币为up【%s】充电失败，原因是低于20电池下限\n", config.Cfg.Exchange)
+		Note.StatusAddString("B币为up【%s】充电失败，原因是低于20电池下限\n", upMid)
 	} else if cU.Data.Status == -4 {
-		Note.AddString("B币为up【%s】充电失败，原因是B币不足\n", config.Cfg.Exchange)
+		Note.AddString("B币为up【%s】充电失败，原因是B币不足\n", upMid)
 	}
 
 	Note.StatusAddString("BCoinExchangeForUp出现未知错误。%s，%p\n", string(resp), cU)
 }
 
 // 电池
-func BCoinExchangeForBattery(idx int) {
-	pay_bp := strconv.Itoa(5 * 1000)
+func BCoinExchangeForBattery(idx int, bnum int) {
+	pay_bp := strconv.Itoa(bnum * 1000)
 	url := "https://api.live.bilibili.com/xlive/revenue/v1/order/createOrder"
 	reqBody := url2.Values{}
 	reqBody.Set("platform", "pc")
 	reqBody.Set("pay_bp", pay_bp)
-	reqBody.Set("context_id", "10231093")
+	reqBody.Set("context_id", "10231093") // 直播间id
 	reqBody.Set("context_type", "1")
 	reqBody.Set("goods_id", "1")
 	reqBody.Set("goods_num", "5")
