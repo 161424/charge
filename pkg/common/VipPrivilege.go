@@ -106,7 +106,7 @@ func VipPrivilege(idx int) int {
 	return 0
 }
 
-// B币券监听和使用
+// BCoinState B币券监听和使用
 // 通过扫码进行登录获取到的ck无法使用.不是，需要将SESSDATA中的，换成%2C就可以了
 func BCoinState(idx int) {
 	if Note.Register("B币券监听和兑换") {
@@ -144,7 +144,7 @@ func BCoinState(idx int) {
 	}
 }
 
-// B币券领取
+// BCoinReceive B币券领取
 func BCoinReceive(idx int) {
 	Note.AddString("正在领取B币券\n")
 	url := "https://api.bilibili.com/x/vip/privilege/receive"
@@ -170,7 +170,7 @@ func BCoinReceive(idx int) {
 	//return VipPrivilege(idx)
 }
 
-// 默认充电
+// BCoinExchangeForUp 默认充电
 func BCoinExchangeForUp(idx int, bnum int) {
 	upMid := config.Cfg.BCoinExchange
 	url := "https://api.bilibili.com/x/ugcpay/web/v2/trade/elec/pay/quick"
@@ -203,32 +203,34 @@ func BCoinExchangeForUp(idx int, bnum int) {
 	Note.StatusAddString("BCoinExchangeForUp出现未知错误。%s，%p\n", string(resp), cU)
 }
 
-// 电池
+// BCoinExchangeForBattery 兑换成电池
 func BCoinExchangeForBattery(idx int, bnum int) {
-	pay_bp := strconv.Itoa(bnum * 1000)
+	payBp := strconv.Itoa(bnum * 1000)
 	url := "https://api.live.bilibili.com/xlive/revenue/v1/order/createOrder"
 	reqBody := url2.Values{}
 	reqBody.Set("platform", "pc")
-	reqBody.Set("pay_bp", pay_bp)
+	reqBody.Set("pay_bp", payBp)
 	reqBody.Set("context_id", "10231093") // 直播间id
 	reqBody.Set("context_type", "1")
 	reqBody.Set("goods_id", "1")
-	reqBody.Set("goods_num", "5")
+	reqBody.Set("goods_num", strconv.Itoa(bnum))
 	reqBody.Set("goods_type", "2")
 	reqBody.Set("ios_bp", "0")
-	reqBody.Set("common_bp", pay_bp)
-	reqBody.Set("csrf_tokens_bp", inet.DefaultClient.Cks[idx].Csrf)
+	reqBody.Set("common_bp", payBp)
+	reqBody.Set("csrf_token", inet.DefaultClient.Cks[idx].Csrf)
 	reqBody.Set("csrf", inet.DefaultClient.Cks[idx].Csrf)
 	reqBody.Set("visit_id", createVisitId())
+
 	pR := &pReceive{}
-	resp := inet.DefaultClient.CheckSelectPost(url, "", "https://www.bilibili.com/", "", idx, strings.NewReader(reqBody.Encode()))
+	resp := inet.DefaultClient.CheckSelectPost(url, utils.ContentType["x"], "https://www.bilibili.com/", "", idx, strings.NewReader(reqBody.Encode()))
 	err := json.Unmarshal(resp, &pR)
 	if err != nil {
 		Note.StatusAddString(utils.ErrMsg["json"], "BCoinExchangeForBattery", err.Error(), string(resp))
 		return
 	}
 	if pR.Code != 0 {
-		Note.StatusAddString(utils.ErrMsg["code"], "BCoinExchangeForBattery", pR.Code, pR.Message)
+		fmt.Println(string(resp), pR)
+		//Note.StatusAddString(utils.ErrMsg["code"], "BCoinExchangeForBattery", pR.Code, pR.Message)
 		return
 	}
 	Note.AddString("用户【uid:%s】为直播间【10231093】充电成功\n", inet.DefaultClient.Cks[idx].Uid)

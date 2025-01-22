@@ -16,5 +16,9 @@ func Push(title, desp, tag string) {
 		fmt.Println(string(desp))
 		Push("发送错误", string(desp), "错误")
 	}
-	//fmt.Println(resp)
+	if resp == nil {
+		fmt.Println("server酱返回信息为nil？？？")
+		return
+	}
+	fmt.Printf("【tag：%s】通知发送结果：Code:%d,Message:%s,Data:%+v", tag, resp.Code, resp.Message, resp)
 }

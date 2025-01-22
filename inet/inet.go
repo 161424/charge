@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"charge/config"
 	"charge/utils"
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -26,14 +27,17 @@ type Unav struct {
 
 type defaultClient struct {
 	sync.Mutex
-	Client      *http.Client
-	Tracker     <-chan time.Time
-	Idx         int64
-	Cks         []ckStatus
-	AliveNum    int
-	AliveCh     map[string]chan []byte // 控制访问并发数量
-	RunTime     map[string]int         // 运行次数
-	ShuffleTime time.Time
+	Client   *http.Client
+	Tracker  <-chan time.Time
+	Idx      int64
+	Cks      []ckStatus
+	AliveNum int
+	AliveCh  map[string]chan []byte // 控制访问并发数量
+	RunTime  map[string]int         // 运行次数
+	Once     struct {
+		once sync.Once
+		ch   chan struct{}
+	}
 }
 
 type ckStatus struct {
@@ -50,10 +54,18 @@ type ckStatus struct {
 var DefaultClient = &defaultClient{}
 
 func init() {
+	context.WithCancel(context.Background())
 	DefaultClient.Client = &http.Client{
 		Transport: &http.Transport{
 			IdleConnTimeout: 30 * time.Second,
 		},
+	}
+	DefaultClient.Once.ch = make(chan struct{})
+	DefaultClient.Client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
+		DefaultClient.Once.once.Do(func() {
+			close(DefaultClient.Once.ch)
+		})
+		return nil
 	}
 	DefaultClient.ReFresh()
 	DefaultClient.Tracker = time.Tick(24 * time.Hour)
@@ -62,7 +74,10 @@ func init() {
 		for {
 			select {
 			case <-DefaultClient.Tracker:
-				DefaultClient.HandCheckAlive()
+				DefaultClient.Once.once.Do(func() {
+					close(DefaultClient.Once.ch)
+				})
+				DefaultClient.CheckCkAlive()
 			}
 		}
 	}()
@@ -79,7 +94,7 @@ func (d *defaultClient) ReFresh() {
 		DefaultClient.Cks[i].Csrf = utils.CutCsrf(_u[i].Ck) // csrf可能为空，注意验证
 		DefaultClient.Cks[i].Access_key = _u[i].Access_key
 	}
-	DefaultClient.HandCheckAlive()
+	DefaultClient.CheckCkAlive()
 }
 
 func (d *defaultClient) Http(method, url, ct string, body io.Reader) []byte {
@@ -292,7 +307,7 @@ func (d *defaultClient) RedundantDW(url string, tp string, dyTime time.Duration)
 				checkAlive++
 			}
 			if checkAlive == 3 { // 经过3轮仍未找到合适的ck来执行任务。在超出ck长度的任务在运行时，可能会出发panic
-				d.HandCheckAlive()
+				d.CheckCkAlive()
 				time.Sleep(dyTime)
 				if d.AliveNum == 0 {
 					panic("没有存活的ck")
@@ -347,16 +362,27 @@ func (d *defaultClient) RegisterTp(tp string) {
 	d.AliveCh[tp] = make(chan []byte, len(d.Cks))
 }
 
-// 初始化检测ck活性
-func (d *defaultClient) HandCheckAlive() {
-
+// todo 1. 设置为lazy检测(DONE);2. ck刷新需要token，然而token容易随着ck失效而失效导致无法刷新，因此ck刷新需要配置为可选参数检测ck活性
+func (d *defaultClient) CheckCkAlive() {
+	if d.Once.ch != nil {
+		select {
+		case <-d.Once.ch:
+			d.Once.ch = nil
+		}
+	}
 	msg := "  ——————  账号检测  ———————  \n"
 	msg += fmt.Sprintf("现在是：%s\n", time.Now().Format("2006-01-02 15:04:05"))
 	d.AliveNum = len(d.Cks)
 	for idx := 0; idx < len(d.Cks); idx++ {
 		uid = utils.CutUid(d.Cks[idx].Ck)
-		//code := Refresh(idx) // Refresh中的刷新函数会刷新失败，报错-101，但是仍能访问个人空间。想当于失效了一半，但是在访问某些内容会-101未登录。可以看出csrf可用，但别的风控失效
 		code := -1
+		if config.Cfg.Refresh {
+			if config.Cfg.BUserCk[idx].Token != "" {
+				code = Refresh(idx) // Refresh中的刷新函数会刷新失败，报错-101，但是仍能访问个人空间。想当于失效了一半，但是在访问某些内容会-101未登录。可以看出csrf可用，但别的风控失效
+
+			}
+		}
+
 		if code == 0 { // 0 表示登录或ck刷新成功，无需再确定活性
 			d.Cks[idx].Alive = true
 			msg += fmt.Sprintf("%d. %s又苟过一天. 存活状态：%t\n", idx, uid, d.Cks[idx].Alive)

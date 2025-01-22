@@ -17,7 +17,7 @@ type config struct {
 		Addr     string `yaml:"Addr"`
 		Password string `yaml:"Password"`
 	} `yaml:"Mongodb"`
-
+	Refresh bool      `yaml:"Refresh"`
 	BUserCk []BUserCk `yaml:"BUserCk"`
 
 	ChargeUid       []string `yaml:"ChargeUid"`

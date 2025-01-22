@@ -212,7 +212,7 @@ func MagicExpiredReminder(idx int) {
 		g2 := et - float64(g1*24)
 		sl = append(sl, fmt.Sprintf("%d个魔晶在%d天%.1f小时后过期", en, g1, g2))
 	}
-	Note.AddString("魔晶数量：【%d】，当前汇率为[%.2f],可以抵扣[%.2f￥]。%s。\n", ef, mRER.Data.Ratio, mRER.Data.Ratio/float64(ef), strings.Join(sl, ","))
+	Note.AddString("魔晶数量：【%d】，当前汇率为[%.2f],可以抵扣[%.2f￥]。%s。\n", ef, mRER.Data.Ratio, float64(ef)/mRER.Data.Ratio, strings.Join(sl, ","))
 
 	url = "https://mall.bilibili.com/magic-c/ticket/list_page_tickets?"
 	url += "type=1&status=1&pageNum=1&pageSize=20"

@@ -2,15 +2,12 @@ package main
 
 import (
 	"charge/server"
-	"fmt"
 )
 
 func main() {
 	server.Start()
-	if err := server.Run(); err != nil {
-		fmt.Println(err)
-		panic(err)
-	}
+	server.Run()
+
 	defer server.Stop()
 
 }

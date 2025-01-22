@@ -43,14 +43,14 @@ func CutCsrf(s string) string {
 
 func RandomStr(num int, toLow bool) string {
 	chars := "1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-	var result uint8
+	var result string
 	for i := 0; i < num; i++ {
-		result += chars[rand.Intn(62)]
+		result += string(chars[rand.Intn(len(chars))])
 	}
 	if toLow == true {
-		return strings.ToLower(string(result))
+		return strings.ToLower(result)
 	}
-	return string(result)
+	return result
 }
 
 // 只能睡眠整数秒，放弃

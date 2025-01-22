@@ -177,7 +177,7 @@ func WatchExp(idx int) int {
 	return re.Code
 }
 
-// 不知道干咩用的
+// WatchRandomEp 不知道干咩用的
 func WatchRandomEp(idx int) {
 	url := "https://api.bilibili.com/pgc/season/player/ogv/cards"
 	reqBody := url2.Values{}
@@ -242,7 +242,7 @@ func WatchRandomEp(idx int) {
 	other["Host"] = "api.bilibili.com"
 	//other["Buvid"] = "XUF1B5AF0BF95BB6F1614E7BC40B3881EA6C6"
 	resp = inet.DefaultClient.APPCheckSelectPost(url, utils.ContentType["x"], "", "", other, idx, strings.NewReader(reqBody.Encode()))
-	fmt.Printf("正在观看:%s·《%s》\n", BangumiList.Name, b.Show_title)
+	fmt.Printf("正在观看（40point）:%s·《%s》\n", BangumiList.Name, b.Show_title)
 	watchReceiveResp := &WatchReceiveResp{}
 	err = json.Unmarshal(resp, &watchReceiveResp)
 	if err != nil {

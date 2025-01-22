@@ -118,7 +118,7 @@ func DailyTask() func() {
 			if v, ok := User[cks[idx].Uid]; ok {
 				uS = fmt.Sprintf("uname:%s uid:%d", v.Data.Uname, v.Data.Mid)
 			} else {
-				uS = fmt.Sprintf("uid:%d", v.Data.Mid)
+				uS = fmt.Sprintf("uid:%s", cks[idx].Uid)
 			}
 			if cks[idx].Alive == false {
 				Note.AddString("## 现在是%s，第%d个账号【%s】Ck已失活\n", time.Now().Format(time.DateTime), idx+1, uS)
@@ -189,7 +189,7 @@ func DailyTask() func() {
 				// 会员BB券提醒,含领取功能。当即将过期会对B币进行兑换
 				BCoinState(idx)
 				// BB券充电。检测到马上过期，会自动充电
-				if BCoinExpiringSoon {
+				if BCoinExpiringSoon && userInfo.Data.Wallet.CouponBalance > 0 {
 					if cks[idx].Uid == config.Cfg.BCoinExchange { // 无法为自己充电，只能冲电池
 						BCoinExchangeForBattery(idx, userInfo.Data.Wallet.CouponBalance) // 即将过期的b币为自己换成电池
 					} else {
@@ -215,7 +215,7 @@ func DailyTask() func() {
 
 		}
 		//  使用随机账户查看信息
-		Note.AddString("正在打印会员购兑换物品...")
+		Note.AddString("正在打印会员购兑换物品...\n")
 		if k := randomCk(len(cks)); k >= 0 {
 			// 会员购兑换物品通知
 			MemberGoodsInfo(k)
@@ -223,7 +223,7 @@ func DailyTask() func() {
 
 		// 每日远程通知一次
 		fmt.Println("打印通知")
-		fmt.Println(Note.String())
+		//fmt.Println(Note.String())
 		mointer.Desp = Note.String()
 		mointer.PushS()
 

@@ -25,7 +25,7 @@ DDNS:
     Name: ""
 DaleyTime: 0
 Server3: ""
-Exchange: ""
+BCoinExchange: ""
 Ql:
     Addr: ""
     ClientId: ""
