@@ -79,8 +79,11 @@ type PointList struct {
 	}
 }
 
+var modelBigTask = "大会员积分签到"
+
 func BigPoint(idx int) {
-	if Note.Register("大会员积分签到") {
+	if Note.Register(modelBigTask) { // 在第一轮执行无误后会跳过
+		Note.AddString("今日【%s】已执行完毕\n", modelBigTask)
 		return
 	}
 	url := "https://api.bilibili.com/x/vip_point/task/combine"

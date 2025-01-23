@@ -30,7 +30,7 @@ func ListenUpForLottery(Uid []string, cmp chan struct{}) []string {
 		fmt.Println(Uid)
 		hu := map[string]string{}
 		for _, uid := range Uid {
-			fmt.Printf("查看用户uid：【%s】。\n", uid)
+			fmt.Printf("查看用户uid:【%s】。\n", uid)
 			if uid == "2595733" {
 				stopPage = 12
 			} else {
@@ -57,7 +57,7 @@ func ListenUpForLottery(Uid []string, cmp chan struct{}) []string {
 				counter++
 				skip := false
 
-				if uid == "2595733" && strings.Contains(item.Content, "互动抽奖") == false {
+				if uid == "2595733" && strings.Contains(item.Content, "互动抽奖") == false || strings.Contains(item.Content, "预约抽奖") == false {
 					skip = true
 				}
 				if strings.Contains(his, item.OpusID) {

@@ -79,7 +79,6 @@ func init() {
 func (d *defaultClient) Do(req *http.Request) (resp *http.Response, err error) {
 	DefaultClient.Once.once.Do(func() {
 		close(DefaultClient.Once.ch)
-		fmt.Println("DefaultClient.Once.ch关闭")
 	})
 	time.Sleep(1 * time.Second)
 	return DefaultClient.Client.Do(req)
@@ -97,7 +96,6 @@ func (d *defaultClient) ReFresh() {
 		DefaultClient.Cks[i].Access_key = _u[i].Access_key
 	}
 	go func() {
-		fmt.Println("启动DefaultClient.CheckCkAlive")
 		DefaultClient.CheckCkAlive()
 	}()
 }
@@ -307,6 +305,9 @@ func (d *defaultClient) RedundantDW(url string, tp string, dyTime time.Duration)
 	} else {
 		checkAlive := 0
 		for {
+			DefaultClient.Once.once.Do(func() {
+				close(DefaultClient.Once.ch)
+			})
 			idx := d.Idx % int64(len(d.Cks))
 			if idx == 0 {
 				checkAlive++
@@ -374,7 +375,6 @@ func (d *defaultClient) CheckCkAlive() {
 		case <-d.Once.ch:
 			d.Once.ch = nil
 		}
-		fmt.Println("???????????????")
 	}
 	msg := "  ——————  账号检测  ———————  \n"
 	msg += fmt.Sprintf("现在是：%s\n", time.Now().Format("2006-01-02 15:04:05"))

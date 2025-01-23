@@ -165,6 +165,9 @@ func LotteryDetail(ctx context.Context, modelTP, lottery string, t time.Time) (r
 				SleepStep = 0
 			}
 			break
+		} else if detail.Code == 4101152 {
+			fmt.Println("动态不见了")
+			return false
 		} else {
 			fmt.Println("other err code", detail.Code, detail.Data)
 			continue

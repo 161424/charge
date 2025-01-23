@@ -14,16 +14,18 @@ type note struct {
 	Wait sync.WaitGroup
 	Id   int //类似于sync.Once。每日刷新
 
-	Status    map[string]*Active
-	OldStatus map[string]Active
+	Status    map[string]map[string]*Active
 	HasSub    bool
 	AddDesc   bool
 	lastTitle string
+	NowUid    string
 	Desc      string
 }
 
 type Active struct {
+	Name   string // 模块名称
 	Id     int
+	HadErr bool
 	ErrMsg string
 }
 
@@ -32,7 +34,7 @@ var User = map[string]UserInfo{} //
 func init() {
 	go func() {
 		Note = note{}
-		Note.Status = make(map[string]*Active)
+		Note.Status = make(map[string]map[string]*Active)
 		Note.AddDesc = true
 		for {
 			now := time.Now()
@@ -50,11 +52,14 @@ func init() {
 }
 
 func (n *note) Register(title string) (stop bool) {
-	_, ok := n.Status[title]
-	if ok == false {
-		n.Status[title] = &Active{}
+	if _, ok := n.Status[n.NowUid]; ok == false {
+		n.Status[n.NowUid] = make(map[string]*Active)
 	}
-	ac := n.Status[title]
+	u := n.Status[n.NowUid]
+	if _, ok := u[title]; ok == false {
+		u[title] = &Active{}
+	}
+	ac := u[title]
 	ac.Id++
 	n.AddDesc = true
 	if ac.Id == n.Id { // 每轮第一次运行
@@ -63,7 +68,6 @@ func (n *note) Register(title string) (stop bool) {
 			e = true
 		} else {
 			if n.Id > 1 { // 在第二轮及以后检测到上一轮执行无错误，则本轮不在记录打印信息
-				n.AddDesc = false
 				return true
 			}
 		}
@@ -71,7 +75,7 @@ func (n *note) Register(title string) (stop bool) {
 		n.AddString("  **  %s  **\n", title)
 		n.lastTitle = title
 		if e {
-			n.AddString("上次执行信息：`%s`\n", ac.ErrMsg)
+			n.AddString("上次执行Err信息：`%s`\n", ac.ErrMsg)
 		}
 		n.HasSub = true
 	} else if ac.Id > n.Id { // 每轮第二次及以上运行
@@ -89,14 +93,12 @@ func (n *note) String() string {
 
 func (n *note) StatusAddString(format string, a ...any) {
 	if _, ok := n.Status[n.lastTitle]; ok {
-		n.Status[n.lastTitle].ErrMsg = fmt.Sprintf(format, a...)
+		n.Status[n.NowUid][n.lastTitle].ErrMsg = fmt.Sprintf(format, a...)
 	}
-
 	n.AddString(format, a...)
 }
 
 func (n *note) AddString(format string, a ...any) {
-
 	s := ""
 	if n.HasSub {
 		s = "- "

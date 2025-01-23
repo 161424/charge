@@ -6,6 +6,7 @@ import (
 	"charge/log"
 	"charge/pkg"
 	"charge/pkg/LotteryGroup"
+	"charge/pkg/LotteryUp"
 	"charge/pkg/common"
 	utils2 "charge/pkg/utils"
 	"charge/sender/utils"
@@ -40,7 +41,7 @@ func Run() {
 	app = append(app, App{"Config模板更新", "0 10 * * *", config.UpdateConfigExample()})
 	app = append(app, App{"DDNS每日更新", "0 11 * * *", utils.UpdateDnsRecode()})
 
-	app = append(app, App{"监听lottery", "0 */4 * * *", LotteryGroup.ListenGroupForLottery()})
+	app = append(app, App{"监听lottery", "0 */4 * * *", LotteryUp.ListenLotteryUp()})
 	app = append(app, App{"监听lotteryGroup", "0 */6 * * *", LotteryGroup.ListenGroupForLottery()})
 	app = append(app, App{"DailyTask", "0 */12 * * *", common.DailyTask()})
 
@@ -58,7 +59,8 @@ func Run() {
 			fmt.Println("Start gocron.Job.err:", err)
 		}
 		// each job has a unique id
-		fmt.Println(j.ID())
+		fmt.Printf("任务【%s】的ID是：%s\n", a.Name, j.ID())
+
 		time.Sleep(10 * time.Second)
 	}
 	// start the scheduler

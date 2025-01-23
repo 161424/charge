@@ -23,8 +23,11 @@ type bE struct {
 	Message string //用户经验已经领取、访问频繁、领取成功
 }
 
+var modelBExp = "大会员10经验"
+
 func BigExperience(idx int) {
-	if Note.Register("大会员10经验") {
+	if Note.Register(modelBExp) { // 在第一轮执行无误后会跳过
+		Note.AddString("今日【%s】已执行完毕\n", modelBExp)
 		return
 	}
 	url := "https://api.bilibili.com/x/vip/experience/add"

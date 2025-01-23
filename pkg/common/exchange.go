@@ -156,7 +156,7 @@ func ExchangePoint(idx int) {
 		}
 	}
 	Note.AddString("正在打印大会员积分兑换物品...\n")
-	Note.AddString(notifyDesc[1:])
+	Note.AddString(notifyDesc[2:])
 
 	return
 }

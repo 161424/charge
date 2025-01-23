@@ -177,12 +177,12 @@ func WatchExp(idx int) int {
 	return re.Code
 }
 
-// WatchRandomEp 不知道干咩用的
+// WatchRandomEp 10分钟40Exp（access_key）
 func WatchRandomEp(idx int) {
 	url := "https://api.bilibili.com/pgc/season/player/ogv/cards"
 	reqBody := url2.Values{}
 	b := BangumiList.Random()
-	reqBody.Set("access_key", "c36372f25f8cbd568b7a506e86c65711CjA5U6SXRli12mz7hDToIAIIAbcix8ujBSoTKKQGWvz8h1krr5eQ9rEimbUu2vXSNzMSVldPRDZQWGo2UmphdXBEa0NTTzZmNjhEUkU0TWs0cmwzeENZYTlwS2ptcXk1dmk4WGRMSEpsXzVJWU1kTFJ5NmFvbWc5ZG5HN3NhSkNydGlucW1POERBIIEC")
+	reqBody.Set("access_key", inet.DefaultClient.Cks[idx].Access_key)
 	reqBody.Set("appkey", "1d8b6e7d45233436")
 	reqBody.Set("build", "8020300")
 	reqBody.Set("c_locale", "zh_CN")
@@ -253,7 +253,7 @@ func WatchRandomEp(idx int) {
 		Note.StatusAddString("观看视频%s失败.res Code:%d,res Message:%s", BangumiList.Name, watchReceiveResp.Code, watchReceiveResp.Message)
 		return
 	}
-	//fmt.Println(watchReceiveResp.Data, string(resp))
+
 	if watchReceiveResp.Data.WatchCountDownCfg.TaskId == "" || watchReceiveResp.Data.WatchCountDownCfg.Token == "" {
 		Note.StatusAddString("观看视频%s失败.res %s。TaskId或Token为空。应该是access_key失效了", BangumiList.Name, string(resp))
 		return
