@@ -192,7 +192,7 @@ var mUa = "Mozilla/5.0 (Linux; Android 12; 24031PN0DC Build/V417IR; wv) AppleWeb
 var stop = 0
 var hadReceive = true
 
-// 可以完成任务，但是领取金币需要access_key
+// MemberRegister 可以完成任务，但是领取金币需要access_key
 func MemberRegister(idx int) {
 	// 签到一星期获得5 + 6 + 15 + 5 + 6 + 8 + 50 = 95，过期时间180天
 	// 签到查询
@@ -215,7 +215,8 @@ func MemberRegister(idx int) {
 	time.Sleep(5 * time.Second)
 	// 在任务执行完毕后领取金币会遇到领取失败的问题，因此采用分开处理
 
-	if hadReceive == false {
+	if Note.Id == 0 || hadReceive == false { // 每日第一次运行或者在在上一次运行时金币领取失败时运行
+
 		ok, _ = memberRegister(idx)
 		if ok == false {
 			Note.StatusAddString("会员购签到任务执行失败（任务领取阶段失败） ×\n")
@@ -368,7 +369,6 @@ func mReceive(idx int, activityId string, nodeId int) int {
 	mRecq := mRecQ{}
 	resp = inet.DefaultClient.CheckSelectPost(url, "", "https://mall.bilibili.com/", "", idx, strings.NewReader(s))
 	err = json.Unmarshal(resp, &mRecq)
-	//fmt.Println(url, s, string(resp))
 	if err != nil {
 		Note.StatusAddString(utils2.ErrMsg["json"], "mReceive", err.Error(), string(resp))
 		return -1

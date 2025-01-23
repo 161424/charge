@@ -228,6 +228,10 @@ func MagicExpiredReminder(idx int) {
 		return
 	}
 
+	if len(mCard.Data.PageInfo.List) == 0 {
+		Note.AddString("暂无权益卡可以使用")
+	}
+
 	// 两次返回类型基本相同
 	mpc := make(map[int]string)
 	endTime = []int{}
@@ -248,6 +252,7 @@ func MagicExpiredReminder(idx int) {
 		g2 := et - float64(g1*24)
 		sl = append(sl, fmt.Sprintf("【%s】权益卡在%d天%.1f小时后过期", en, g1, g2))
 	}
+
 	Note.AddString("权益卡数量：【%d】。%s。\n", len(mCard.Data.PageInfo.List), strings.Join(sl, ","))
 
 }

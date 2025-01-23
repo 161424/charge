@@ -137,7 +137,7 @@ func AutoJoinCharge() func() {
 		//}
 		for _, c := range charges {
 			uid := c.Uid
-			if v, ok := chargeRecords[uid]; ok { // 已冲电
+			if _, ok := chargeRecords[uid]; ok { // 已冲电
 				// code:4420014,已冲电但是未关注
 				// code:4100001,参数错误
 				// code:-101,csrf校验失败
@@ -148,16 +148,16 @@ func AutoJoinCharge() func() {
 						continue
 					}
 				}
-				resp := inet.DefaultClient.JoinChargeLottery("", c.BusinessId)
-				ajc := AJCharge{}
-				err := json.Unmarshal(resp, &ajc)
-				if err != nil {
-					fmt.Println("json Unmarshal err:", err)
-					continue
-				}
-				if ajc.Code != 0 {
-					fmt.Println("ajc.Code:", ajc.Code, v)
-				}
+				//resp := inet.DefaultClient.JoinChargeLottery("", c.BusinessId)
+				//ajc := AJCharge{}
+				//err := json.Unmarshal(resp, &ajc)
+				//if err != nil {
+				//	fmt.Println("json Unmarshal err:", err)
+				//	continue
+				//}
+				//if ajc.Code != 0 {
+				//	fmt.Println("ajc.Code:", ajc.Code, v)
+				//}
 
 			}
 		}

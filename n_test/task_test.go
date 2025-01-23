@@ -65,7 +65,7 @@ func TestWatchExp(t *testing.T) {
 }
 
 func TestWatchRandomEp(t *testing.T) {
-	common.WatchRandomEp(0)
-	time.Sleep(10 * time.Minute)
+	common.WatchRandomEp(1)
+	time.Sleep(13 * time.Minute)
 	time.Sleep(10 * time.Second)
 }

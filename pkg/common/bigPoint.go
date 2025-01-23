@@ -140,11 +140,15 @@ func BigPoint(idx int) {
 							// 执行任务
 							if task.Task_code == "ogvwatchnew" {
 								// 10分钟观影任务 ,看视频40积分
-								WatchRandomEp(idx)
+								if inet.DefaultClient.Cks[idx].Access_key == "" {
+									Note.AddString("【10分钟观影任务】无法完成，因为缺少必要的Access_key")
+								} else {
+									WatchRandomEp(idx)
+								}
 							} else if task.Task_code == "vipmallview" {
 								// 会员购
 								if VipMallView(idx) == 0 {
-									Note.AddString("浏览会员购每日任务 ✓")
+									Note.AddString("【浏览会员购】每日任务 ✓")
 								}
 							} else if task.Task_code == "dress-view" {
 								// 装扮商城

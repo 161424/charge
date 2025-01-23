@@ -36,8 +36,13 @@ func BigExperience(idx int) {
 	if err != nil {
 		Note.StatusAddString(utils.ErrMsg["json"], "BigExperience", err.Error(), string(resp))
 	}
+	if be.Code == 69198 {
+		Note.AddString("大会员每日10经验已领取\n")
+		return
+	}
 	if be.Code != 0 {
 		Note.StatusAddString(utils.ErrMsg["code"], "BigExperience", be.Code, be.Message)
+		return
 	}
 	Note.AddString("大会员每日10经验领取成功\n")
 }

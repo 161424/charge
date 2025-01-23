@@ -18,7 +18,6 @@ type note struct {
 	OldStatus map[string]Active
 	HasSub    bool
 	AddDesc   bool
-
 	lastTitle string
 	Desc      string
 }
@@ -89,7 +88,10 @@ func (n *note) String() string {
 }
 
 func (n *note) StatusAddString(format string, a ...any) {
-	n.Status[n.lastTitle].ErrMsg = fmt.Sprintf(format, a...)
+	if _, ok := n.Status[n.lastTitle]; ok {
+		n.Status[n.lastTitle].ErrMsg = fmt.Sprintf(format, a...)
+	}
+
 	n.AddString(format, a...)
 }
 
@@ -120,12 +122,13 @@ func DailyTask() func() {
 			} else {
 				uS = fmt.Sprintf("uid:%s", cks[idx].Uid)
 			}
+			Note.AddDesc = false
 			if cks[idx].Alive == false {
 				Note.AddString("## 现在是%s，第%d个账号【%s】Ck已失活\n", time.Now().Format(time.DateTime), idx+1, uS)
 				continue
 			}
 			Note.AddString("## 现在是%s，正在执行第%d个账号【%s】的每日任务\n", time.Now().Format(time.DateTime), idx+1, uS)
-
+			Note.AddDesc = false
 			// userinfo
 			userInfo := GetUserInfo(idx) // 获取user基本信息
 			if userInfo == nil {

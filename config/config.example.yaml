@@ -10,6 +10,7 @@ Redis:
 Mongodb:
     Addr: ""
     Password: ""
+Refresh: false
 BUserCk: []
 ChargeUid: []
 LotteryUid: []

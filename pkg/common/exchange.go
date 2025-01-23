@@ -74,6 +74,7 @@ func ExchangePoint(idx int) {
 	notifyDesc = ""
 	url := "https://api.bilibili.com/x/vip_point/sku/list?pn=%d&ps=%d"             // pn  ps   total
 	iurl := "https://api.bilibili.com/x/vip_point/sku/info?token=%s&access_key=%s" // access_key,token
+	skip := false
 	for i := 1; i <= pn; i++ {
 		_url := fmt.Sprintf(url, i, ps)
 		sku := &Sku{}
@@ -87,8 +88,12 @@ func ExchangePoint(idx int) {
 			Note.StatusAddString(utils.ErrMsg["code"], "ExchangePoint", sku.Code, sku.Message)
 			return
 		}
+		if inet.DefaultClient.Cks[idx].Access_key == "" {
+			Note.AddString("无Access_key，无法兑换大会员积分物品")
+			skip = true
+		}
 		for j := 0; j < len(sku.Data.Skus); j++ {
-			_iurl := fmt.Sprintf(iurl, sku.Data.Skus[j].Token, config.Cfg.BUserCk[idx].Access_key)
+			_iurl := fmt.Sprintf(iurl, sku.Data.Skus[j].Token, inet.DefaultClient.Cks[idx].Access_key)
 			skuInfo := &SkuInfo{}
 			resp := inet.DefaultClient.CheckSelect(_iurl, idx)
 			err := json.Unmarshal(resp, skuInfo)
@@ -116,6 +121,13 @@ func ExchangePoint(idx int) {
 			notifyDesc += fmt.Sprintf("- 【%s】:%s\n", skuInfo.Data.Title, s)
 
 			// 商品页面
+			if inet.DefaultClient.Cks[idx].Access_key == "" {
+				Note.AddString("无Access_key，无法兑换大会员积分物品")
+				continue
+			}
+			if skip {
+				continue
+			}
 			//fmt.Println(skuInfo.Data.Title, skuInfo.Data.Token)
 			if _, ok := goods[skuInfo.Data.Title]; ok == false {
 				continue
@@ -143,7 +155,8 @@ func ExchangePoint(idx int) {
 			pn = sku.Data.Page.Total/sku.Data.Page.Size + 1
 		}
 	}
-	Note.AddString(notifyDesc)
+	Note.AddString("正在打印大会员积分兑换物品...\n")
+	Note.AddString(notifyDesc[1:])
 
 	return
 }

@@ -11,6 +11,7 @@ import (
 	"charge/sender/utils"
 	"fmt"
 	"github.com/go-co-op/gocron/v2"
+	"time"
 )
 
 type App struct {
@@ -45,8 +46,10 @@ func Run() {
 
 	// add a job to the scheduler
 	// 秒 分 时 日 月 星期(非必须)
+
 	var j gocron.Job
 	for _, a := range app {
+		a.Task()
 		j, err = s.NewJob(
 			gocron.CronJob(a.Cron, false),
 			gocron.NewTask(a.Task),
@@ -56,6 +59,7 @@ func Run() {
 		}
 		// each job has a unique id
 		fmt.Println(j.ID())
+		time.Sleep(10 * time.Second)
 	}
 	// start the scheduler
 	s.Start()

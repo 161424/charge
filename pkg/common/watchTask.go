@@ -209,10 +209,10 @@ func WatchRandomEp(idx int) {
 		Note.StatusAddString(utils.ErrMsg["code"], "watchRandomEp", ogvCards.Code, string(resp))
 		return
 	}
-
+	// 一个用户使用另一个用户的access_key，也会获得taskid和token，但是无法完成视频观看任务
 	url = "https://api.bilibili.com/pgc/activity/deliver/material/receive"
 	reqBody = url2.Values{}
-	reqBody.Set("access_key", "c36372f25f8cbd568b7a506e86c65711CjA5U6SXRli12mz7hDToIAIIAbcix8ujBSoTKKQGWvz8h1krr5eQ9rEimbUu2vXSNzMSVldPRDZQWGo2UmphdXBEa0NTTzZmNjhEUkU0TWs0cmwzeENZYTlwS2ptcXk1dmk4WGRMSEpsXzVJWU1kTFJ5NmFvbWc5ZG5HN3NhSkNydGlucW1POERBIIEC")
+	reqBody.Set("access_key", inet.DefaultClient.Cks[idx].Access_key)
 	reqBody.Set("activity_code", "")
 	reqBody.Set("appkey", "1d8b6e7d45233436")
 	reqBody.Set("build", "8020300")
@@ -231,17 +231,17 @@ func WatchRandomEp(idx int) {
 	s = reqBody.Encode()
 	s = APPKey(s)
 	reqBody.Set("sign", s)
-	other := map[string]string{}
-	other["APP-KEY"] = "android"
-	other["env"] = "prod"
-	other["fp_local"] = "951c86318c17690e885ec6de669facc320241230014023186f2ba9aef4532de7"
-	other["fp_remote"] = "951c86318c17690e885ec6de669facc320241230014023186f2ba9aef4532de7"
-	other["Buvid"] = "XUF1B5AF0BF95BB6F1614E7BC40B3881EA6C6"
-	other["GuestId"] = "24045169332770"
-	other["session_id"] = "50809fbf"
-	other["Host"] = "api.bilibili.com"
+	//other := map[string]string{}
+	//other["APP-KEY"] = "android"
+	//other["env"] = "prod"
+	//other["fp_local"] = "951c86318c17690e885ec6de669facc320241230014023186f2ba9aef4532de7"
+	//other["fp_remote"] = "951c86318c17690e885ec6de669facc320241230014023186f2ba9aef4532de7"
 	//other["Buvid"] = "XUF1B5AF0BF95BB6F1614E7BC40B3881EA6C6"
-	resp = inet.DefaultClient.APPCheckSelectPost(url, utils.ContentType["x"], "", "", other, idx, strings.NewReader(reqBody.Encode()))
+	//other["GuestId"] = "24045169332770"
+	//other["session_id"] = "a5f1e85e"
+	//other["Host"] = "api.bilibili.com"
+	//other["Buvid"] = "XUF1B5AF0BF95BB6F1614E7BC40B3881EA6C6"
+	resp = inet.DefaultClient.CheckSelectPost(url, utils.ContentType["x"], "", "", idx, strings.NewReader(reqBody.Encode()))
 	fmt.Printf("正在观看（40point）:%s·《%s》\n", BangumiList.Name, b.Show_title)
 	watchReceiveResp := &WatchReceiveResp{}
 	err = json.Unmarshal(resp, &watchReceiveResp)
@@ -253,9 +253,14 @@ func WatchRandomEp(idx int) {
 		Note.StatusAddString("观看视频%s失败.res Code:%d,res Message:%s", BangumiList.Name, watchReceiveResp.Code, watchReceiveResp.Message)
 		return
 	}
+	//fmt.Println(watchReceiveResp.Data, string(resp))
+	if watchReceiveResp.Data.WatchCountDownCfg.TaskId == "" || watchReceiveResp.Data.WatchCountDownCfg.Token == "" {
+		Note.StatusAddString("观看视频%s失败.res %s。TaskId或Token为空。应该是access_key失效了", BangumiList.Name, string(resp))
+		return
+	}
 	// 异步执行
 	go func() {
-		time.Sleep(10 * time.Minute)
+		time.Sleep(11 * time.Minute)
 		code := WatchMovie(idx, watchReceiveResp.Data.WatchCountDownCfg.Token, watchReceiveResp.Data.WatchCountDownCfg.TaskId)
 		if code == 0 {
 			Note.AddString("10分钟视频观看完毕，获得40积分")
@@ -277,7 +282,9 @@ func WatchMovie(idx int, token, taskId string) int {
 	reqBody.Set("statistics", "{\"appId\":1,\"platform\":3,\"version\":\"8.2.0\",\"abtest\":\"\"}")
 	reqBody.Set("activity_code", "")
 	reqBody.Set("ts", fmt.Sprintf("%d", t))
-	//reqBody.Set("sign", "...")
+	s := reqBody.Encode()
+	s = APPKey(s)
+	reqBody.Set("sign", s)
 	resp := inet.DefaultClient.CheckSelectPost(url, utils.ContentType["x"], "", "", idx, strings.NewReader(reqBody.Encode()))
 	re := &reSign{}
 	err := json.Unmarshal(resp, re)

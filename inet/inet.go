@@ -1,7 +1,6 @@
 package inet
 
 import (
-	"bytes"
 	"charge/config"
 	"charge/utils"
 	"context"
@@ -61,12 +60,6 @@ func init() {
 		},
 	}
 	DefaultClient.Once.ch = make(chan struct{})
-	DefaultClient.Client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
-		DefaultClient.Once.once.Do(func() {
-			close(DefaultClient.Once.ch)
-		})
-		return nil
-	}
 	DefaultClient.ReFresh()
 	DefaultClient.Tracker = time.Tick(24 * time.Hour)
 	// 每日检查ck是否存活
@@ -77,10 +70,19 @@ func init() {
 				DefaultClient.Once.once.Do(func() {
 					close(DefaultClient.Once.ch)
 				})
-				DefaultClient.CheckCkAlive()
+				DefaultClient.ReFresh() // 每日从config中更新ck
 			}
 		}
 	}()
+}
+
+func (d *defaultClient) Do(req *http.Request) (resp *http.Response, err error) {
+	DefaultClient.Once.once.Do(func() {
+		close(DefaultClient.Once.ch)
+		fmt.Println("DefaultClient.Once.ch关闭")
+	})
+	time.Sleep(1 * time.Second)
+	return DefaultClient.Client.Do(req)
 }
 
 func (d *defaultClient) ReFresh() {
@@ -94,7 +96,10 @@ func (d *defaultClient) ReFresh() {
 		DefaultClient.Cks[i].Csrf = utils.CutCsrf(_u[i].Ck) // csrf可能为空，注意验证
 		DefaultClient.Cks[i].Access_key = _u[i].Access_key
 	}
-	DefaultClient.CheckCkAlive()
+	go func() {
+		fmt.Println("启动DefaultClient.CheckCkAlive")
+		DefaultClient.CheckCkAlive()
+	}()
 }
 
 func (d *defaultClient) Http(method, url, ct string, body io.Reader) []byte {
@@ -117,7 +122,7 @@ func (d *defaultClient) Http(method, url, ct string, body io.Reader) []byte {
 	}
 }
 
-// 支持ck[0]单独使用的get访问
+// CheckFirst 支持ck[0]单独使用的get访问
 func (d *defaultClient) CheckFirst(url string) []byte {
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
@@ -127,7 +132,7 @@ func (d *defaultClient) CheckFirst(url string) []byte {
 	req.Header.Set("User-Agent", config.Cfg.WebUserAgent)
 	req.Header.Set("Connection", "keep-alive")
 	req.Header.Set("Cookie", d.Cks[0].Ck)
-	resp, err := d.Client.Do(req)
+	resp, err := d.Do(req)
 	if err != nil {
 		return nil
 	}
@@ -149,7 +154,7 @@ func (d *defaultClient) CheckSelect(url string, idx int) []byte {
 	req.Header.Set("Connection", "keep-alive")
 	req.Header.Set("Cookie", d.Cks[idx].Ck)
 
-	resp, err := d.Client.Do(req)
+	resp, err := d.Do(req)
 	if err != nil {
 		return nil
 	}
@@ -182,7 +187,7 @@ func (d *defaultClient) CheckSelectPost(url string, contentType, referer, ua str
 	req.Header.Set("Connection", "keep-alive")
 	req.Header.Set("Cookie", d.Cks[idx].Ck)
 
-	resp, err := d.Client.Do(req)
+	resp, err := d.Do(req)
 	if err != nil {
 		return nil
 	}
@@ -212,7 +217,7 @@ func (d *defaultClient) APPCheckSelect(url, ua, re string, idx int) []byte {
 	req.Header.Set("Cookie", d.Cks[idx].Ck+"; access_key="+d.Cks[idx].Access_key)
 	req.Header.Set("Accept", "application/json, text/plain, */*")
 	req.Header.Set("Accept-Language", "zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7")
-	resp, err := d.Client.Do(req)
+	resp, err := d.Do(req)
 	if err != nil {
 		fmt.Println(err.Error())
 		return nil
@@ -250,11 +255,11 @@ func (d *defaultClient) APPCheckSelectPost(url string, contentType, referer, ua 
 	req.Header.Set("Referer", referer)
 	req.Header.Set("User-Agent", ua)
 	req.Header.Set("Connection", "keep-alive")
-	req.Header.Set("Cookie", d.Cks[idx].Ck+"; access_key="+d.Cks[idx].Access_key)
+	req.Header.Set("Cookie", d.Cks[idx].Ck)
 	for k, v := range other {
 		req.Header.Set(k, v)
 	}
-	resp, err := d.Client.Do(req)
+	resp, err := d.Do(req)
 	if err != nil {
 		return nil
 	}
@@ -279,7 +284,7 @@ func (d *defaultClient) CheckSelectPost2(url string, idx int, ck string, rbody i
 		req.Header.Set("Cookie", d.Cks[idx].Ck)
 	}
 
-	resp, err := d.Client.Do(req)
+	resp, err := d.Do(req)
 	if err != nil {
 		return nil, nil
 	}
@@ -369,6 +374,7 @@ func (d *defaultClient) CheckCkAlive() {
 		case <-d.Once.ch:
 			d.Once.ch = nil
 		}
+		fmt.Println("???????????????")
 	}
 	msg := "  ——————  账号检测  ———————  \n"
 	msg += fmt.Sprintf("现在是：%s\n", time.Now().Format("2006-01-02 15:04:05"))
@@ -422,33 +428,6 @@ func (d *defaultClient) CheckCkAlive() {
 	}
 	msg += "  —————— 账号检测完毕 ———————  \n"
 	fmt.Println(msg)
-}
-
-// csrf就是bili_jct
-// csrf极易失效
-func (d *defaultClient) JoinChargeLottery(csrf, businessId string) []byte {
-	ck := config.Cfg.BUserCk[0].Ck
-	if csrf == "" {
-		csrf = utils.CutCsrf(ck)
-	}
-	url := "https://api.bilibili.com/x/dynamic/feed/attach/click?csrf=" + csrf
-	pbody := fmt.Sprintf(`{"attach_card_type": 20,"cur_btn_status": 1,"dynamic_id_str": "%s"}`, businessId)
-	pbodyReader := bytes.NewReader([]byte(pbody))
-	req, err := http.NewRequest(http.MethodPost, url, pbodyReader)
-	if err != nil {
-		return nil
-	}
-
-	req.Header.Set("User-Agent", config.Cfg.WebUserAgent)
-	req.Header.Set("Connection", "keep-alive")
-	req.Header.Set("Cookie", ck)
-	resp, err := d.Client.Do(req)
-	if err != nil {
-		return nil
-	}
-	defer resp.Body.Close()
-	body, err := io.ReadAll(resp.Body)
-	return body
 }
 
 func (d *defaultClient) RunT() {
