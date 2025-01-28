@@ -95,11 +95,11 @@ func LinkQl() {
 	aToken := &AToken{}
 	err := json.Unmarshal(resp, aToken)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("err", err)
 		return
 	}
 	if aToken.Code != 200 {
-		fmt.Println(aToken.Code, string(resp))
+		fmt.Println("code", aToken.Code, string(resp))
 		return
 	}
 	fmt.Printf("%+v", aToken)

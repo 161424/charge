@@ -47,8 +47,11 @@ func UpdateLocalEnv(token string) {
 			nck.Ck = v.Value
 			config.Cfg.BUserCk = append(config.Cfg.BUserCk, nck)
 		} else { // 如果存在呢？   会有很大问题。
-			tk := config.Cfg.BUserCk
-			fmt.Println(tk)
+			for k, ck := range config.Cfg.BUserCk {
+				if utils.CutUid(ck.Ck) == uid {
+					config.Cfg.BUserCk[k].Ck = v.Value
+				}
+			}
 		}
 	}
 	config.Write()
