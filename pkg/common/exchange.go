@@ -88,7 +88,7 @@ func ExchangePoint(idx int) {
 			Note.StatusAddString(utils.ErrMsg["code"], "ExchangePoint", sku.Code, sku.Message)
 			return
 		}
-		if inet.DefaultClient.Cks[idx].Access_key == "" {
+		if inet.DefaultClient.Cks[idx].Access_key == "" && skip == false {
 			Note.AddString("无Access_key，无法兑换大会员积分物品")
 			skip = true
 		}

@@ -24,12 +24,11 @@ type QlEnvs struct {
 func UpdateLocalEnv(token string) {
 	url := QlClient.Addr + "/open/envs"
 	url += "?searchValue=BILIBILI_COOKIES"
-	fmt.Println(url)
 	qlEnvs := &QlEnvs{}
-	resp, ok := QlClient.Get(url, token)
+	resp, _ := QlClient.Get(url, token)
 	err := json.Unmarshal(resp, qlEnvs)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println(utils.ErrMsg["json"], "UpdateLocalEnv", err, string(resp))
 		return
 	}
 	uids := map[string]string{}
@@ -46,7 +45,7 @@ func UpdateLocalEnv(token string) {
 			nck := config.BUserCk{}
 			nck.Ck = v.Value
 			config.Cfg.BUserCk = append(config.Cfg.BUserCk, nck)
-		} else { // 如果存在呢？   会有很大问题。
+		} else { // 如果存在呢？  则进行替换
 			for k, ck := range config.Cfg.BUserCk {
 				if utils.CutUid(ck.Ck) == uid {
 					config.Cfg.BUserCk[k].Ck = v.Value
@@ -55,7 +54,6 @@ func UpdateLocalEnv(token string) {
 		}
 	}
 	config.Write()
-	fmt.Println(string(resp), ok)
 }
 
 func UpdateQlEnv() {

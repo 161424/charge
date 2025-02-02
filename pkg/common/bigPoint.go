@@ -144,7 +144,7 @@ func BigPoint(idx int) {
 							if task.Task_code == "ogvwatchnew" {
 								// 10分钟观影任务 ,看视频40积分
 								if inet.DefaultClient.Cks[idx].Access_key == "" {
-									Note.AddString("【10分钟观影任务】无法完成，因为缺少必要的Access_key")
+									Note.AddString("【10分钟观影任务】无法完成，因为缺少必要的Access_key\n")
 								} else {
 									WatchRandomEp(idx)
 								}

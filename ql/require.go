@@ -2,6 +2,7 @@ package ql
 
 import (
 	"charge/config"
+	"charge/utils"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -79,7 +80,7 @@ type AToken struct {
 	} `json:"data"`
 }
 
-func LinkQl() {
+func LinkQl() string {
 	url := QlClient.Addr + fmt.Sprintf("/open/auth/token?client_secret=%s&client_id=%s", QlClient.ClientSecret, QlClient.ClientId)
 	//reqBody := url2.Values{}
 	//s := fmt.Sprintf(`{"client_secret":"%s","client_id":"%s"}`, QlClient.ClientSecret, QlClient.ClientId)
@@ -90,18 +91,27 @@ func LinkQl() {
 	resp, ok := QlClient.Get(url, "")
 	if ok != nil {
 		fmt.Println(ok)
-		return
+		return ""
 	}
 	aToken := &AToken{}
 	err := json.Unmarshal(resp, aToken)
 	if err != nil {
+		fmt.Println(utils.ErrMsg["json"], "LinkQl", err, string(resp))
 		fmt.Println("err", err)
-		return
+		return ""
 	}
 	if aToken.Code != 200 {
-		fmt.Println("code", aToken.Code, string(resp))
-		return
+		fmt.Println(utils.ErrMsg["code"], "LinkQl", aToken.Code, string(resp))
+		return ""
 	}
-	fmt.Printf("%+v", aToken)
-	UpdateLocalEnv(aToken.Data.Token)
+	return aToken.Data.Token
+
+}
+
+func LinkQLAndUpdateCk() func() {
+	return func() {
+		token := LinkQl()
+		UpdateLocalEnv(token)
+		fmt.Println("青龙CK更新完毕")
+	}
 }

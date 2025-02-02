@@ -99,10 +99,13 @@ type MCard struct {
 	Errtag int `json:"errtag"`
 }
 
+var modelMagic = "魔晶签到"
+
 // MagicRegister 魔力赏签到
 func MagicRegister(idx int) {
 	// 任务id会进行刷新
-	if Note.Register("魔晶签到") { // 在第一轮执行无误后会跳过
+	if Note.Register(modelMagic) { // 在第一轮执行无误后会跳过
+		Note.AddString("今日【%s】已执行完毕\n", modelMagic)
 		return
 	}
 	taskId := magicRegister(idx, false)

@@ -90,6 +90,8 @@ type ChargeUp struct {
 	}
 }
 
+// 大会员福利有很多，但是领取都具有时效性，故最好单独领取。
+
 // 大会员福利，感觉不重要。目前仅实现与BCoin相关的方法
 func VipPrivilege(idx int) int {
 	url := "https://api.bilibili.com/x/vip/privilege_assets/list"
@@ -106,10 +108,13 @@ func VipPrivilege(idx int) int {
 	return 0
 }
 
+var modelBCoin = "B币券监听和兑换"
+
 // BCoinState B币券监听和使用
 // 通过扫码进行登录获取到的ck无法使用.不是，需要将SESSDATA中的，换成%2C就可以了
 func BCoinState(idx int) {
-	if Note.Register("B币券监听和兑换") {
+	if Note.Register(modelBCoin) { // 在第一轮执行无误后会跳过
+		Note.AddString("今日【%s】已执行完毕\n", modelBCoin)
 		return
 	}
 	url := "https://pay.bilibili.com/paywallet/coupon/listForUserCoupons"

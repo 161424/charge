@@ -191,12 +191,14 @@ func MemberGoodsInfo(idx int) {
 var mUa = "Mozilla/5.0 (Linux; Android 12; 24031PN0DC Build/V417IR; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/101.0.4951.61 Safari/537.36 BiliApp/8020300 mobi_app/android isNotchWindow/0 NotchHeight=1 mallVersion/8020300 mVersion/263 disable_rcmd/0"
 var stop = 0
 var hadReceive = true
+var modelMemberTask = "会员购签到"
 
 // MemberRegister 可以完成任务，但是领取金币需要access_key
 func MemberRegister(idx int) {
 	// 签到一星期获得5 + 6 + 15 + 5 + 6 + 8 + 50 = 95，过期时间180天
 	// 签到查询
-	if Note.Register("会员购签到") { // 在第一轮执行无误后会跳过
+	if Note.Register(modelMemberTask) { // 在第一轮执行无误后会跳过
+		Note.AddString("今日【%s】已执行完毕\n", modelMemberTask)
 		return
 	}
 	hadReceive = true
