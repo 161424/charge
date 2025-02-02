@@ -3,6 +3,7 @@ package common
 import (
 	"charge/config"
 	"charge/inet"
+	"charge/log"
 	"charge/sender"
 	"fmt"
 	"math/rand"
@@ -112,10 +113,11 @@ func (n *note) AddString(format string, a ...any) {
 // serve酱的文本采用的是markdown格式，因此消息也是markdown格式
 func DailyTask() func() {
 	return func() {
-		mointer := sender.Monitor{}
-		mointer.Tag = "Daily Tasks"
+		monitor := sender.Monitor{}
+		monitor.Tag = "Daily Tasks"
 		cks := inet.DefaultClient.Cks
 		Note.Id++
+		day := time.Now().Format(time.DateTime)
 		Note.AddString("  --------  Daily Tasks  --------\n")
 		for idx := range len(cks) {
 			var uS string
@@ -126,7 +128,7 @@ func DailyTask() func() {
 			}
 			Note.AddDesc = false
 			if cks[idx].Alive == false {
-				Note.AddString("## 现在是%s，第%d个账号【%s】Ck已失活\n", time.Now().Format(time.DateTime), idx+1, uS)
+				Note.AddString("## 现在是%s，第%d个账号【%s】Ck已失活\n", day, idx+1, uS)
 				continue
 			}
 			Note.AddString("## 现在是%s，正在执行第%d个账号【%s】的每日任务\n", time.Now().Format(time.DateTime), idx+1, uS)
@@ -229,8 +231,9 @@ func DailyTask() func() {
 		// 每日远程通知一次
 		fmt.Println("打印通知")
 		//fmt.Println(Note.String())
-		mointer.Desp = Note.String()
-		mointer.PushS()
+		monitor.Desp = Note.String()
+		monitor.PushS()
+		log.Write(Note.Desc, day)
 
 	}
 }

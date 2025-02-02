@@ -259,3 +259,8 @@ func MagicExpiredReminder(idx int) {
 	Note.AddString("权益卡数量：【%d】。%s。\n", len(mCard.Data.PageInfo.List), strings.Join(sl, ","))
 
 }
+
+// 5 魔晶
+func magicWarOrder() {
+
+}

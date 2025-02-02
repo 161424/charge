@@ -81,7 +81,7 @@ type MemberResp struct {
 			ExpectValue string `json:"expectValue"`
 			Title       string `json:"title"`       // 活动名称
 			TaskTitle   string `json:"taskTitle"`   // 活动名称
-			Description string `json:"description"` // 活动描述  浏览新人专区|购买任意商品1单|分享可爱fufu|浏览欧气专区|浏览周边特惠频道
+			Description string `json:"description"` // 活动描述  浏览新人专区15|购买任意商品1单50|分享可爱fufu10|浏览欧气专区15|浏览周边特惠频道15   限时活动：浏览拜年祭会场15
 			Action      string `json:"action"`      // jump| done | receive
 			ButtonText  string `json:"buttonText"`  // 去完成 | 已完成 | 领取奖励
 			ButtonStyle string `json:"buttonStyle"` // go | done | receive
