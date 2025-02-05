@@ -1,6 +1,7 @@
 package log
 
 import (
+	"fmt"
 	"log"
 	"os"
 )
@@ -10,22 +11,18 @@ var Log *log.Logger
 func Write(s string, Day string) {
 	logName := "log-" + Day + ".md"
 
-	f, err := os.OpenFile(logName, os.O_RDWR, 777)
-	if os.IsExist(err) == false {
-		err = os.Mkdir(logName, os.ModePerm)
-		if err != nil {
-			return
-		}
-		f, err = os.OpenFile(logName, os.O_RDWR, 777)
-	} else {
-		return
-	}
-	if f == nil {
-		return
-	}
-	defer f.Close()
-	_, err = f.Write([]byte(s))
+	logFile, err := os.OpenFile(logName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	if logFile == nil {
+		return
+	}
+	defer logFile.Close()
+	_, err = logFile.Write([]byte(s))
+	if err != nil {
+		fmt.Println(err)
 		return
 	}
 

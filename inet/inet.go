@@ -60,20 +60,6 @@ func init() {
 		},
 	}
 	DefaultClient.Once.ch = make(chan struct{})
-	DefaultClient.ReFresh()
-	DefaultClient.Tracker = time.Tick(24 * time.Hour)
-	// 每日检查ck是否存活
-	go func() {
-		for {
-			select {
-			case <-DefaultClient.Tracker:
-				DefaultClient.Once.once.Do(func() {
-					close(DefaultClient.Once.ch)
-				})
-				DefaultClient.ReFresh() // 每日从config中更新ck
-			}
-		}
-	}()
 }
 
 func (d *defaultClient) Do(req *http.Request) (resp *http.Response, err error) {
@@ -85,6 +71,8 @@ func (d *defaultClient) Do(req *http.Request) (resp *http.Response, err error) {
 }
 
 func (d *defaultClient) ReFresh() {
+	d.Lock()
+	defer d.Unlock()
 	DefaultClient.Cks = make([]ckStatus, len(config.Cfg.BUserCk))
 	DefaultClient.RunTime = make(map[string]int, len(config.Cfg.BUserCk))
 	_u := config.Cfg.BUserCk
@@ -385,7 +373,6 @@ func (d *defaultClient) CheckCkAlive() {
 		if config.Cfg.Refresh {
 			if config.Cfg.BUserCk[idx].Token != "" {
 				code = Refresh(idx) // Refresh中的刷新函数会刷新失败，报错-101，但是仍能访问个人空间。想当于失效了一半，但是在访问某些内容会-101未登录。可以看出csrf可用，但别的风控失效
-
 			}
 		}
 

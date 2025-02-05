@@ -107,11 +107,3 @@ func LinkQl() string {
 	return aToken.Data.Token
 
 }
-
-func LinkQLAndUpdateCk() func() {
-	return func() {
-		token := LinkQl()
-		UpdateLocalEnv(token)
-		fmt.Println("青龙CK更新完毕")
-	}
-}
