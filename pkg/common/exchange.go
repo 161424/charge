@@ -64,6 +64,7 @@ type SkuInfo struct {
 	}
 }
 
+// todo 兑换应该但拉出去，以更好地应对缺货商品
 func ExchangePoint(idx int) {
 	if Note.Register("大会员积分兑换一览") {
 		return
