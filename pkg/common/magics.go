@@ -260,7 +260,179 @@ func MagicExpiredReminder(idx int) {
 
 }
 
-// 5 魔晶
-func magicWarOrder() {
+type MagicWarPage struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+	Data    struct {
+		CurrentMagicValue           int `json:"currentMagicValue"`
+		CurrentGrade                int `json:"currentGrade"`
+		MagicValue2NextGrade        int `json:"magicValue2nextGrade"`
+		CurrentMagicValue2NextGrade int `json:"currentMagicValue2nextGrade"`
+		MagicValueToday             int `json:"magicValueToday"`
+		TaskList                    struct {
+			IsNew       bool          `json:"isNew"`
+			StairTasks  []interface{} `json:"stairTasks"`
+			NormalTasks []struct {
+				ActivityId string `json:"activityId"`
+				UserTaskId int    `json:"userTaskId"`
+				TaskName   string `json:"taskName"`
+				GuideLink  string `json:"guideLink"`
+			} `json:"normalTasks"`
+		} `json:"taskList"`
+	} `json:"data"`
+	Errtag int `json:"errtag"`
+}
 
+type MagicWarViewReporter struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+	Data    struct {
+		TaskId  string `json:"taskId"`
+		EventId string `json:"eventId"`
+	} `json:"data"`
+	Errtag int   `json:"errtag"`
+	Ttl    int64 `json:"ttl"`
+}
+
+type MagicWarViewResp struct {
+	Code    int         `json:"code"`
+	Message string      `json:"message"`
+	Data    interface{} `json:"data"`
+	Errtag  int         `json:"errtag"`
+	Ttl     int64       `json:"ttl"`
+}
+
+type MagicWarOrder struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+	Data    struct {
+		ActivityId                  string `json:"activityId"`
+		Channel                     int    `json:"channel"`
+		Mid                         int    `json:"mid"`
+		Avatar                      string `json:"avatar"`
+		NickName                    string `json:"nickName"`
+		SuperPoolGrade              int    `json:"superPoolGrade"`
+		SuperPoolUnlock             bool   `json:"superPoolUnlock"`
+		CurrentMagicValue           int    `json:"currentMagicValue"`
+		CurrentGrade                int    `json:"currentGrade"`
+		NextGrade                   int    `json:"nextGrade"`
+		TotalGrade                  int    `json:"totalGrade"`
+		MagicValue2NextGrade        int    `json:"magicValue2nextGrade"`
+		NextMagicValue              int    `json:"nextMagicValue"`
+		CurrentMagicValue2NextGrade int    `json:"currentMagicValue2nextGrade"`
+		SwoThreshold                int    `json:"swoThreshold"`
+		CurrentSwoValue             int    `json:"currentSwoValue"`
+		SwoText                     string `json:"swoText"`
+		UnReceivedPrizeCount        int    `json:"unReceivedPrizeCount"`
+		GradeList                   []struct {
+			GradeIndex           int  `json:"gradeIndex"`
+			IsGradeActive        bool `json:"isGradeActive"`
+			IsSwoActive          bool `json:"isSwoActive"`
+			MagicValueThreshold  int  `json:"magicValueThreshold"`
+			IsSuperPool          bool `json:"isSuperPool"`
+			UnReceivedPrizeCount int  `json:"unReceivedPrizeCount"`
+			SuperPoolGradeInfo   *struct {
+				RewardTime              int `json:"rewardTime"`
+				TotalMagicCrystalAmount int `json:"totalMagicCrystalAmount"`
+				SuperPoolStatus         int `json:"superPoolStatus"`
+				UserSuperPoolStatus     int `json:"userSuperPoolStatus"`
+				MagicCrystalAmount      int `json:"magicCrystalAmount"`
+			} `json:"superPoolGradeInfo"`
+			NormalPrizeList []struct {
+				Index         int    `json:"index"`
+				PrizeName     string `json:"prizeName"`
+				PrizeImg      string `json:"prizeImg"`
+				PrizeNum      int    `json:"prizeNum"`
+				FaceValue     *int   `json:"faceValue"`
+				RightsId      int    `json:"rightsId"`
+				RightsType    int    `json:"rightsType"`
+				AmountType    int    `json:"amountType"`
+				ReceiveStatus int    `json:"receiveStatus"` // 0 可领取，1不可领取
+				RewardId      int    `json:"rewardId"`
+				RandomType    int    `json:"randomType"`
+				IsMust        *bool  `json:"isMust"`
+			} `json:"normalPrizeList"`
+			SwoPrizeList []struct {
+				Index         int    `json:"index"`
+				PrizeName     string `json:"prizeName"`
+				PrizeImg      string `json:"prizeImg"`
+				PrizeNum      int    `json:"prizeNum"`
+				FaceValue     *int   `json:"faceValue"`
+				RightsId      int    `json:"rightsId"`
+				RightsType    int    `json:"rightsType"`
+				AmountType    int    `json:"amountType"`
+				ReceiveStatus int    `json:"receiveStatus"`
+				RewardId      int    `json:"rewardId"`
+				RandomType    int    `json:"randomType"`
+				IsMust        *bool  `json:"isMust"`
+			} `json:"swoPrizeList"`
+		} `json:"gradeList"`
+		LastCardReleaseTime int  `json:"lastCardReleaseTime"`
+		ServerTime          int  `json:"serverTime"`
+		SwoUnlock           bool `json:"swoUnlock"`
+	} `json:"data"`
+	Errtag int `json:"errtag"`
+}
+
+// 5 魔晶
+func magicWarOrder(idx int) {
+	magicWarOrderView(idx)
+
+}
+func magicWarOrderView(idx int) {
+	// 浏览获得得5积分
+	urlView := "https://mall.bilibili.com/mall-magic-c/internet/mls_pm/war_order/activity_task_list" // POST
+	resp := inet.DefaultClient.CheckSelectPost(urlView, "", "", "", idx, nil)
+	magicWarPage := &MagicWarPage{}
+	err := json.Unmarshal(resp, magicWarPage)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	if magicWarPage.Code != 0 {
+		fmt.Println(idx, magicWarPage.Code, magicWarPage.Message)
+		return
+	}
+	herculesId := magicWarPage.Data.TaskList.NormalTasks[0].GuideLink
+	herculesIds := strings.Split(herculesId, "=")
+	if len(herculesIds) != 2 {
+		fmt.Println(herculesId)
+		return
+	}
+	taskId := herculesIds[1]
+	urlView = fmt.Sprintf("https:///api/activity/hercules/task/report-detail?taskId=%s&_=%d", taskId, time.Now().UnixMilli()) // get
+	magicWarViewReporter := &MagicWarViewReporter{}
+	resp = inet.DefaultClient.CheckSelect(urlView, idx)
+	err = json.Unmarshal(resp, magicWarViewReporter)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	if magicWarViewReporter.Code != 0 {
+		fmt.Println(idx, magicWarViewReporter.Code, magicWarViewReporter.Message)
+		return
+	}
+	time.Sleep(10 * time.Second)
+	urlView = "https://show.bilibili.com/api/activity/fire/common/event/dispatch" // post json csrf+eventid
+	reqBody := fmt.Sprintf(`{"csrf":%s,"eventId":%s}`, inet.DefaultClient.Cks[idx].Csrf, magicWarViewReporter.Data.EventId)
+	resp = inet.DefaultClient.CheckSelectPost(urlView, "", utils.ContentType["json"], "", idx, strings.NewReader(reqBody))
+	magicWarViewResp := &MagicWarViewResp{}
+	err = json.Unmarshal(resp, magicWarViewResp)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	if magicWarViewResp.Code != 0 {
+		fmt.Println(idx, magicWarViewResp.Code, magicWarViewResp.Message)
+		return
+	}
+
+}
+
+// hard
+func magicWarOrderWish(idx int) {
+}
+
+func magicWarOrderReceive(idx int) {
+	// url := "Host: mall.bilibili.com/mall-magic-c/internet/mls_pm/war_order/activity_grade_list" // post  {"activityId":"warOrder_b1fy4zl"}
 }

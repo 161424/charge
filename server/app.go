@@ -38,8 +38,9 @@ func Run() {
 	}
 	var app []App
 	app = append(app, App{"DDNS每日更新", "0 11 * * *", utils.UpdateDnsRecode()})
-	app = append(app, App{Name: "青龙更新CK", Cron: "0 */1 * * *", Task: ql.LinkQLAndUpdateCk()})
 	app = append(app, App{"Config模板更新", "0 10 * * *", config.UpdateConfigExample()})
+
+	app = append(app, App{Name: "青龙更新CK", Cron: "0 */1 * * *", Task: ql.LinkQLAndUpdateCk()})
 
 	app = append(app, App{"监听lottery", "0 */4 * * *", LotteryUp.ListenLotteryUp()}) // 0 4 8 12 16 20
 	app = append(app, App{"监听lotteryGroup", "0 */6 * * *", LotteryGroup.ListenGroupForLottery()})

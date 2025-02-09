@@ -2,6 +2,7 @@ package n
 
 import (
 	"charge/config"
+	"context"
 	"fmt"
 	"os"
 	"regexp"
@@ -58,4 +59,31 @@ func TestConfig(t *testing.T) {
 	j := 0
 	config.SetUck(tp[j], uid, uid)
 
+}
+
+func TestVVV(t *testing.T) {
+	HttpHandler()
+}
+
+func NewContextWithTimeout() (context.Context, context.CancelFunc) {
+	return context.WithTimeout(context.Background(), 3*time.Second)
+}
+
+func HttpHandler() {
+	ctx, cancel := NewContextWithTimeout()
+	defer cancel()
+	deal(ctx)
+}
+
+func deal(ctx context.Context) {
+	for i := 0; i < 10; i++ {
+		time.Sleep(5 * time.Second)
+		select {
+		case <-ctx.Done():
+			fmt.Println(ctx.Err())
+			return
+		default:
+			fmt.Printf("deal time is %d\n", i)
+		}
+	}
 }

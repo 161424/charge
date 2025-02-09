@@ -282,7 +282,7 @@ func (d *defaultClient) CheckSelectPost2(url string, idx int, ck string, rbody i
 	return cookies, body
 }
 
-// 尽可能保证请求成功,应该尽可能保证返回结果，
+// 尽可能保证请求成功,应该尽可能保证返回结果.(ck延迟时间，ck失活和ck休眠)
 func (d *defaultClient) RedundantDW(url string, tp string, dyTime time.Duration) (re []byte) {
 	t := time.Now()
 	l := len(d.Cks)
@@ -327,7 +327,6 @@ func (d *defaultClient) RedundantDW(url string, tp string, dyTime time.Duration)
 					d.Idx = idx + 1
 					return
 				}
-
 			}
 			//没有执行访问
 			d.Idx++
