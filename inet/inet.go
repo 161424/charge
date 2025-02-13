@@ -21,7 +21,10 @@ var nUrl = "https://api.bilibili.com/x/web-interface/nav"
 type Unav struct {
 	Code    int
 	Message string
-	Data    interface{}
+	Data    struct {
+		IsLogin bool   //  是否登录
+		Uname   string `json:"uname"`
+	}
 }
 
 type defaultClient struct {
@@ -43,6 +46,7 @@ type ckStatus struct {
 	Ck               string
 	Status           atomic.Bool // true表示正在占用中
 	Uid              string
+	Uname            string
 	Csrf             string
 	Access_key       string
 	Alive            bool
@@ -406,6 +410,7 @@ func (d *defaultClient) CheckCkAlive() {
 		}
 		// refresh可能返回-101未登录，但是在访问个人空间时，仍可以访问。
 		if d.Unav(unav, idx) {
+			d.Cks[idx].Uname = unav.Data.Uname
 			msg += fmt.Sprintf("%d. %s又苟过一天. 存活状态：%t\n", idx, uid, d.Cks[idx].Alive)
 		} else {
 			msg += fmt.Sprintf("%d. %s吃鸡失败. 存活状态：%t\n", idx, uid, d.Cks[idx].Alive)

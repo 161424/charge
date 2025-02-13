@@ -245,6 +245,7 @@ func AddLotteryDay(ctx context.Context, header, key string) bool {
 	}
 	return true
 }
+
 func ReadLotteryDay(ctx context.Context, header string) []string {
 	w := RedisClient.SMembers(ctx, "lottery-"+header)
 	if w.Err() != nil {
@@ -277,4 +278,22 @@ func UpdateRUpHistory(ctx context.Context, key, val string) {
 	if w.Err() != nil {
 		fmt.Println(w.Err())
 	}
+}
+
+func PixivAdd(ctx context.Context, val string) bool {
+	w := RedisClient.SAdd(ctx, "pixiv", val)
+	if w.Err() != nil {
+		fmt.Println(w.Err())
+		return false
+	}
+	return true
+}
+
+func PixivCheck(ctx context.Context, val string) bool {
+	w := RedisClient.SIsMember(ctx, "pixiv", val)
+	if w.Err() != nil {
+		fmt.Println(w.Err())
+		return false
+	}
+	return w.Val()
 }
