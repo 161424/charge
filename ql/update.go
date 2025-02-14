@@ -60,7 +60,8 @@ func GetQLEnv(token string) {
 		}
 
 		uid_name_token := strings.Split(v.Remarks, "_")
-		uid := uid_name_token[0]
+		_ = uid_name_token[0]
+		uid := utils.CutUid(v.Value)
 		acTime := ""
 		if len(uid_name_token) >= 3 && uid_name_token[2] != "" {
 			acTime = uid_name_token[2]
@@ -94,7 +95,7 @@ func LinkQLAndUpdateCk() func() {
 		token := LinkQl()
 		GetQLEnv(token)
 		fmt.Println("青龙CK更新完毕")
-		inet.DefaultClient.ReFresh()
+		inet.DefaultClient.ReFresh(false)
 		fmt.Println("inet CK更新完毕")
 
 	}

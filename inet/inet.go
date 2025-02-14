@@ -74,7 +74,7 @@ func (d *defaultClient) Do(req *http.Request) (resp *http.Response, err error) {
 	return DefaultClient.Client.Do(req)
 }
 
-func (d *defaultClient) ReFresh() {
+func (d *defaultClient) ReFresh(skip bool) {
 	d.Lock()
 	defer d.Unlock()
 	DefaultClient.Cks = make([]ckStatus, len(config.Cfg.BUserCk))
@@ -88,7 +88,7 @@ func (d *defaultClient) ReFresh() {
 		DefaultClient.Cks[i].Access_key = _u[i].Access_key
 	}
 	go func() {
-		DefaultClient.CheckCkAlive()
+		DefaultClient.CheckCkAlive(skip)
 	}()
 }
 
@@ -305,7 +305,7 @@ func (d *defaultClient) RedundantDW(url string, tp string, dyTime time.Duration)
 				checkAlive++
 			}
 			if checkAlive == 3 { // 经过3轮仍未找到合适的ck来执行任务。在超出ck长度的任务在运行时，可能会出发panic
-				d.CheckCkAlive()
+				d.CheckCkAlive(false)
 				time.Sleep(dyTime)
 				if d.AliveNum == 0 {
 					panic("没有存活的ck")
@@ -360,11 +360,13 @@ func (d *defaultClient) RegisterTp(tp string) {
 }
 
 // todo 1. 设置为lazy检测(DONE);2. ck刷新需要token，然而token容易随着ck失效而失效导致无法刷新，因此ck刷新需要配置为可选参数检测ck活性
-func (d *defaultClient) CheckCkAlive() {
-	if d.Once.ch != nil {
-		select {
-		case <-d.Once.ch:
-			d.Once.ch = nil
+func (d *defaultClient) CheckCkAlive(skip bool) {
+	if skip == false {
+		if d.Once.ch != nil {
+			select {
+			case <-d.Once.ch:
+				d.Once.ch = nil
+			}
 		}
 	}
 	msg := "  ——————  账号检测  ———————  \n"

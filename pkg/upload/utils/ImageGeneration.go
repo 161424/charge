@@ -20,7 +20,7 @@ import (
 
 var rank = []string{"daily", "weekly", "monthly"}
 var headlining = "%d. 画师名字：%s；创作时间：%s；作品id：%s\n"
-var defaultPath = config.Path + "/upload/picture/"
+var defaultPath = config.Path + "/pkg/upload/picture/"
 
 // 图片搬运
 // 每日图片n张。   排行榜日、月、周
@@ -107,15 +107,20 @@ func LinkPixiv() {
 }
 
 func GetPixivPage(url string) []byte {
+	fmt.Println(url)
 	client := PixivClient
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		panic(err)
 	}
 	req.Header.Set("User-Agent", config.Cfg.WebUserAgent)
-	req.Header.Set("Content-Type", "application/json; charset=utf-8")
-	req.Header.Set("Cookie", "first_visit_datetime_pc=2024-12-29%2018%3A35%3A59; p_ab_id=8; p_ab_id_2=5; p_ab_d_id=75731399; yuid_b=MSZilHY; privacy_policy_agreement=7; c_type=26; privacy_policy_notification=0; a_type=0; b_type=1; cc1=2025-02-12%2000%3A55%3A07; PHPSESSID=23316552_FsU0Vmvv5m2Ep0P0CahrTNhRojGSdKJr; device_token=23411fecd6c07ea215e71ce35529fb07; __cf_bm=mZ4B3b2Wm0i_ibRweZMzaFO4Q.2BeSK0DSuR1_Vr6Ps-1739342655-1.0.1.1-Rb9265G8FHHwrimJBilWrZQd2fkZSNSlYyCNMTTVgLiUv4PCgB1HzrOj9wku0PeFuzwz23ntsXYpjyWLGxSmq4hVpfwyqRm7huJZpo7IXKw; cf_clearance=9Zkbts04hvo6PG13nz4a8GUTilMMfwNJzt98dh4drC8-1739342661-1.2.1.1-jVlGTRzTDaOcD_0wpcsKRhjxEfAUSvezLkIQBH.MQTwqFBRlAMTrOuVo.LMHMXfSIA1cVY9t4h85yYm_CgA8C5eB7iXs1IWi46ua.sYKy6qECdGavkkoshefFXyTJdGi53sfnDdJsjHacxgGcDKicJJBF1MTptBn4VQmXfNokJFOI0.kFCd9UPkQThNcr3F0R9kBW5gQAwwaarI2pPhUjyzzbIPdVWRDlYruJJWQPGhTzXtb7MkMKU7anEk0wtfPDwW4_ZDH1UJ39Zhe0AueqB05PP8O2colZcd08ShQC2g; login_ever=yes; howto_recent_view_history=127115916")
-
+	req.Header.Set("Referer", "https://www.pixiv.net")
+	req.Header.Set("Content-Type", "application/json")
+	ck := "first_visit_datetime_pc=2024-12-29%2018%3A35%3A59; p_ab_id=8; p_ab_id_2=5; p_ab_d_id=75731399; yuid_b=MSZilHY; privacy_policy_agreement=7; c_type=26; privacy_policy_notification=0; a_type=0; b_type=1; cc1=2025-02-12%2000%3A55%3A07; PHPSESSID=23316552_FsU0Vmvv5m2Ep0P0CahrTNhRojGSdKJr; device_token=23411fecd6c07ea215e71ce35529fb07; __cf_bm=mZ4B3b2Wm0i_ibRweZMzaFO4Q.2BeSK0DSuR1_Vr6Ps-1739342655-1.0.1.1-Rb9265G8FHHwrimJBilWrZQd2fkZSNSlYyCNMTTVgLiUv4PCgB1HzrOj9wku0PeFuzwz23ntsXYpjyWLGxSmq4hVpfwyqRm7huJZpo7IXKw; cf_clearance=9Zkbts04hvo6PG13nz4a8GUTilMMfwNJzt98dh4drC8-1739342661-1.2.1.1-jVlGTRzTDaOcD_0wpcsKRhjxEfAUSvezLkIQBH.MQTwqFBRlAMTrOuVo.LMHMXfSIA1cVY9t4h85yYm_CgA8C5eB7iXs1IWi46ua.sYKy6qECdGavkkoshefFXyTJdGi53sfnDdJsjHacxgGcDKicJJBF1MTptBn4VQmXfNokJFOI0.kFCd9UPkQThNcr3F0R9kBW5gQAwwaarI2pPhUjyzzbIPdVWRDlYruJJWQPGhTzXtb7MkMKU7anEk0wtfPDwW4_ZDH1UJ39Zhe0AueqB05PP8O2colZcd08ShQC2g; login_ever=yes; howto_recent_view_history=127115916"
+	for _, i := range strings.Split(ck, "; ") {
+		a := strings.Split(i, "=")
+		req.AddCookie(&http.Cookie{Name: a[0], Value: a[1]})
+	}
 	resp, err := client.Do(req)
 	if err != nil {
 		panic(err)
@@ -164,11 +169,12 @@ func DownloadPixiv(uname string) []RpJsContents {
 		if redis.PixivCheck(ctx, id) {
 			continue
 		} else {
+			name := DelSpeChar(v.UserName + "_" + v.Title + "_" + id + ".jpg")
 			fileNameAll := MakeFilename("all")
-			fileNameAll += string(os.PathSeparator) + v.UserName + "_" + v.Title + "_" + id + ".jpg"
+			fileNameAll += string(os.PathSeparator) + name
 
 			fileName := MakeFilename(uname)
-			fileName += string(os.PathSeparator) + v.UserName + "_" + v.Title + "_" + id + ".jpg"
+			fileName += string(os.PathSeparator) + name
 			imgUrl := strings.Split(v.Url, "img-master")
 			if len(imgUrl) != 2 {
 				return path
@@ -180,6 +186,7 @@ func DownloadPixiv(uname string) []RpJsContents {
 				if b {
 					PerformDownload(imgBt, fileNameAll)
 					redis.PixivAdd(ctx, id)
+					v.Title = name
 					path = append(path, v)
 					break
 				}
@@ -192,7 +199,7 @@ func DownloadPixiv(uname string) []RpJsContents {
 }
 
 func DownloadDiscovery(uname string, num int) []Illust {
-	url := "https://www.pixiv.net/ajax/discovery/artworks?mode=all&limit=15&lang=zh"
+	url := "https://www.pixiv.net/ajax/discovery/artworks?mode=all&limit=30&lang=zh"
 	ctx := context.Background()
 	path := []Illust{}
 	discoveryResp := &DiscoveryResp{}
@@ -210,11 +217,12 @@ func DownloadDiscovery(uname string, num int) []Illust {
 		if redis.PixivCheck(ctx, id) {
 			continue
 		} else {
+			name := DelSpeChar(v.UserName + "_" + v.Title + "_" + id + ".jpg")
 			fileNameAll := MakeFilename("all")
-			fileNameAll += string(os.PathSeparator) + v.UserName + "_" + v.Title + "_" + id + ".jpg"
+			fileNameAll += "/" + name
 
 			fileName := MakeFilename(uname)
-			fileName += string(os.PathSeparator) + v.UserName + "_" + v.Title + "_" + id + ".jpg"
+			fileName += "/" + name
 			_url := ""
 			if v.Urls.X1200 != "" {
 				_url = v.Urls.X1200
@@ -232,11 +240,13 @@ func DownloadDiscovery(uname string, num int) []Illust {
 				if b {
 					PerformDownload(imgBt, fileNameAll)
 					redis.PixivAdd(ctx, id)
+					v.Title = name
 					path = append(path, v)
 					break
 				}
 				time.Sleep(10 * time.Second)
 			}
+			k++
 		}
 	}
 
@@ -255,7 +265,6 @@ func MakeFilename(path string) string {
 			}
 		}
 	}
-	fmt.Printf("  Creating directory: %s. Successful!\n", path)
 	return path
 }
 
@@ -278,26 +287,41 @@ func PerformDownload(resp []byte, fileNameSave string) bool {
 
 }
 
-func ImageGeneration(idx int) (string, []string) {
+func ImageGeneration(uname string) (string, []string) {
 	desp := ""
 	path := []string{}
-	inet.DefaultClient.ReFresh()
-	uname := inet.DefaultClient.Cks[idx].Uname
+	inet.DefaultClient.ReFresh(false)
 	imgs1 := DownloadPixiv(uname)
-	if imgs1 == nil {
+	if imgs1 != nil {
 		for i, img := range imgs1 {
 			id := strconv.Itoa(img.IllustId)
-			desp += fmt.Sprintf(headlining, i, img.UserName, img.Date, id)
-			path = append(path, id)
+			date := strings.Split(img.Date, " ")[0]
+			desp += fmt.Sprintf(headlining, i, img.UserName, date, id)
+			path = append(path, img.Title)
 		}
 	}
 	num := 6 - len(imgs1)
 	imgs2 := DownloadDiscovery(uname, num)
-	if imgs2 == nil {
+	if imgs2 != nil {
 		for i, img := range imgs2 {
-			desp += fmt.Sprintf(headlining, i, img.UserName, img.CreateDate, img.Id)
-			path = append(path, img.Id)
+			date := img.CreateDate.Format("2006-01-02")
+			desp += fmt.Sprintf(headlining, i, img.UserName, date, img.Id)
+			path = append(path, img.Title)
 		}
 	}
 	return desp, path
+}
+
+func DelSpeChar(DF string) string {
+	DF = strings.Replace(DF, "\\", "", -1)
+	DF = strings.Replace(DF, "/", "", -1)
+	DF = strings.Replace(DF, ":", "", -1)
+	DF = strings.Replace(DF, "*", "", -1)
+	DF = strings.Replace(DF, "?", "", -1)
+	DF = strings.Replace(DF, "\\\"", "", -1)
+	DF = strings.Replace(DF, "<", "", -1)
+	DF = strings.Replace(DF, ">", "", -1)
+	DF = strings.Replace(DF, "|", "", -1)
+	return DF
+
 }
