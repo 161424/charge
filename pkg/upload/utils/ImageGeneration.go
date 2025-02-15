@@ -213,6 +213,9 @@ func DownloadDiscovery(uname string, num int) []Illust {
 		if k == num {
 			break
 		}
+		if v.PageCount != 1 {
+			continue
+		}
 		id := v.Id
 		if redis.PixivCheck(ctx, id) {
 			continue

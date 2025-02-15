@@ -53,6 +53,15 @@ func RandomStr(num int, toLow bool) string {
 	return result
 }
 
+func RandomNum(num int) string {
+	chars := "1234567890"
+	var result string
+	for i := 0; i < num; i++ {
+		result += string(chars[rand.Intn(len(chars))])
+	}
+	return result
+}
+
 // 只能睡眠整数秒，放弃
 //func Sleep(t time.Duration) {
 //	rand.Seed(time.Now().Unix()) //Seed生成的随机数

@@ -188,6 +188,38 @@ func (d *defaultClient) CheckSelectPost(url string, contentType, referer, ua str
 	return body
 }
 
+func (d *defaultClient) CheckSelectOptions(url string, contentType, referer, ua string, idx int, rbody io.Reader) []byte {
+	req, err := http.NewRequest(http.MethodOptions, url, rbody)
+	if err != nil {
+		return nil
+	}
+	if contentType != "" {
+		req.Header.Set("Content-Type", contentType)
+	} else {
+		req.Header.Set("Content-Type", "application/json")
+	}
+	if referer == "" {
+		referer = "https://www.bilibili.com/"
+	}
+	if ua == "" {
+		ua = config.Cfg.WebUserAgent
+	}
+	req.Header.Set("Referer", referer)
+	req.Header.Set("User-Agent", ua)
+	req.Header.Set("Connection", "keep-alive")
+	req.Header.Set("Cookie", d.Cks[idx].Ck)
+
+	resp, err := d.Do(req)
+	if err != nil {
+		return nil
+	}
+	d.RunTime[d.Cks[idx].Uid]++
+	d.RunT()
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	return body
+}
+
 func (d *defaultClient) APPCheckSelect(url, ua, re string, idx int) []byte {
 	if d.Cks[idx].Access_key == "" {
 		return nil
