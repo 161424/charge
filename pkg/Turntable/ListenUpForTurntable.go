@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-// 根本中不了。。。
+// 根本中不了。。。skip
 func ListenUpForTurntable() func() {
 	return func() {
 		t := utils2.ListenTurnTable()

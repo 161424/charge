@@ -63,6 +63,7 @@ type RpJsContents struct {
 	} `json:"illust_content_type"`
 	IllustSeries interface{} `json:"illust_series"`
 	IllustId     int         `json:"illust_id"` // 作品id
+	Is_masked    bool        `json:"is_masked"`
 	UserId       int         `json:"user_id"`
 }
 
@@ -146,7 +147,7 @@ func ReqDwUrl() []RpJsContents {
 			if sk == 2 { // 每个排行榜两张
 				break
 			}
-			if c.IllustPageCount == "1" {
+			if c.IllustPageCount == "1" && c.Is_masked == false && c.IllustContentType.Sexual == 0 {
 				urls = append(urls, c)
 				sk++
 			}

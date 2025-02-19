@@ -25,6 +25,7 @@ type UploadPic struct {
 }
 
 func UploadImg(paths []string, idx int, uname string) (imgUrl []string) {
+	// 图片上传模块
 	// 添加文件字段
 	for _, path := range paths {
 		var requestBody bytes.Buffer
@@ -144,11 +145,11 @@ func UploadOpus(idx, types int, uname, desp string, paths []string) {
 		fmt.Println("Error unmarshalling upload create resp:", err)
 		return
 	}
+	// 返回data固定为空
 	if uploadCreateResp.Code != 0 {
 		fmt.Println("Error upload create resp:", uploadCreateResp.Message)
 		return
 	}
-	fmt.Println(uploadCreateResp, string(resp))
 
 	dyn.Upload_id = upload_id
 	s, _ = json.Marshal(dyns)

@@ -51,6 +51,9 @@ func ReadSentence() (string, string) {
 
 func UploadOnlyWordOpus(idx int) {
 	content, from := ReadSentence()
+	if content == "" {
+		return
+	}
 	content = fmt.Sprintf("%s\n                                --%s", content, from)
 	utils.UploadOpus(idx, 1, "", content, []string{})
 	//dyn := SimpleDyn_Req{}
