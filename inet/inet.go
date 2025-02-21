@@ -277,7 +277,8 @@ func (d *defaultClient) APPCheckSelectPost(url string, contentType, referer, ua 
 	req.Header.Set("Referer", referer)
 	req.Header.Set("User-Agent", ua)
 	req.Header.Set("Connection", "keep-alive")
-	req.Header.Set("Cookie", d.Cks[idx].Ck)
+	req.Header.Set("Cookie", d.Cks[idx].Ck+"; access_key="+d.Cks[idx].Access_key)
+
 	for k, v := range other {
 		req.Header.Set(k, v)
 	}

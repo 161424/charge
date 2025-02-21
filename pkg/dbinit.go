@@ -6,6 +6,10 @@ import (
 	"time"
 )
 
+var Host = map[string]string{
+	"show": "https://show.bilibili.com",
+	"mall": "https://mall.bilibili.com",
+}
 var Month = time.Now().Month().String()
 
 // 用来初始化数据库

@@ -2,6 +2,7 @@ package common
 
 import (
 	"charge/inet"
+	"charge/pkg"
 	"charge/utils"
 	"encoding/json"
 	"fmt"
@@ -260,6 +261,38 @@ func MagicExpiredReminder(idx int) {
 
 }
 
+type MagicWarOrderInfo struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+	Data    struct {
+		ActivityId            string      `json:"activityId"`
+		PreActivityId         string      `json:"preActivityId"`
+		NextActivityId        interface{} `json:"nextActivityId"`
+		Channel               int         `json:"channel"`
+		Mid                   int         `json:"mid"`
+		StartTime             int         `json:"startTime"`
+		EndTime               int         `json:"endTime"`
+		Title                 string      `json:"title"`
+		IsNew                 bool        `json:"isNew"`
+		ActivityStatus        int         `json:"activityStatus"`
+		SuperPoolStatus       int         `json:"superPoolStatus"`
+		PromptUnlockSuperPool bool        `json:"promptUnlockSuperPool"`
+		RuleUrl               string      `json:"ruleUrl"`
+		SuperPoolInfo         struct {
+			RewardTime             int   `json:"rewardTime"`
+			MagicCrystalAmountList []int `json:"magicCrystalAmountList"`
+			RewardPoolGrade        int   `json:"rewardPoolGrade"`
+		} `json:"superPoolInfo"`
+		SignInfo struct {
+			SignStatus int `json:"signStatus"`
+		} `json:"signInfo"`
+		ServerTime          int    `json:"serverTime"`
+		ActivityGuideLink   string `json:"activityGuideLink"`
+		WaitReceivePrizeNum int    `json:"waitReceivePrizeNum"`
+	} `json:"data"`
+	Errtag int `json:"errtag"`
+}
+
 type MagicWarPage struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
@@ -302,7 +335,7 @@ type MagicWarViewResp struct {
 	Ttl     int64       `json:"ttl"`
 }
 
-type MagicWarOrder struct {
+type MagicWarOrder1 struct {
 	Code    int    `json:"code"`
 	Message string `json:"message"`
 	Data    struct {
@@ -374,23 +407,200 @@ type MagicWarOrder struct {
 	Errtag int `json:"errtag"`
 }
 
-// 5 魔晶
-func magicWarOrder(idx int) {
-	magicWarOrderView(idx)
-
+type MagicWarOrderBoxPageReq struct {
+	PageNum      int           `json:"pageNum"`
+	RangeQueries []interface{} `json:"rangeQueries"`
+	TermQueries  []interface{} `json:"termQueries"`
+	FixSelect    []struct {
+		SelectName  string      `json:"selectName"`
+		SelectType  int         `json:"selectType"`
+		BriefName   interface{} `json:"briefName"`
+		Check       bool        `json:"check"`
+		CurrentName string      `json:"currentName"`
+	} `json:"fixSelect"`
+	Scene         string `json:"scene"`
+	Group         int    `json:"group"`
+	MallChannelId string `json:"mall-channel-id"`
+	BzType        int    `json:"bzType"`
+	Network       string `json:"network"`
+	PageSize      int    `json:"pageSize"`
+	MVersion      int    `json:"mVersion"`
+	Init          bool   `json:"init"`
 }
-func magicWarOrderView(idx int) {
+
+type MagicWarOrderBoxPage struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+	Data    struct {
+		CodeType int    `json:"codeType"`
+		CodeMsg  string `json:"codeMsg"`
+		Vo       struct {
+			AssociatedTaoBaoSpuId string `json:"associatedTaoBaoSpuId"`
+			List                  []struct {
+				Type          string        `json:"type"`
+				Title         string        `json:"title"`
+				ImageUrls     []string      `json:"imageUrls"`
+				JumpUrls      []string      `json:"jumpUrls"`
+				PriceDesc     []string      `json:"priceDesc"`
+				PricePrefix   string        `json:"pricePrefix"`
+				PriceSymbol   string        `json:"priceSymbol"`
+				PayType       int           `json:"payType"`
+				HasWished     int           `json:"hasWished"`
+				LogData       string        `json:"logData"`
+				ActivityCount int           `json:"activityCount"`
+				SubSaleType   int           `json:"subSaleType"`
+				ItemsId       int           `json:"itemsId"`
+				ItemType      int           `json:"itemType"`
+				SaleType      int           `json:"saleType"`
+				UgcList       []interface{} `json:"ugcList"`
+				Tags          struct {
+					PromotionTagNames     interface{}   `json:"promotionTagNames"`
+					MarketingTagNames     interface{}   `json:"marketingTagNames"`
+					SaleTypeTagNames      interface{}   `json:"saleTypeTagNames"`
+					TypeAndLimitTagName   *string       `json:"typeAndLimitTagName"`
+					ItemTagNames          interface{}   `json:"itemTagNames"`
+					RecommendTagNames     []interface{} `json:"recommendTagNames"`
+					FeedBoardTag          interface{}   `json:"feedBoardTag"`
+					BlindBoxHideTypeNames interface{}   `json:"blindBoxHideTypeNames"`
+					BlindBoxHasWishNames  interface{}   `json:"blindBoxHasWishNames"`
+					TitleTagNames         interface{}   `json:"titleTagNames"`
+					TagsSort              interface{}   `json:"tagsSort"`
+					AdTagNames            interface{}   `json:"adTagNames"`
+					GodlikeTag            interface{}   `json:"godlikeTag"`
+					AttributeTagNames     interface{}   `json:"attributeTagNames"`
+					ExclusiveSalePoints   interface{}   `json:"exclusiveSalePoints"`
+					OtherSalePoints       interface{}   `json:"otherSalePoints"`
+					BlindBoxEuroNames     interface{}   `json:"blindBoxEuroNames"`
+					BlindBoxCommendTags   interface{}   `json:"blindBoxCommendTags"`
+					ServiceTagNames       interface{}   `json:"serviceTagNames"`
+					DrainageTags          interface{}   `json:"drainageTags"`
+					ActionTags            interface{}   `json:"actionTags"`
+					ActThereMaterial      interface{}   `json:"actThereMaterial"`
+					ExtraTempTags         interface{}   `json:"extraTempTags"`
+				} `json:"tags"`
+				UgcSize                int    `json:"ugcSize"`
+				Like                   int    `json:"like"`
+				Brief                  string `json:"brief"`
+				SubStatus              int    `json:"subStatus"`
+				BrandId                int    `json:"brandId"`
+				PresaleDeliveryTimeStr string `json:"presaleDeliveryTimeStr"`
+				ItemsType              int    `json:"itemsType"`
+				SubSkuList             []struct {
+					ImageUrl                string      `json:"imageUrl"`
+					Type                    int         `json:"type"`
+					Name                    string      `json:"name"`
+					SubSkuId                int         `json:"subSkuId"`
+					SaleStatus              interface{} `json:"saleStatus"`
+					WishedSku               bool        `json:"wishedSku"`
+					ItemsType               interface{} `json:"itemsType"`
+					PresaleDeliveryTimeStr  interface{} `json:"presaleDeliveryTimeStr"`
+					OverseasPreShippingTime interface{} `json:"overseasPreShippingTime"`
+					WhiteListSku            interface{} `json:"whiteListSku"`
+					SubSkuPrice             interface{} `json:"subSkuPrice"`
+					SubSkuItemsId           interface{} `json:"subSkuItemsId"`
+					Url                     interface{} `json:"url"`
+					SliceNum                interface{} `json:"sliceNum"`
+					SkuSpec                 interface{} `json:"skuSpec"`
+				} `json:"subSkuList"`
+				JumpLinkType   int  `json:"jumpLinkType"`
+				SubSkuNum      int  `json:"subSkuNum,omitempty"`
+				SubSkuRareNum  int  `json:"subSkuRareNum,omitempty"`
+				CanFav         bool `json:"canFav"`
+				BzType         int  `json:"bzType"`
+				Living         bool `json:"living"`
+				HasWishedCount int  `json:"hasWishedCount,omitempty"`
+				SkuCardVO      struct {
+					BlindBoxNewsVOList []struct {
+						Avatar     interface{} `json:"avatar"`
+						Nickname   string      `json:"nickname"`
+						Mid        interface{} `json:"mid"`
+						Content    string      `json:"content"`
+						Style      interface{} `json:"style"`
+						StyleValue string      `json:"styleValue"`
+						Ctime      interface{} `json:"ctime"`
+					} `json:"blindBoxNewsVOList"`
+					SubSkuVO struct {
+						ImageUrl                string      `json:"imageUrl"`
+						Type                    int         `json:"type"`
+						Name                    string      `json:"name"`
+						SubSkuId                int         `json:"subSkuId"`
+						SaleStatus              interface{} `json:"saleStatus"`
+						WishedSku               bool        `json:"wishedSku"`
+						ItemsType               interface{} `json:"itemsType"`
+						PresaleDeliveryTimeStr  interface{} `json:"presaleDeliveryTimeStr"`
+						OverseasPreShippingTime interface{} `json:"overseasPreShippingTime"`
+						WhiteListSku            interface{} `json:"whiteListSku"`
+						SubSkuPrice             interface{} `json:"subSkuPrice"`
+						SubSkuItemsId           interface{} `json:"subSkuItemsId"`
+						Url                     interface{} `json:"url"`
+						SliceNum                interface{} `json:"sliceNum"`
+						SkuSpec                 interface{} `json:"skuSpec"`
+					} `json:"subSkuVO"`
+					PuppyNum interface{} `json:"puppyNum"`
+					LemonNum interface{} `json:"lemonNum"`
+					ImageUrl string      `json:"imageUrl"`
+				} `json:"skuCardVO,omitempty"`
+			} `json:"list"`
+
+			NumResults      int    `json:"numResults"`
+			TagLayout       int    `json:"tagLayout"`
+			QuickFilterType string `json:"quickFilterType"`
+			Seid            string `json:"seid"`
+		} `json:"vo"`
+	} `json:"data"`
+	Errtag int `json:"errtag"`
+}
+
+type MagicWarOrderBoxWishReq struct {
+	ItemsId       int    `json:"itemsId"`
+	Avatar        string `json:"avatar"`
+	Msource       string `json:"msource"`
+	Nickname      string `json:"nickname"`
+	BlindBoxCoin  int    `json:"blindBoxCoin"`
+	DeviceId      string `json:"deviceId"`
+	PayType       int    `json:"payType"`
+	Price         int    `json:"price"`
+	ImageUrl      string `json:"imageUrl"`
+	HideType      int    `json:"hideType"`
+	HasWish       int    `json:"hasWish"`
+	SkuId         int    `json:"skuId"`
+	WishSuccCount int    `json:"wishSuccCount"`
+	SkuName       string `json:"skuName"`
+	DemogorgonSku bool   `json:"demogorgonSku"`
+}
+
+// 部分账号没有战令
+// 5 魔晶
+func MagicWarOrder(idx int) {
+	url := pkg.Host["mall"] + "/mall-magic-c/internet/mls_pm/war_order/activity_head_info"
+	fmt.Println(url)
+	magicWarOrderInfo := MagicWarOrderInfo{}
+	resp := inet.DefaultClient.CheckSelectPost(url, "", "", "", idx, strings.NewReader("{}"))
+	err := json.Unmarshal(resp, &magicWarOrderInfo)
+	if err != nil {
+		Note.StatusAddString(utils.ErrMsg["json"], "MagicWarOrder", err.Error(), string(resp))
+		return
+	}
+	if magicWarOrderInfo.Code != 0 {
+		Note.StatusAddString(utils.ErrMsg["code"], "MagicWarOrder", magicWarOrderInfo.Code, string(resp))
+		return
+	}
+	MagicWarOrderView(idx, magicWarOrderInfo.Data.ActivityId)
+}
+
+func MagicWarOrderView(idx int, acId string) {
 	// 浏览获得得5积分
 	urlView := "https://mall.bilibili.com/mall-magic-c/internet/mls_pm/war_order/activity_task_list" // POST
-	resp := inet.DefaultClient.CheckSelectPost(urlView, "", "", "", idx, nil)
+	reqBody := fmt.Sprintf(`{"activityId":"%s"}`, acId)
+	resp := inet.DefaultClient.CheckSelectPost(urlView, "", "", "", idx, strings.NewReader(reqBody))
 	magicWarPage := &MagicWarPage{}
 	err := json.Unmarshal(resp, magicWarPage)
 	if err != nil {
-		fmt.Println(err)
+		Note.StatusAddString(utils.ErrMsg["json"], "MagicWarOrderView", err.Error(), string(resp))
 		return
 	}
 	if magicWarPage.Code != 0 {
-		fmt.Println(idx, magicWarPage.Code, magicWarPage.Message)
+		Note.StatusAddString(utils.ErrMsg["code"], "MagicWarOrderView", magicWarPage.Code, string(resp))
 		return
 	}
 	herculesId := magicWarPage.Data.TaskList.NormalTasks[0].GuideLink
@@ -400,21 +610,22 @@ func magicWarOrderView(idx int) {
 		return
 	}
 	taskId := herculesIds[1]
-	urlView = fmt.Sprintf("https:///api/activity/hercules/task/report-detail?taskId=%s&_=%d", taskId, time.Now().UnixMilli()) // get
+	fmt.Println("taskId", taskId)
+	urlView = fmt.Sprintf(pkg.Host["show"]+"/api/activity/hercules/task/report-detail?taskId=%s", taskId) // get
 	magicWarViewReporter := &MagicWarViewReporter{}
 	resp = inet.DefaultClient.CheckSelect(urlView, idx)
 	err = json.Unmarshal(resp, magicWarViewReporter)
 	if err != nil {
-		fmt.Println(err)
+		Note.StatusAddString(utils.ErrMsg["json"], "MagicWarOrderView", err.Error(), string(resp))
 		return
 	}
 	if magicWarViewReporter.Code != 0 {
-		fmt.Println(idx, magicWarViewReporter.Code, magicWarViewReporter.Message)
+		Note.StatusAddString(utils.ErrMsg["code"], "MagicWarOrderView", magicWarPage.Code, string(resp))
 		return
 	}
 	time.Sleep(10 * time.Second)
-	urlView = "https://show.bilibili.com/api/activity/fire/common/event/dispatch" // post json csrf+eventid
-	reqBody := fmt.Sprintf(`{"csrf":%s,"eventId":%s}`, inet.DefaultClient.Cks[idx].Csrf, magicWarViewReporter.Data.EventId)
+	urlView = pkg.Host["show"] + "/api/activity/fire/common/event/dispatch" // post json csrf+eventid
+	reqBody = fmt.Sprintf(`{"csrf":"%s","eventId":"%s"}`, inet.DefaultClient.Cks[idx].Csrf, magicWarViewReporter.Data.EventId)
 	resp = inet.DefaultClient.CheckSelectPost(urlView, "", utils.ContentType["json"], "", idx, strings.NewReader(reqBody))
 	magicWarViewResp := &MagicWarViewResp{}
 	err = json.Unmarshal(resp, magicWarViewResp)
@@ -426,13 +637,49 @@ func magicWarOrderView(idx int) {
 		fmt.Println(idx, magicWarViewResp.Code, magicWarViewResp.Message)
 		return
 	}
+	fmt.Println("战令浏览成功")
 
 }
 
 // hard
 func magicWarOrderWish(idx int) {
+	magicWarOrderBoxPageReq := &MagicWarOrderBoxPageReq{}
+	magicWarOrderBoxPageReq.BzType = 1
+	magicWarOrderBoxPageReq.FixSelect[0].BriefName = "综合"
+	magicWarOrderBoxPageReq.FixSelect[0].Check = true
+	magicWarOrderBoxPageReq.FixSelect[0].SelectName = "综合排序"
+	magicWarOrderBoxPageReq.FixSelect[0].SelectType = 4
+	magicWarOrderBoxPageReq.Group = 1
+	magicWarOrderBoxPageReq.Init = true
+	magicWarOrderBoxPageReq.MallChannelId = "1"
+	magicWarOrderBoxPageReq.MVersion = 168
+	magicWarOrderBoxPageReq.Network = "mobile"
+	magicWarOrderBoxPageReq.PageNum = 1
+	magicWarOrderBoxPageReq.PageSize = 20
+	magicWarOrderBoxPageReq.Scene = "bilndbox"
+	s, _ := json.Marshal(magicWarOrderBoxPageReq)
+	rs := strings.NewReader(string(s))
+	url := pkg.Host["mall"] + "/magic-c-search/blind_box/feed/list/v2"
+	magicWarOrderBoxPage := &MagicWarOrderBoxPage{}
+	resp := inet.DefaultClient.CheckSelectPost(url, "", "", "", idx, rs)
+	err := json.Unmarshal(resp, magicWarOrderBoxPage)
+	if err != nil {
+		Note.StatusAddString(utils.ErrMsg["json"], "magicWarOrderWish", err.Error(), string(resp))
+		return
+	}
+	if magicWarOrderBoxPage.Code != 0 {
+		Note.StatusAddString(utils.ErrMsg["code"], "magicWarOrderWish", magicWarOrderBoxPage.Code, string(resp))
+		return
+	}
+
+	url = pkg.Host["mall"] + fmt.Sprintf("/magic-c-search/blind_box/info?itemsId=%s&afterDraw=false&v=%s", magicWarOrderBoxPage.Data.Vo.List[0].ItemsId, time.Now().UnixMilli())
+
+	url = pkg.Host["mall"] + "/magic-c-search/blind_box/wish/create/v2" // post
+	magicWarOrderBoxWishReq := &MagicWarOrderBoxWishReq{}
+	fmt.Println(magicWarOrderBoxWishReq)
+
 }
 
 func magicWarOrderReceive(idx int) {
-	// url := "Host: mall.bilibili.com/mall-magic-c/internet/mls_pm/war_order/activity_grade_list" // post  {"activityId":"warOrder_b1fy4zl"}
+
 }
