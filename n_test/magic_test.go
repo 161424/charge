@@ -25,6 +25,7 @@ func TestMagicExpiredReminder(t *testing.T) {
 func TestMagicWarOrderTask1(t *testing.T) {
 	redis.Start()
 	inet.DefaultClient.ReFresh(true)
-	//inet.DefaultClient.Cks[0].Access_key = "a5b0601c51002d014e446d4e498d0521CjAChJwsOSGDKtj34_UreNoy8xgTcVUjx1D_PiRwXh0kMQFIjWNRtOh2h_O-pDhWDCkSVlRFaTRHV1JwQkk5UUVNMDVqT05EMTFia29CQWJtVm9Od1V6LVlGaFJzaFhaRzctbTd6NzIzVHVFcnFvVFJpZy1QN2FoZ1JDc2QtZEYxamtuV0pEWVJBIIEC"
-	common.MagicWarOrder(2)
+	inet.DefaultClient.Cks[0].Access_key = "a5b0601c51002d014e446d4e498d0521CjAChJwsOSGDKtj34_UreNoy8xgTcVUjx1D_PiRwXh0kMQFIjWNRtOh2h_O-pDhWDCkSVlRFaTRHV1JwQkk5UUVNMDVqT05EMTFia29CQWJtVm9Od1V6LVlGaFJzaFhaRzctbTd6NzIzVHVFcnFvVFJpZy1QN2FoZ1JDc2QtZEYxamtuV0pEWVJBIIEC"
+	//common.MagicWarOrder(2)
+	common.MagicWarOrderWish(0)
 }
