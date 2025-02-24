@@ -48,7 +48,7 @@ func TestDailyTask(t *testing.T) {
 }
 
 func TestExchangePoint(t *testing.T) {
-	common.ExchangePoint(0)
+	common.ExchangePoint(0, 1)
 }
 
 func TestGetUserInfo(t *testing.T) {

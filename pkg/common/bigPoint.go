@@ -1,6 +1,7 @@
 package common
 
 import (
+	"charge/config"
 	"charge/inet"
 	"charge/utils"
 	"encoding/json"
@@ -146,6 +147,7 @@ func BigPoint(idx int) {
 								if inet.DefaultClient.Cks[idx].Access_key == "" {
 									Note.AddString("【10分钟观影任务】无法完成，因为缺少必要的Access_key\n")
 								} else {
+									config.Read() // 确保access尽可能正确
 									WatchRandomEp(idx)
 								}
 							} else if task.Task_code == "vipmallview" {

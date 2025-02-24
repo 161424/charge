@@ -31,7 +31,7 @@ type Active struct {
 }
 
 var Note note
-var User = map[string]UserInfo{} //
+var User = map[string]UserInfo{} // user cache
 func init() {
 	go func() {
 		Note = note{}
@@ -179,7 +179,8 @@ func DailyTask() func() {
 
 			// 魔晶签到
 			MagicRegister(idx)
-
+			// 魔晶战令
+			MagicWarOrder(idx, 1)
 			// 银瓜子兑换硬币？  银瓜子快绝版了，没啥用了
 
 			// shareAndWatch。视频观看及分享
@@ -191,12 +192,11 @@ func DailyTask() func() {
 			// 大会员栏目
 			if userInfo.Data.VipStatus == 1 {
 				// 大会员积分
-				BigPoint(idx)      // 每日积分签到，保底45~50。最少1350，最多2700
-				ExchangePoint(idx) // 全勤月兑换10天大会员，需要2400积分。   -404 bug
+				BigPoint(idx) // 每日积分签到，保底45~50。最少1350，最多2700
 				// 会员BB券提醒,含领取功能。当即将过期会对B币进行兑换
 				BCoinState(idx)
 				// BB券充电。检测到马上过期，会自动充电
-				if BCoinExpiringSoon && userInfo.Data.Wallet.CouponBalance > 0 {
+				if BCoinExpiringSoon && userInfo.Data.Wallet.CouponBalance > 0 { // bug
 					if cks[idx].Uid == config.Cfg.BCoinExchange { // 无法为自己充电，只能冲电池
 						BCoinExchangeForBattery(idx, userInfo.Data.Wallet.CouponBalance) // 即将过期的b币为自己换成电池
 					} else {
@@ -235,6 +235,41 @@ func DailyTask() func() {
 		monitor.PushS()
 		log.Write(Note.Desc, day)
 
+	}
+}
+
+//	 战令魔晶保质期3天
+//		会员购积分兑换魔晶保质期14天，12点刷新
+//		金币兑换魔晶0点刷新，有效期1天。秒没
+func GiftExchange() func() {
+	return func() {
+		tm := time.Now()
+		Gift := false
+		if tm.Weekday() == time.Saturday || tm.Weekday() == time.Sunday {
+			Gift = true
+		}
+		Note.AddString("  --------  Gift  Exchange  --------\n")
+		cks := inet.DefaultClient.Cks
+		for idx := range len(cks) {
+			// 战令魔晶
+			if Gift {
+				MagicWarOrder(idx, 2)
+			}
+			userInfo := User[cks[idx].Uid]
+			if userInfo.Data.VipStatus == 1 {
+				go func() {
+					time.Sleep(12 * time.Hour)
+					// 全勤月兑换10天大会员，需要2400积分。   -404 bug
+					if Gift {
+						ExchangePoint(idx, 2) // 比1多花费500积分兑换魔晶
+					} else {
+						ExchangePoint(idx, 1)
+					}
+
+				}()
+			}
+
+		}
 	}
 }
 

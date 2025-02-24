@@ -37,9 +37,9 @@ func TestPath(t *testing.T) {
 }
 
 func TestTime(t *testing.T) {
-	tn := time.Now()
-	tw := tn.Format(time.DateOnly)
-	fmt.Println(tw, tn)
+	expireTime := time.UnixMilli(1742918400000)
+	expireDay := expireTime.Sub(time.Now()).Hours() / 24
+	fmt.Println(expireTime, expireDay, expireDay < 3)
 }
 
 //func TestSleep(t *testing.T) {

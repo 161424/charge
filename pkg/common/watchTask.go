@@ -104,6 +104,7 @@ func WatchTask() {
 // https://www.bilibili.com/video/BV1WDzFYjE3q?p=140
 // 对于不同的视频合集，需要更新bvid来更换视频
 
+// watchTargetVideoCommon
 func watchTargetVideoCommon(idx int, bvid string) {
 	// 获取vedio
 	url := "https://api.bilibili.com/x/web-interface/view?bvid=" // 每一个视频的bvid都不同，
@@ -231,16 +232,7 @@ func WatchRandomEp(idx int) {
 	s = reqBody.Encode()
 	s = APPKey(s)
 	reqBody.Set("sign", s)
-	//other := map[string]string{}
-	//other["APP-KEY"] = "android"
-	//other["env"] = "prod"
-	//other["fp_local"] = "951c86318c17690e885ec6de669facc320241230014023186f2ba9aef4532de7"
-	//other["fp_remote"] = "951c86318c17690e885ec6de669facc320241230014023186f2ba9aef4532de7"
-	//other["Buvid"] = "XUF1B5AF0BF95BB6F1614E7BC40B3881EA6C6"
-	//other["GuestId"] = "24045169332770"
-	//other["session_id"] = "a5f1e85e"
-	//other["Host"] = "api.bilibili.com"
-	//other["Buvid"] = "XUF1B5AF0BF95BB6F1614E7BC40B3881EA6C6"
+
 	resp = inet.DefaultClient.CheckSelectPost(url, utils.ContentType["x"], "", "", idx, strings.NewReader(reqBody.Encode()))
 	fmt.Printf("正在观看（40point）:%s·《%s》\n", BangumiList.Name, b.Show_title)
 	watchReceiveResp := &WatchReceiveResp{}
@@ -264,6 +256,8 @@ func WatchRandomEp(idx int) {
 		code := WatchMovie(idx, watchReceiveResp.Data.WatchCountDownCfg.Token, watchReceiveResp.Data.WatchCountDownCfg.TaskId)
 		if code == 0 {
 			Note.AddString("10分钟视频观看完毕，获得40积分")
+		} else {
+
 		}
 	}()
 

@@ -74,6 +74,16 @@ var Path = ""
 
 func init() {
 	// 读取 YAML 文件
+	Read()
+}
+
+func Start() {
+	if len(Cfg.BUserCk) == 0 {
+		panic("BUserCk为无效配置，无法启动服务")
+	}
+}
+
+func Read() {
 	Path, _ = os.Getwd()
 	npath := strings.Split(Path, "\\")
 	if npath[len(npath)-1] != "charge" {
@@ -96,12 +106,6 @@ func init() {
 		log.Fatalf("解析 YAML 失败: %v", err)
 	}
 	fmt.Println("config:", Cfg)
-}
-
-func Start() {
-	if len(Cfg.BUserCk) == 0 {
-		panic("BUserCk为无效配置，无法启动服务")
-	}
 }
 
 // 有一些bug，在覆盖yaml后，yaml总会多一些重复的内容

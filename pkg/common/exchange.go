@@ -9,9 +9,10 @@ import (
 	"fmt"
 	url2 "net/url"
 	"strings"
+	"sync"
 )
 
-var goods = map[string]int{"大会员3天卡": 720, "大会员7天卡": 1680}
+var goods = map[string]int{"大会员3天卡": 720, "大会员7天卡": 1680, "会员购5魔晶": 500}
 var notifyDesc = ""
 
 type S struct {
@@ -65,7 +66,7 @@ type SkuInfo struct {
 }
 
 // todo 兑换应该但拉出去，以更好地应对缺货商品
-func ExchangePoint(idx int) {
+func ExchangePoint(idx, tp int) {
 	if Note.Register("大会员积分兑换一览") {
 		return
 	}
@@ -76,6 +77,7 @@ func ExchangePoint(idx int) {
 	url := "https://api.bilibili.com/x/vip_point/sku/list?pn=%d&ps=%d"             // pn  ps   total
 	iurl := "https://api.bilibili.com/x/vip_point/sku/info?token=%s&access_key=%s" // access_key,token
 	skip := false
+	readAccess := sync.Once{}
 	for i := 1; i <= pn; i++ {
 		_url := fmt.Sprintf(url, i, ps)
 		sku := &Sku{}
@@ -122,15 +124,13 @@ func ExchangePoint(idx int) {
 			notifyDesc += fmt.Sprintf("- 【%s】:%s\n", skuInfo.Data.Title, s)
 
 			// 商品页面
-			if inet.DefaultClient.Cks[idx].Access_key == "" {
-				Note.AddString("无Access_key，无法兑换大会员积分物品")
-				continue
-			}
 			if skip {
 				continue
 			}
 			//fmt.Println(skuInfo.Data.Title, skuInfo.Data.Token)
 			if _, ok := goods[skuInfo.Data.Title]; ok == false {
+				continue
+			} else if skuInfo.Data.Title == "会员购5魔晶" && tp != 2 {
 				continue
 			}
 
@@ -142,6 +142,12 @@ func ExchangePoint(idx int) {
 				}
 			} else if skuInfo.Data.Purchase_button.Status == "not_logging" {
 				Note.AddString("大会员积分兑换物品【%s】失败，可能是因为Access_key失效\n", skuInfo.Data.Title)
+				readAccess.Do(func() {
+					config.Read()
+					if exchangePoint(idx, skuInfo.Data.Token) == 0 {
+						Note.AddString("大会员积分兑换物品【%s】成功，可能还可以兑换%d次\n", skuInfo.Data.Title, skuInfo.Data.Exchange_limit_num-1)
+					}
+				})
 			} else if skuInfo.Data.Purchase_button.Status == "exchange_limit" {
 				Note.AddString("大会员积分兑换物品【%s】失败，已达到最大兑换次数\n", skuInfo.Data.Title)
 			} else if skuInfo.Data.Purchase_button.Status == "sold_out" {
@@ -186,7 +192,6 @@ func exchangePoint(idx int, token string) int {
 }
 
 func APPKey(s string) string {
-
 	appsec := "560c52ccd288fed045859ed18bffd973"
 	s += appsec
 	data := []byte(s) //切片

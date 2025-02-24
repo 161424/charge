@@ -113,6 +113,7 @@ var modelBCoin = "B币券监听和兑换"
 // BCoinState B币券监听和使用
 // 通过扫码进行登录获取到的ck无法使用.不是，需要将SESSDATA中的，换成%2C就可以了
 func BCoinState(idx int) {
+	BCoinExpiringSoon = false
 	if Note.Register(modelBCoin) { // 在第一轮执行无误后会跳过
 		Note.AddString("今日【%s】已执行完毕\n", modelBCoin)
 		return
@@ -120,7 +121,7 @@ func BCoinState(idx int) {
 	url := "https://pay.bilibili.com/paywallet/coupon/listForUserCoupons"
 	t := time.Now()
 	te := t.Format("2006-01-02")
-	ts := t.Add(-1 * time.Hour * 24 * 35).Format("2006-01-02")
+	ts := t.Add(-1 * time.Hour * 24 * 7).Format("2006-01-02")
 	tm := t.UnixMilli()
 	s := fmt.Sprintf(`{"currentPage":1,"pageSize":10,"beginTime":"%s 00:00:00","endTime":"%s 23:59:59","traceId":%d,"timestamp":%d,"version":"1.0"}`, ts, te, tm, tm)
 	resp := inet.DefaultClient.CheckSelectPost(url, "", "https://pay.bilibili.com/pay-v2-web/bcoin_record", "", idx, strings.NewReader(s))
@@ -141,7 +142,7 @@ func BCoinState(idx int) {
 	}
 	expireTime := time.UnixMilli(bcS.Data.Result[0].CouponDueTime)
 	expireDay := expireTime.Sub(time.Now()).Hours() / 24
-	if expireDay < 3 {
+	if expireDay < 3 && bcS.Data.Result[0].Status == 0 {
 		BCoinExpiringSoon = true
 		Note.AddString("B币券过期时间【%s】，距离过期还有%d天。即将为你充电\n", expireTime.Format("2006-01-02"), int(expireDay))
 	} else {

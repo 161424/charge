@@ -47,7 +47,7 @@ func Run() {
 	app = append(app, App{"监听lottery", "0 */4 * * *", LotteryUp.ListenLotteryUp()}) // 0 4 8 12 16 20
 	app = append(app, App{"监听lotteryGroup", "0 */6 * * *", LotteryGroup.ListenGroupForLottery()})
 	app = append(app, App{"DailyTask", "0 8/8 * * *", common.DailyTask()})
-
+	app = append(app, App{"GiftExchange", "0 0 * * *", common.GiftExchange()})
 	// todo 自动参与充电抽奖
 
 	// add a job to the scheduler
