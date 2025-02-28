@@ -4,6 +4,7 @@ import (
 	"charge/config"
 	"context"
 	"fmt"
+	"math/rand"
 	"os"
 	"regexp"
 	"strings"
@@ -22,12 +23,10 @@ func TestCutUid(t *testing.T) {
 }
 
 func TestY(t *testing.T) {
-	w := k()
-	fmt.Println(w, len(w), w == nil)
-}
-
-func k() (re []int) {
-	return
+	OneDay := 3600 * 20
+	randomNumber := rand.Intn(OneDay)
+	fmt.Println(time.Duration(rand.Intn(randomNumber)) * time.Second)
+	//time.Sleep(time.Duration(rand.Intn(randomNumber)))
 }
 
 func TestPath(t *testing.T) {
