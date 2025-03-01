@@ -3,6 +3,7 @@ package n
 import (
 	"charge/config"
 	"charge/dao/redis"
+	"charge/inet"
 	"charge/pkg/LotteryGroup"
 	"charge/pkg/LotteryUp"
 	utils2 "charge/pkg/utils"
@@ -151,4 +152,13 @@ func TestLottery5(t *testing.T) {
 	doc, _ := goquery.NewDocumentFromReader(d)
 	rt := doc.Find(".desc-info-text").Text()
 	fmt.Println(rt)
+}
+
+func TestLottery6(t *testing.T) {
+	config.Start()
+	redis.Start()
+	inet.DefaultClient.ReFresh(true)
+	complete := make(chan struct{})
+	lotterys := utils2.ListenUpForLotteryVideo(config.Cfg.SpecialUid, complete)
+	fmt.Println(lotterys)
 }

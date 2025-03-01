@@ -203,7 +203,7 @@ func ListenUpForLotteryVideo(Uid []string, cmp chan struct{}) []string {
 			_url := "https://app.bilibili.com/x/v2/space/archive/cursor?vmid=" + uid
 			videos := &Videos{}
 			//fmt.Println(inet.DefaultClient)
-			d.RedundantDW(_url, modelTp, time.Second*5)
+			d.RedundantDW(_url, modelTp, 0)
 			body := <-d.AliveCh[modelTp]
 			err := json.Unmarshal(body[:len(body)-1], &videos)
 			if err != nil {
@@ -219,7 +219,7 @@ func ListenUpForLotteryVideo(Uid []string, cmp chan struct{}) []string {
 				if counter == stopPage {
 					break
 				}
-				_url = fmt.Sprintf("https: //www.bilibili.com/video/%s/?spm_id_from=333.1387.homepage.video_card.click", item.Bvid)
+				_url = fmt.Sprintf("https://www.bilibili.com/video/%s/?spm_id_from=333.1387.homepage.video_card.click", item.Bvid)
 				f := DaleyTimeRandom2_10() // 做个延时，减少风控几率.双重延时
 				d.RedundantDW(_url, modelTp, 0)
 				body = <-d.AliveCh[modelTp]
