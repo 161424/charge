@@ -320,6 +320,8 @@ func (d *defaultClient) CheckSelectPost2(url string, idx int, ck string, rbody i
 }
 
 // 尽可能保证请求成功,应该尽可能保证返回结果.(ck延迟时间，ck失活和ck休眠)
+// 1. 对于非通道re输出，结果为正常输出
+// 2. 对于通道输出，re最后一byte表示的是idx
 func (d *defaultClient) RedundantDW(url string, tp string, dyTime time.Duration) (re []byte) {
 	t := time.Now()
 	l := len(d.Cks)

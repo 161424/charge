@@ -57,7 +57,7 @@ func ListenReverse(cmp chan struct{}) []string {
 		if skip {
 			continue
 		}
-		f := DaleyTime(time.Now()) // 做个延时，减少风控几率
+		f := DaleyTimeRandom2_10() // 做个延时，减少风控几率
 		// https://www.bilibili.com/opus/1009676614375571474
 		_url := SpaceUrl + item.OpusID
 		inet.DefaultClient.RedundantDW(_url, modelTp, 0)

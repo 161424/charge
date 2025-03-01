@@ -145,3 +145,10 @@ func TestLottery4(t *testing.T) {
 	})
 
 }
+
+func TestLottery5(t *testing.T) {
+	d, _ := os.Open("G:/编程/goland/project/try/charge/data/videoPlayPage.html")
+	doc, _ := goquery.NewDocumentFromReader(d)
+	rt := doc.Find(".desc-info-text").Text()
+	fmt.Println(rt)
+}

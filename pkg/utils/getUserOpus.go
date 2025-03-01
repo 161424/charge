@@ -59,7 +59,7 @@ func GetUserOpus(Uid []string) []string {
 				if counter == 10 {
 					break
 				}
-				f := DaleyTime(time.Now()) // 做个延时，减少风控几率
+				f := DaleyTimeRandom2_10() // 做个延时，减少风控几率
 				_url := SpaceUrl + item.OpusID
 				ibody := inet.DefaultClient.RedundantDW(_url, modelTp, time.Second*5)
 

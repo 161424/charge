@@ -5,6 +5,7 @@ import (
 	"charge/inet"
 	"charge/utils"
 	"fmt"
+	"math/rand"
 	"net/http"
 	"strings"
 	"time"
@@ -24,11 +25,16 @@ func SetDefaultUid(uid string) {
 	}
 }
 
-func DaleyTime(t time.Time) func() {
+func DaleyTimeRandom2_10() func() {
+	start := time.Now()
 	return func() {
 		nt := time.Now()
-		if nt.Sub(t) < time.Duration(config.Cfg.DaleyTime) {
-			time.Sleep(t.Add(time.Duration(config.Cfg.DaleyTime)).Sub(nt))
+		dyT := config.Cfg.DaleyTime
+		if dyT == 0 {
+			dyT = 2 + rand.Int63n(8)
+		}
+		if nt.Sub(start) < time.Duration(dyT*1000) {
+			time.Sleep(start.Add(time.Duration(dyT * 1000)).Sub(nt))
 		}
 	}
 }
