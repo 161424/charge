@@ -11,10 +11,17 @@ import (
 )
 
 type config struct {
+	GIP struct {
+		IPV4 string `yaml:"IPV4"`
+		IPV6 string `yaml:"IPV6"`
+	}
+
 	WebPort string `yaml:"WebPort"`
 	Redis   Redis  `yaml:"Redis"`
 	Mongodb struct {
+		IsLocal  bool   `yaml:"IsLocal"`
 		Addr     string `yaml:"Addr"`
+		Port     string `yaml:"Port"`
 		Password string `yaml:"Password"`
 	} `yaml:"Mongodb"`
 	Refresh bool      `yaml:"Refresh"`
@@ -38,13 +45,11 @@ type config struct {
 }
 
 type Redis struct {
-	Addr           string `yaml:"Addr"`
-	Port           string `yaml:"Port"`
-	Password       string `yaml:"Password"`
-	IsIpv6         bool   `yaml:"IsIpv6"`
-	StaticIpv6Addr string `yaml:"StaticIpv6Addr"`
-	DynamicIpv6    string `yaml:"DynamicIpv6"`
-	Id_rsa         string `yaml:"Id_rsa"`
+	IsLocal  bool   `yaml:"IsLocal"`
+	Addr     string `yaml:"Addr"`
+	Port     string `yaml:"Port"`
+	Password string `yaml:"Password"`
+	Id_rsa   string `yaml:"Id_rsa"`
 }
 
 type BUserCk struct {
@@ -63,7 +68,9 @@ type DDNS struct {
 }
 
 type Ql struct {
+	IsLocal      bool   `yaml:"IsLocal"`
 	Addr         string `yaml:"Addr"`
+	Port         string `yaml:"Port"`
 	ClientId     string `yaml:"ClientId"`
 	ClientSecret string `yaml:"ClientSecret"`
 }
@@ -71,6 +78,7 @@ type Ql struct {
 var Cfg = &config{}
 
 var Path = ""
+var IP = "127.0.0.1"
 
 func init() {
 	// 读取 YAML 文件
@@ -106,6 +114,11 @@ func Read() {
 		log.Fatalf("解析 YAML 失败: %v", err)
 	}
 	fmt.Println("config:", Cfg)
+	if Cfg.GIP.IPV4 != "" {
+		IP = Cfg.GIP.IPV4
+	} else if Cfg.GIP.IPV6 != "" {
+		IP = "[" + Cfg.GIP.IPV6 + "]"
+	}
 }
 
 // 有一些bug，在覆盖yaml后，yaml总会多一些重复的内容

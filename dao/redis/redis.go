@@ -18,37 +18,44 @@ var Month = time.Now().Month().String()
 
 // 启动redis，并做ping检查
 func Start() {
-	addr := config.Cfg.Redis.Addr
+	addr := config.IP
+	_addr := ""
 	var redisClient *redis.Client
 	//confusion
 	// 当使用ipv6访问本机wsl中redis时，会访问失败，但是远程客户端使用ipv6访问本机redis服务器时，就能访问成功
-	if config.Cfg.Redis.IsIpv6 {
-		addr = "[" + config.Cfg.Redis.StaticIpv6Addr + "]"
-		redisClient = start(addr)
-	} else {
-		redisClient = start(config.Cfg.Redis.Addr)
+	if config.Cfg.Redis.IsLocal {
+		if config.Cfg.Redis.Addr != "" {
+			_addr = config.Cfg.Redis.Addr
+		} else {
+			_addr = "127.0.0.1"
+		}
+		redisClient = start(_addr)
+		ok := redisClient.Ping(context.Background())
+
+		if ok.Err() == nil {
+			RedisClient = redisClient
+			fmt.Println("访问 本地redis 成功！")
+			return
+		}
 	}
 
+	fmt.Println("访问 本地redis 失败")
+
+	redisClient = start(addr)
 	ok := redisClient.Ping(context.Background())
-
-	if ok.Err() == nil {
-		RedisClient = redisClient
-		fmt.Println("redis 访问 StaticIpv6Addr 成功！")
-		return
-	}
-	fmt.Println("redis 访问不到 StaticIpv6Addr")
-
-	redisClient = start(config.Cfg.Redis.DynamicIpv6)
-	ok = redisClient.Ping(context.Background())
 	if ok.Err() != nil {
+		fmt.Println("访问不到redis数据库")
 		panic(ok.Err())
 	}
 	RedisClient = redisClient
-	fmt.Println("redis 访问 DynamicIpv6 成功！", utils2.DDNSCheck(config.Cfg.Redis.DynamicIpv6))
+	fmt.Println("访问 远程redis 成功！", utils2.DDNSCheck(addr))
 
 }
 
 func start(addr string) *redis.Client {
+	if config.Cfg.Redis.Port == "" {
+		config.Cfg.Redis.Port = "6379"
+	}
 	return redis.NewClient(&redis.Options{
 		Addr:    addr + config.Cfg.Redis.Port,
 		Network: "tcp",

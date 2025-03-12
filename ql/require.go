@@ -26,12 +26,33 @@ func init() {
 			IdleConnTimeout: 30 * time.Second,
 		},
 	}
-	QlClient.Addr = "http://" + config.Cfg.Ql.Addr
+	port := "5700"
+	if config.Cfg.Ql.Port != "" {
+		port = config.Cfg.Ql.Port
+	}
+	if config.Cfg.Ql.IsLocal {
+		if config.Cfg.Ql.Addr != "" {
+			QlClient.Addr = config.Cfg.Ql.Addr
+		} else {
+			QlClient.Addr = "127.0.0.1"
+		}
+	}
+
+	QlClient.Addr = "http://" + QlClient.Addr + ":" + port
 	QlClient.ClientId = config.Cfg.Ql.ClientId
 	QlClient.ClientSecret = config.Cfg.Ql.ClientSecret
-	if QlClient.Addr == "" || QlClient.ClientId == "" || QlClient.ClientSecret == "" {
 
+	ok := LinkQl()
+	if ok != "" {
+		return
 	}
+	QlClient.Addr = "http://" + config.IP + ":" + port
+	ok = LinkQl()
+	if ok != "" {
+		return
+	}
+	fmt.Println("青龙连接失败")
+
 }
 
 func (q *qlClient) Post(url string, data io.Reader) ([]byte, error) {
@@ -81,13 +102,12 @@ type AToken struct {
 }
 
 func LinkQl() string {
+	if QlClient.ClientId == "" || QlClient.ClientSecret == "" {
+		fmt.Println("身份验证失败")
+		return ""
+	}
 	url := QlClient.Addr + fmt.Sprintf("/open/auth/token?client_secret=%s&client_id=%s", QlClient.ClientSecret, QlClient.ClientId)
-	//reqBody := url2.Values{}
-	//s := fmt.Sprintf(`{"client_secret":"%s","client_id":"%s"}`, QlClient.ClientSecret, QlClient.ClientId)
-	//reqBody.Set("client_secret", QlClient.ClientSecret)
-	//reqBody.Set("client_id", QlClient.ClientId)
 
-	//fmt.Println(url, s)
 	resp, ok := QlClient.Get(url, "")
 	if ok != nil {
 		fmt.Println(ok)
