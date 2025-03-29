@@ -35,7 +35,7 @@ type defaultClient struct {
 	Cks      []ckStatus
 	AliveNum int
 	AliveCh  map[string]chan []byte // 控制访问并发数量
-	RunTime  map[string]int         // 运行次数
+	RunTime  sync.Map               // 运行次数
 	Once     struct {
 		once sync.Once
 		ch   chan struct{}
@@ -78,7 +78,7 @@ func (d *defaultClient) ReFresh(skip bool) {
 	d.Lock()
 	defer d.Unlock()
 	DefaultClient.Cks = make([]ckStatus, len(config.Cfg.BUserCk))
-	DefaultClient.RunTime = make(map[string]int, len(config.Cfg.BUserCk))
+	DefaultClient.RunTime = sync.Map{}
 	_u := config.Cfg.BUserCk
 	// utils.Shuffle(_u) // 打乱ck毫无必要，还增加了工作量，需要修改
 	for i := 0; i < len(_u); i++ {
@@ -126,7 +126,6 @@ func (d *defaultClient) CheckFirst(url string) []byte {
 	if err != nil {
 		return nil
 	}
-	d.RunTime[d.Cks[0].Uid]++
 	d.RunT()
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
@@ -148,7 +147,6 @@ func (d *defaultClient) CheckSelect(url string, idx int) []byte {
 	if err != nil {
 		return nil
 	}
-	d.RunTime[d.Cks[idx].Uid]++
 	d.RunT()
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
@@ -181,7 +179,6 @@ func (d *defaultClient) CheckSelectPost(url string, contentType, referer, ua str
 	if err != nil {
 		return nil
 	}
-	d.RunTime[d.Cks[idx].Uid]++
 	d.RunT()
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
@@ -213,7 +210,6 @@ func (d *defaultClient) CheckSelectOptions(url string, contentType, referer, ua 
 	if err != nil {
 		return nil
 	}
-	d.RunTime[d.Cks[idx].Uid]++
 	d.RunT()
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
@@ -244,7 +240,7 @@ func (d *defaultClient) APPCheckSelect(url, ua, re string, idx int) []byte {
 		fmt.Println(err.Error())
 		return nil
 	}
-	d.RunTime[d.Cks[idx].Uid]++
+
 	d.RunT()
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
@@ -286,7 +282,7 @@ func (d *defaultClient) APPCheckSelectPost(url string, contentType, referer, ua 
 	if err != nil {
 		return nil
 	}
-	d.RunTime[d.Cks[idx].Uid]++
+
 	d.RunT()
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
@@ -311,7 +307,6 @@ func (d *defaultClient) CheckSelectPost2(url string, idx int, ck string, rbody i
 	if err != nil {
 		return nil, nil
 	}
-	d.RunTime[d.Cks[idx].Uid]++
 	d.RunT()
 	defer resp.Body.Close()
 	cookies := resp.Header.Values("set-cookie")
@@ -459,12 +454,15 @@ func (d *defaultClient) CheckCkAlive(skip bool) {
 }
 
 func (d *defaultClient) RunT() {
+	v, _ := d.RunTime.Load(d.Cks[0].Uid)
+	d.RunTime.Store(d.Cks[0].Uid, v.(int)+1)
 	if config.Cfg.Model == "test" {
 		return
 	}
 	w := []string{}
 	for _, k := range d.Cks {
-		w = append(w, k.Uid+":"+strconv.Itoa(d.RunTime[k.Uid]))
+		v, _ := d.RunTime.Load(k.Uid)
+		w = append(w, k.Uid+":"+strconv.Itoa(v.(int)))
 	}
 	s := strings.Join(w, "; ")
 	fmt.Println("访问次数：", s)

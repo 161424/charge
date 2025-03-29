@@ -120,6 +120,7 @@ func DailyTask() func() {
 		day := time.Now().Format(time.DateTime)
 		Note.AddString("  --------  Daily Tasks  --------\n")
 		for idx := range len(cks) {
+
 			var uS string
 			if v, ok := User[cks[idx].Uid]; ok {
 				uS = fmt.Sprintf("uname:%s uid:%d", v.Data.Uname, v.Data.Mid)

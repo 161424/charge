@@ -38,7 +38,7 @@ func Run() {
 		panic(err)
 	}
 	var app []App
-	app = append(app, App{"DDNS每日更新", "0 */1 * * *", utils.UpdateDnsRecode()})
+	app = append(app, App{"DDNS每日更新", "0 12 * * *", utils.UpdateDnsRecode()})
 	app = append(app, App{"Config模板更新", "0 10 * * *", config.UpdateConfigExample()})
 
 	app = append(app, App{Name: "青龙更新CK", Cron: "0 */1 * * *", Task: ql.LinkQLAndUpdateCk()})

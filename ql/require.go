@@ -30,9 +30,12 @@ func init() {
 	if config.Cfg.Ql.Port != "" {
 		port = config.Cfg.Ql.Port
 	}
-	if config.Cfg.Ql.IsLocal {
-		if config.Cfg.Ql.Addr != "" {
-			QlClient.Addr = config.Cfg.Ql.Addr
+
+	if config.Cfg.Ql.Addr != "" {
+		QlClient.Addr = config.Cfg.Ql.Addr
+	} else {
+		if config.Pod == "Docker" {
+			QlClient.Addr = "host.docker.internal"
 		} else {
 			QlClient.Addr = "127.0.0.1"
 		}
@@ -44,14 +47,17 @@ func init() {
 
 	ok := LinkQl()
 	if ok != "" {
+		fmt.Println("青龙第一次连接成功", QlClient.Addr)
 		return
 	}
+	fmt.Println("青龙第一次连接失败", QlClient.Addr)
 	QlClient.Addr = "http://" + config.IP + ":" + port
 	ok = LinkQl()
 	if ok != "" {
+		fmt.Println("青龙第二次连接成功", QlClient.Addr)
 		return
 	}
-	fmt.Println("青龙连接失败")
+	fmt.Println("青龙第二次连接失败", QlClient.Addr)
 
 }
 

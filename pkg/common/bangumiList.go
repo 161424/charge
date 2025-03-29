@@ -1,6 +1,7 @@
 package common
 
 import (
+	"charge/config"
 	"encoding/json"
 	"log"
 	"math/rand"
@@ -40,7 +41,7 @@ func init() {
 	BangumiList.Type = 3
 
 	path, _ := os.Getwd()
-	npath := strings.Split(path, "\\")
+	npath := strings.Split(path, config.Ps)
 	if npath[len(npath)-1] != "charge" {
 		npath = npath[:len(npath)-1]
 	}

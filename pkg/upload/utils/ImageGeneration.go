@@ -207,7 +207,7 @@ func DownloadDiscovery(uname string, num int) []Illust {
 	resp := GetPixivPage(url)
 	err := json.Unmarshal(resp, discoveryResp)
 	if err != nil {
-		return nil
+		return path
 	}
 	k := 0
 	for _, v := range discoveryResp.Body.Thumbnails.Illust {
@@ -296,7 +296,7 @@ func ImageGeneration(uname string) (string, []string) {
 	path := []string{}
 	inet.DefaultClient.ReFresh(false)
 	imgs1 := DownloadPixiv(uname)
-	if imgs1 != nil {
+	if len(imgs1) != 0 {
 		for i, img := range imgs1 {
 			id := strconv.Itoa(img.IllustId)
 			date := strings.Split(img.Date, " ")[0]
@@ -306,7 +306,7 @@ func ImageGeneration(uname string) (string, []string) {
 	}
 	num := 6 - len(imgs1)
 	imgs2 := DownloadDiscovery(uname, num)
-	if imgs2 != nil {
+	if len(imgs2) != 0 {
 		for i, img := range imgs2 {
 			date := img.CreateDate.Format("2006-01-02")
 			desp += fmt.Sprintf(headlining, i, img.UserName, date, img.Id)

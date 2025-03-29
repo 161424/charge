@@ -1,14 +1,16 @@
+GIP:
+    IPV4: ""
+    IPV6: ""
 WebPort: ""
 Redis:
     Addr: ""
     Port: ""
     Password: ""
-    IsIpv6: false
-    StaticIpv6Addr: ""
-    DynamicIpv6: ""
     Id_rsa: ""
 Mongodb:
+    IsLocal: false
     Addr: ""
+    Port: ""
     Password: ""
 Refresh: false
 BUserCk: []
@@ -29,6 +31,7 @@ Server3: ""
 BCoinExchange: ""
 Ql:
     Addr: ""
+    Port: ""
     ClientId: ""
     ClientSecret: ""
 Model: ""

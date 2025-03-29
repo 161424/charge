@@ -14,7 +14,7 @@ type config struct {
 	GIP struct {
 		IPV4 string `yaml:"IPV4"`
 		IPV6 string `yaml:"IPV6"`
-	}
+	} `yaml:"GIP"`
 
 	WebPort string `yaml:"WebPort"`
 	Redis   Redis  `yaml:"Redis"`
@@ -45,7 +45,6 @@ type config struct {
 }
 
 type Redis struct {
-	IsLocal  bool   `yaml:"IsLocal"`
 	Addr     string `yaml:"Addr"`
 	Port     string `yaml:"Port"`
 	Password string `yaml:"Password"`
@@ -57,6 +56,8 @@ type BUserCk struct {
 	Token      string `yaml:"Token"`
 	Access_key string `yaml:"Access_key"`
 	Group      string `yaml:"Group"`
+	Uname      string `yaml:"Uname"`
+	Uid        string `yaml:"Uid"`
 }
 
 type DDNS struct {
@@ -68,7 +69,6 @@ type DDNS struct {
 }
 
 type Ql struct {
-	IsLocal      bool   `yaml:"IsLocal"`
 	Addr         string `yaml:"Addr"`
 	Port         string `yaml:"Port"`
 	ClientId     string `yaml:"ClientId"`
@@ -76,9 +76,10 @@ type Ql struct {
 }
 
 var Cfg = &config{}
-
+var Ps = string(os.PathSeparator)
 var Path = ""
 var IP = "127.0.0.1"
+var Pod = os.Getenv("Pod")
 
 func init() {
 	// 读取 YAML 文件
@@ -92,14 +93,17 @@ func Start() {
 }
 
 func Read() {
+	//fmt.Println(Pod)
 	Path, _ = os.Getwd()
-	npath := strings.Split(Path, "\\")
+
+	npath := strings.Split(Path, Ps)
 	if npath[len(npath)-1] != "charge" {
 		npath = npath[:len(npath)-1]
 	}
+	fmt.Println("Path:", Path)
 	Path = strings.Join(npath, "/")
 
-	fmt.Println("rootPath:", Path)
+	fmt.Println("rootPath:", Path+"/config/config.yaml")
 	data, err := os.OpenFile(Path+"/config/config.yaml", os.O_RDWR, 777)
 	if err != nil {
 		log.Fatalf("读取文件失败: %v", err)
@@ -119,6 +123,7 @@ func Read() {
 	} else if Cfg.GIP.IPV6 != "" {
 		IP = "[" + Cfg.GIP.IPV6 + "]"
 	}
+
 }
 
 // 有一些bug，在覆盖yaml后，yaml总会多一些重复的内容

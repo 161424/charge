@@ -16,6 +16,10 @@ import (
 var RedisClient *redis.Client
 var Month = time.Now().Month().String()
 
+// todo:打包到docker
+// 1. 脚本ck推送到redis，再由该软件推送到ql
+// 2.
+
 // 启动redis，并做ping检查
 func Start() {
 	addr := config.IP
@@ -23,28 +27,42 @@ func Start() {
 	var redisClient *redis.Client
 	//confusion
 	// 当使用ipv6访问本机wsl中redis时，会访问失败，但是远程客户端使用ipv6访问本机redis服务器时，就能访问成功
-	if config.Cfg.Redis.IsLocal {
-		if config.Cfg.Redis.Addr != "" {
-			_addr = config.Cfg.Redis.Addr
-		} else {
-			_addr = "127.0.0.1"
-		}
+
+	if config.Cfg.Redis.Addr != "" {
+		_addr = config.Cfg.Redis.Addr
+		fmt.Println("默认redis地址1：", _addr)
 		redisClient = start(_addr)
 		ok := redisClient.Ping(context.Background())
 
 		if ok.Err() == nil {
 			RedisClient = redisClient
-			fmt.Println("访问 本地redis 成功！")
+			fmt.Println("访问 redis地址 成功！")
 			return
 		}
+		fmt.Println("访问 redis地址 第1次失败")
 	}
 
-	fmt.Println("访问 本地redis 失败")
-
-	redisClient = start(addr)
+	if config.Pod == "Docker" {
+		_addr = "host.docker.internal"
+	} else {
+		_addr = "127.0.0.1"
+	}
+	fmt.Println("默认redis地址2：", _addr)
+	redisClient = start(_addr)
 	ok := redisClient.Ping(context.Background())
+
+	if ok.Err() == nil {
+		RedisClient = redisClient
+		fmt.Println("访问 redis地址 成功！")
+		return
+	}
+	fmt.Println("访问 redis地址 第2次失败")
+
+	fmt.Println("默认redis地址3：", addr)
+	redisClient = start(addr)
+	ok = redisClient.Ping(context.Background())
 	if ok.Err() != nil {
-		fmt.Println("访问不到redis数据库")
+		fmt.Println("访问 redis地址 第3次失败。访问不到redis数据库")
 		panic(ok.Err())
 	}
 	RedisClient = redisClient
@@ -57,8 +75,9 @@ func start(addr string) *redis.Client {
 		config.Cfg.Redis.Port = "6379"
 	}
 	return redis.NewClient(&redis.Options{
-		Addr:    addr + config.Cfg.Redis.Port,
-		Network: "tcp",
+		Addr:     addr + ":" + config.Cfg.Redis.Port,
+		Network:  "tcp",
+		Password: config.Cfg.Redis.Password,
 	})
 }
 
