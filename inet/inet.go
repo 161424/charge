@@ -126,7 +126,7 @@ func (d *defaultClient) CheckFirst(url string) []byte {
 	if err != nil {
 		return nil
 	}
-	d.RunT()
+	//d.RunT()
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	return body
@@ -147,7 +147,7 @@ func (d *defaultClient) CheckSelect(url string, idx int) []byte {
 	if err != nil {
 		return nil
 	}
-	d.RunT()
+	//d.RunT()
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 
@@ -179,7 +179,7 @@ func (d *defaultClient) CheckSelectPost(url string, contentType, referer, ua str
 	if err != nil {
 		return nil
 	}
-	d.RunT()
+	//d.RunT()
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	return body
@@ -210,7 +210,7 @@ func (d *defaultClient) CheckSelectOptions(url string, contentType, referer, ua 
 	if err != nil {
 		return nil
 	}
-	d.RunT()
+	//d.RunT()
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	return body
@@ -241,7 +241,7 @@ func (d *defaultClient) APPCheckSelect(url, ua, re string, idx int) []byte {
 		return nil
 	}
 
-	d.RunT()
+	//d.RunT()
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -283,7 +283,7 @@ func (d *defaultClient) APPCheckSelectPost(url string, contentType, referer, ua 
 		return nil
 	}
 
-	d.RunT()
+	//d.RunT()
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	return body
@@ -307,7 +307,7 @@ func (d *defaultClient) CheckSelectPost2(url string, idx int, ck string, rbody i
 	if err != nil {
 		return nil, nil
 	}
-	d.RunT()
+	//d.RunT()
 	defer resp.Body.Close()
 	cookies := resp.Header.Values("set-cookie")
 	body, err := io.ReadAll(resp.Body)
