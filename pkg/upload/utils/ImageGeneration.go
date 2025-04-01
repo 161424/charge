@@ -112,7 +112,7 @@ func GetPixivPage(url string) []byte {
 	client := PixivClient
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		panic(err)
+		return nil
 	}
 	req.Header.Set("User-Agent", config.Cfg.WebUserAgent)
 	req.Header.Set("Referer", "https://www.pixiv.net")
@@ -123,8 +123,8 @@ func GetPixivPage(url string) []byte {
 		req.AddCookie(&http.Cookie{Name: a[0], Value: a[1]})
 	}
 	resp, err := client.Do(req)
-	if err != nil {
-		panic(err)
+	if err == nil {
+		return nil
 	}
 	body, _ := io.ReadAll(resp.Body)
 	defer resp.Body.Close()
@@ -138,6 +138,9 @@ func ReqDwUrl() []RpJsContents {
 		_url := url + v
 		rpJs := &RpJs{}
 		resp := GetPixivPage(_url)
+		if resp == nil {
+			continue
+		}
 		err := json.Unmarshal(resp, rpJs)
 		if err != nil {
 			return nil
@@ -159,6 +162,9 @@ func ReqDwUrl() []RpJsContents {
 
 func DownloadPixiv(uname string) []RpJsContents {
 	resp := ReqDwUrl()
+	if len(resp) == 0 {
+		return resp
+	}
 	path := []RpJsContents{}
 	ctx := context.Background()
 	if resp == nil {
@@ -183,6 +189,9 @@ func DownloadPixiv(uname string) []RpJsContents {
 			_url := "https://i.pximg.net/img-master" + imgUrl[1]
 			for retryCount := 0; retryCount < 3; retryCount++ {
 				imgBt := GetPixivPage(_url)
+				if imgBt == nil {
+					continue
+				}
 				b := PerformDownload(imgBt, fileName)
 				if b {
 					PerformDownload(imgBt, fileNameAll)
@@ -205,6 +214,9 @@ func DownloadDiscovery(uname string, num int) []Illust {
 	path := []Illust{}
 	discoveryResp := &DiscoveryResp{}
 	resp := GetPixivPage(url)
+	if resp == nil {
+		return path
+	}
 	err := json.Unmarshal(resp, discoveryResp)
 	if err != nil {
 		return path
@@ -240,6 +252,9 @@ func DownloadDiscovery(uname string, num int) []Illust {
 
 			for retryCount := 0; retryCount < 3; retryCount++ {
 				imgBt := GetPixivPage(_url)
+				if imgBt == nil {
+					continue
+				}
 				b := PerformDownload(imgBt, fileName)
 				if b {
 					PerformDownload(imgBt, fileNameAll)

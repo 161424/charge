@@ -61,6 +61,7 @@ type BUserCk struct {
 }
 
 type DDNS struct {
+	Update      bool   `yaml:"Update"`
 	ZoneID      string `yaml:"ZoneID"`
 	DnsRecordId string `yaml:"DnsRecordId"`
 	ApiToken    string `yaml:"ApiToken"`

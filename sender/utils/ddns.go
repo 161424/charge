@@ -46,6 +46,11 @@ func UpdateDnsRecode() func() {
 	return func() {
 		url := "https://api.cloudflare.com/client/v4/zones/%s/dns_records/%s"
 		ddns := config.Cfg.DDNS
+		isCheck := ddns.Update
+		if !isCheck {
+			return
+		}
+
 		monitor := sender.Monitor{}
 		monitor.Tag = "DDNS"
 		monitor.Title = "Ipv6"
