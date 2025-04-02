@@ -217,7 +217,7 @@ func MemberRegister(idx int) {
 	time.Sleep(5 * time.Second)
 	// 在任务执行完毕后领取金币会遇到领取失败的问题，因此采用分开处理
 
-	if Note.Id == 0 || hadReceive == false { // 每日第一次运行或者在在上一次运行时金币领取失败时运行
+	if hadReceive == false { // 每日第一次运行或者在在上一次运行时金币领取失败时运行
 
 		ok, _ = memberRegister(idx)
 		if ok == false {

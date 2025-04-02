@@ -13,7 +13,6 @@ import (
 
 type note struct {
 	Wait sync.WaitGroup
-	Id   int //类似于sync.Once。每日刷新
 
 	Status    map[string]map[string]*Active
 	HasSub    bool
@@ -24,10 +23,11 @@ type note struct {
 }
 
 type Active struct {
-	Name   string // 模块名称
-	Id     int
-	HadErr bool
-	ErrMsg string
+	Name     string // 模块名称
+	RunTimes int
+
+	ErrMsg     string
+	LastErrMsg string
 }
 
 var Note note
@@ -35,8 +35,7 @@ var User = map[string]UserInfo{} // user cache
 func init() {
 	go func() {
 		Note = note{}
-		Note.Status = make(map[string]map[string]*Active)
-		Note.AddDesc = true
+		Note.Status = make(map[string]map[string]*Active) //  角色 + 活动 + 模块
 		for {
 			now := time.Now()
 			next := now.Add(time.Hour * 24)
@@ -44,15 +43,15 @@ func init() {
 			t := time.NewTicker(next.Sub(now))
 			<-t.C
 			Note.Wait.Wait()
-			Note.Id = 0
 			Note.HasSub = false
-			Note.AddDesc = true
 			Note.Desc = ""
 		}
 	}()
 }
 
 func (n *note) Register(title string) (stop bool) {
+	sc := sync.Mutex{}
+	sc.Lock()
 	if _, ok := n.Status[n.NowUid]; ok == false {
 		n.Status[n.NowUid] = make(map[string]*Active)
 	}
@@ -61,28 +60,26 @@ func (n *note) Register(title string) (stop bool) {
 		u[title] = &Active{}
 	}
 	ac := u[title]
-	ac.Id++
-	n.AddDesc = true
-	if ac.Id == n.Id { // 每轮第一次运行
-		e := false
-		if ac.ErrMsg != "" {
-			e = true
-		} else {
-			if n.Id > 1 { // 在第二轮及以后检测到上一轮执行无错误，则本轮不在记录打印信息
-				return true
-			}
-		}
+	sc.Unlock()
+
+	if ac.RunTimes == 0 { // 每轮第一次运行
 		n.HasSub = false
 		n.AddString("  **  %s  **\n", title)
 		n.lastTitle = title
-		if e {
-			n.AddString("上次执行Err信息：`%s`\n", ac.ErrMsg)
-		}
 		n.HasSub = true
-	} else if ac.Id > n.Id { // 每轮第二次及以上运行
-		ac.Id = n.Id
-	} else { // err
+	} else if ac.RunTimes >= 1 { // 每轮第二次及以上运行
+		n.HasSub = false
+		n.AddString("  **  %s  **\n", title)
+		n.lastTitle = title
+		n.HasSub = true
 
+		ac.LastErrMsg = ac.ErrMsg
+		ac.ErrMsg = ""
+
+		if ac.LastErrMsg == "" {
+			return true
+		}
+		n.AddString("上次执行Err信息：`%s`\n", ac.LastErrMsg)
 	}
 	return false
 
@@ -116,7 +113,6 @@ func DailyTask() func() {
 		monitor := sender.Monitor{}
 		monitor.Tag = "Daily Tasks"
 		cks := inet.DefaultClient.Cks
-		Note.Id++
 		day := time.Now().Format(time.DateTime)
 		Note.AddString("  --------  Daily Tasks  --------\n")
 		for idx := range len(cks) {
@@ -127,13 +123,12 @@ func DailyTask() func() {
 			} else {
 				uS = fmt.Sprintf("uid:%s", cks[idx].Uid)
 			}
-			Note.AddDesc = false
+
 			if cks[idx].Alive == false {
 				Note.AddString("## 现在是%s，第%d个账号【%s】Ck已失活\n", day, idx+1, uS)
 				continue
 			}
 			Note.AddString("## 现在是%s，正在执行第%d个账号【%s】的每日任务\n", time.Now().Format(time.DateTime), idx+1, uS)
-			Note.AddDesc = false
 			// userinfo
 			userInfo := GetUserInfo(idx) // 获取user基本信息
 			if userInfo == nil {
@@ -219,7 +214,6 @@ func DailyTask() func() {
 			}
 
 			Note.AddString("第【%d】个账号的每日任务执行完毕\n", idx+1)
-			Note.Id++
 
 		}
 		//  使用随机账户查看信息
