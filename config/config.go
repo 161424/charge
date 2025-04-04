@@ -57,7 +57,7 @@ type BUserCk struct {
 	Access_key string `yaml:"Access_key"`
 	Group      string `yaml:"Group"`
 	Uname      string `yaml:"Uname"`
-	Uid        string `yaml:"Uid"`
+	Uid        int64  `yaml:"Uid"`
 }
 
 type DDNS struct {
@@ -176,7 +176,6 @@ func SetUck(tp string, value, uid string) {
 	default:
 		fmt.Println("tp输入错误，找不到对应关系")
 	}
-	Write()
 }
 
 func UpdateConfigExample() func() {

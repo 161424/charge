@@ -99,7 +99,10 @@ func GetCoinExp(idx int) int {
 		Note.StatusAddString(utils.ErrMsg["code"], "GetCoinExp", b.Code, b.Message)
 		return -1
 	}
-	Note.AddString("今日已通过投币获得经验：%d\n", b.Data)
+	if b.Data != 0 {
+		Note.AddString("今日已通过投币获得经验：*%d*\n", b.Data)
+	}
+
 	return b.Data
 }
 

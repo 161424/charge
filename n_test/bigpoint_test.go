@@ -42,11 +42,6 @@ func TestVSign(t *testing.T) {
 	fmt.Println("【123】，【哈哈哈】，[123]，[哈哈哈]")
 }
 
-func TestDailyTask(t *testing.T) {
-	f := common.DailyTask()
-	f()
-}
-
 func TestExchangePoint(t *testing.T) {
 	common.ExchangePoint(0, 1)
 }

@@ -18,7 +18,7 @@ type U struct {
 func TestRedisIpv6(t *testing.T) {
 	addr := config.Cfg.Redis.Addr
 	network := ""
-	if config.Cfg.Redis.IsIpv6 {
+	if true {
 		w := "2408:8421:4b50:371:ea8f:b64d:594b:fa19"
 		addr = "[" + w + "]"
 		network = "tcp6"

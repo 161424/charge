@@ -11,14 +11,15 @@ import (
 	"time"
 )
 
+var MaxRunCKNum = 99
+
 type note struct {
 	Wait sync.WaitGroup
 
 	Status    map[string]map[string]*Active
 	HasSub    bool
-	AddDesc   bool
 	lastTitle string
-	NowUid    string
+	Uid       string
 	Desc      string
 }
 
@@ -30,12 +31,11 @@ type Active struct {
 	LastErrMsg string
 }
 
-var Note note
+var Note = &note{}
 var User = map[string]UserInfo{} // user cache
 func init() {
+	Note.Status = make(map[string]map[string]*Active) //  角色 + 活动 + 模块
 	go func() {
-		Note = note{}
-		Note.Status = make(map[string]map[string]*Active) //  角色 + 活动 + 模块
 		for {
 			now := time.Now()
 			next := now.Add(time.Hour * 24)
@@ -52,10 +52,10 @@ func init() {
 func (n *note) Register(title string) (stop bool) {
 	sc := sync.Mutex{}
 	sc.Lock()
-	if _, ok := n.Status[n.NowUid]; ok == false {
-		n.Status[n.NowUid] = make(map[string]*Active)
+	if _, ok := n.Status[n.Uid]; ok == false {
+		n.Status[n.Uid] = make(map[string]*Active)
 	}
-	u := n.Status[n.NowUid]
+	u := n.Status[n.Uid]
 	if _, ok := u[title]; ok == false {
 		u[title] = &Active{}
 	}
@@ -64,12 +64,12 @@ func (n *note) Register(title string) (stop bool) {
 
 	if ac.RunTimes == 0 { // 每轮第一次运行
 		n.HasSub = false
-		n.AddString("  **  %s  **\n", title)
+		n.AddString("  **%s**\n", title)
 		n.lastTitle = title
 		n.HasSub = true
 	} else if ac.RunTimes >= 1 { // 每轮第二次及以上运行
 		n.HasSub = false
-		n.AddString("  **  %s  **\n", title)
+		n.AddString("  **%s**\n", title)
 		n.lastTitle = title
 		n.HasSub = true
 
@@ -91,7 +91,7 @@ func (n *note) String() string {
 
 func (n *note) StatusAddString(format string, a ...any) {
 	if _, ok := n.Status[n.lastTitle]; ok {
-		n.Status[n.NowUid][n.lastTitle].ErrMsg = fmt.Sprintf(format, a...)
+		n.Status[n.Uid][n.lastTitle].ErrMsg = fmt.Sprintf(format, a...)
 	}
 	n.AddString(format, a...)
 }
@@ -114,33 +114,40 @@ func DailyTask() func() {
 		monitor.Tag = "Daily Tasks"
 		cks := inet.DefaultClient.Cks
 		day := time.Now().Format(time.DateTime)
-		Note.AddString("  --------  Daily Tasks  --------\n")
+		monitor.Title = fmt.Sprintf("每日任务（%s）", day)
+		Note.AddString("#  --------  Daily Tasks  --------\n")
 		for idx := range len(cks) {
-
+			Note.Uid = cks[idx].Uid
+			if idx > MaxRunCKNum {
+				break
+			}
 			var uS string
-			if v, ok := User[cks[idx].Uid]; ok {
-				uS = fmt.Sprintf("uname:%s uid:%d", v.Data.Uname, v.Data.Mid)
+			if cks[idx].Uname != "" {
+				uS = fmt.Sprintf("%s uid:%s", cks[idx].Uname, cks[idx].Uid)
 			} else {
 				uS = fmt.Sprintf("uid:%s", cks[idx].Uid)
 			}
-
+			Note.AddString("现在是%s", day)
 			if cks[idx].Alive == false {
-				Note.AddString("## 现在是%s，第%d个账号【%s】Ck已失活\n", day, idx+1, uS)
+				Note.AddString("## 第%d个账号【%s】Ck已失活\n", idx+1, uS)
 				continue
 			}
-			Note.AddString("## 现在是%s，正在执行第%d个账号【%s】的每日任务\n", time.Now().Format(time.DateTime), idx+1, uS)
+			Note.AddString("## 正在执行第%d个账号【%s】的每日任务\n", idx+1, uS)
+
 			// userinfo
 			userInfo := GetUserInfo(idx) // 获取user基本信息
 			if userInfo == nil {
 				continue
 			}
+			StoreUserInfo(idx, userInfo)
+
 			User[cks[idx].Uid] = *userInfo // 保存user基本信息
 			Note.AddString("用户【uname:%s】[uid:%d]信息获取成功。\n", userInfo.Data.Uname, userInfo.Data.Mid)
 			if userInfo.Data.VipStatus == 1 {
 				t := time.UnixMilli(userInfo.Data.VipDueDate)
 				t1 := t.Format("2006-01-02")
 				t2 := int(t.Sub(time.Now()).Hours() / 24)
-				Note.AddString("尊敬的 {%s}-【name:%s】您好,您的大会员在 %s 到期，还剩 %d 天。\n", userInfo.Data.VipLabel.Text, userInfo.Data.Uname,
+				Note.AddString("尊敬的 {*%s*}-【%s】您好,您的大会员在 %s 到期，还剩 %d 天。\n", userInfo.Data.VipLabel.Text, userInfo.Data.Uname,
 					t1, t2)
 			} else {
 				Note.AddString("尊敬的【name:%s】您好。\n", userInfo.Data.Uname)
@@ -149,18 +156,19 @@ func DailyTask() func() {
 			if userInfo.Data.Wallet.BcoinBalance != 0 {
 				Note.AddString("您共有%d个B币，其中大会员赠送的B币有%d个\n", userInfo.Data.Wallet.BcoinBalance, userInfo.Data.Wallet.CouponBalance)
 			}
+
 			// Experience  登录和观看视频的10经验不知道怎么搞
 			// coin
 			GainCoin(idx) //  查看硬币使用历史，暂未找到获得硬币api
 			if userInfo.Data.Level_info.CurrentLevel < 6 {
 				next := (userInfo.Data.Level_info.NextExp).(float64) - float64(userInfo.Data.Level_info.CurrentExp)
-				Note.AddString("当前用户等级【Lv%d】，目前%d经验，还差%.f经验升级。大概需要%.f天\n", userInfo.Data.Level_info.CurrentLevel, userInfo.Data.Level_info.CurrentExp, next, (next)/50)
+				Note.AddString("当前用户等级【*Lv%d*】，目前%d经验，还差%.f经验升级。大概需要%.f天\n", userInfo.Data.Level_info.CurrentLevel, userInfo.Data.Level_info.CurrentExp, next, (next)/50)
 			} else {
 				Note.AddString("当前用户等级【Lv%d】，以达到最大等级，无需升级\n", userInfo.Data.Level_info.CurrentLevel)
 			}
-			Note.AddString("当前用户有%.2f个硬币\n", userInfo.Data.Money)
+			Note.AddString("当前用户有*%.2f*个硬币\n", userInfo.Data.Money)
 			if code := GetCoinExp(idx); code >= 0 && code < 50 { // 投币经验小于50
-				if userInfo.Data.Level_info.CurrentLevel < 6 && userInfo.Data.Money > 5 { // 只在6级之下投币且硬币数量大于5个
+				if userInfo.Data.Level_info.CurrentLevel < 6 && userInfo.Data.Money > 20 { // 只在6级之下投币且硬币数量大于5个
 					coin := SpendCoin(idx, code) //  观看推荐视频，并点赞投币
 					if coin/10 < 5 {
 						Note.StatusAddString("投币未达到预期\n")
@@ -175,11 +183,12 @@ func DailyTask() func() {
 
 			// 魔晶签到
 			MagicRegister(idx)
+
 			// 魔晶战令
 			MagicWarOrder(idx, 1)
 			// 银瓜子兑换硬币？  银瓜子快绝版了，没啥用了
 
-			// shareAndWatch。视频观看及分享
+			// shareAndWatch。 视频观看及分享
 
 			// like 点赞
 
@@ -222,6 +231,8 @@ func DailyTask() func() {
 			// 会员购兑换物品通知
 			MemberGoodsInfo(k)
 		}
+
+		config.Write()
 
 		// 每日远程通知一次
 		fmt.Println("打印通知")

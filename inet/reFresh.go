@@ -137,6 +137,7 @@ func refresh(idx int, token string) bool {
 		config.Cfg.BUserCk[idx].Ck = ck
 		config.SetUck("ck", ck, "")
 		config.SetUck("token", rt.Data.RefreshToken, utils.CutUid(ck))
+		config.Write()
 		return true
 	} else {
 		return false

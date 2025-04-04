@@ -184,6 +184,7 @@ func MemberGoodsInfo(idx int) {
 		s := item.Title + fmt.Sprintf("【价格：%d】。", item.Price) + item.PrizeDesc + item.PrizeSpec
 		desp += "- " + s + "\n"
 	}
+	desp = desp[2:]
 	Note.AddString(desp)
 
 }
@@ -192,6 +193,7 @@ var mUa = "Mozilla/5.0 (Linux; Android 12; 24031PN0DC Build/V417IR; wv) AppleWeb
 var stop = 0
 var hadReceive = true
 var modelMemberTask = "会员购签到"
+var newGold = 0
 
 // MemberRegister 可以完成任务，但是领取金币需要access_key
 func MemberRegister(idx int) {
@@ -231,11 +233,9 @@ func MemberRegister(idx int) {
 			Note.StatusAddString("会员购签到任务执行失败（最终金币查询阶段失败） ×\n")
 			return
 		}
-		Note.AddString("会员购签到完毕。今日已获得%d个金币\n", num2-num1+todayG) // 统计不准,尝试做一下延迟
-	} else {
-		Note.AddString("会员购签到完毕。现在有%d个金币\n", num1) // 统计不准,尝试做一下延迟
+		newGold = num2 - num1 + todayG
 	}
-
+	Note.AddString("会员购签到完毕。现在有*%d*个金币,今日已获得*%d*个金币\n", num1, newGold)
 }
 
 func memberRegister(idx int) (req bool, rs string) {
@@ -306,7 +306,7 @@ func memberRegister(idx int) (req bool, rs string) {
 				}
 				time.Sleep(time.Second * 5)
 			} else if action == "receive" { // 表示任务已经完成，但还未领取奖励
-				Note.AddString("正在领取任务-%s的%d个金币\n", mt.Description, mt.Prize.PrizeNum)
+				//Note.AddString("正在领取任务-%s的%d个金币\n", mt.Description, mt.Prize.PrizeNum)
 				time.Sleep(time.Second)
 				code := mReceive(idx, activityId, mt.NodeId)
 				if code == 0 {

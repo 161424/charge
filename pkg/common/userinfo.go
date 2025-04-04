@@ -1,6 +1,7 @@
 package common
 
 import (
+	"charge/config"
 	"charge/inet"
 	"charge/utils"
 	"encoding/json"
@@ -59,4 +60,11 @@ func GetUserInfo(idx int) *UserInfo {
 		return nil
 	}
 	return userinfo
+}
+
+func StoreUserInfo(idx int, userinfo *UserInfo) {
+	config.Cfg.BUserCk[idx].Uname = userinfo.Data.Uname
+	config.Cfg.BUserCk[idx].Uid = int64(userinfo.Data.Mid)
+
+	inet.DefaultClient.Cks[idx].Uname = userinfo.Data.Uname
 }

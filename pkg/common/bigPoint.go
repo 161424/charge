@@ -104,7 +104,7 @@ func BigPoint(idx int) {
 		//fmt.Println("获取任务列表失败，列表为空")
 		return
 	}
-	Note.AddString("当前大会员积分：%d。其中%d积分即将过期，剩余%d天\n", vTask.Data.Point_info.Point, vTask.Data.Point_info.Expire_point, vTask.Data.Point_info.Expire_days)
+	Note.AddString("当前大会员积分：*%d*。其中%d积分即将过期，剩余%d天\n", vTask.Data.Point_info.Point, vTask.Data.Point_info.Expire_point, vTask.Data.Point_info.Expire_days)
 
 	day := time.Now().Format("2006-01-02")
 	for _, d := range vTask.Data.Task_info.Sing_task_item.Histories {
@@ -182,11 +182,11 @@ func BigPoint(idx int) {
 	time.Sleep(2 * time.Second)
 	todayPoint := GetTodayPoint(idx)
 	if todayPoint >= 45 {
-		Note.AddString("今日获取积分【%d】，跳过检测观看结果\n", todayPoint)
+		Note.AddString("今日获取积分【*%d*】，跳过检测观看结果\n", todayPoint)
 	} else if todayPoint < 35 {
-		Note.StatusAddString("今日获取积分【%d】, 未达到预期 ×。\n", todayPoint)
+		Note.StatusAddString("今日获取积分【*%d*】, 未达到预期 ×。\n", todayPoint)
 	} else {
-		Note.StatusAddString("今日获取积分【%d】, 部分任务未成功（可能是完成获取，但是接口数据延迟） ×。\n", todayPoint)
+		Note.StatusAddString("今日获取积分【*%d*】, 部分任务未成功（可能是完成获取，但是接口数据延迟） ×。\n", todayPoint)
 	}
 }
 

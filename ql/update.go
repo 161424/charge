@@ -87,6 +87,7 @@ func GetQLEnv(token string) {
 		}
 		qlCk.cks[uid] = v.Value
 	}
+
 	config.Write()
 }
 
@@ -97,7 +98,6 @@ func LinkQLAndUpdateCk() func() {
 		fmt.Println("青龙CK更新完毕")
 		inet.DefaultClient.ReFresh(false)
 		fmt.Println("inet CK更新完毕")
-
 	}
 }
 

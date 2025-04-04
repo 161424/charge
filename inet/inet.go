@@ -66,29 +66,35 @@ func init() {
 	DefaultClient.Once.ch = make(chan struct{})
 }
 
-func (d *defaultClient) Do(req *http.Request) (resp *http.Response, err error) {
-	DefaultClient.Once.once.Do(func() {
-		close(DefaultClient.Once.ch)
+func (d *defaultClient) SmellDo() {
+	d.Once.once.Do(func() {
+		close(d.Once.ch)
 	})
 	time.Sleep(1 * time.Second)
-	return DefaultClient.Client.Do(req)
+}
+
+func (d *defaultClient) Do(req *http.Request) (resp *http.Response, err error) {
+	d.SmellDo()
+	return d.Client.Do(req)
 }
 
 func (d *defaultClient) ReFresh(skip bool) {
 	d.Lock()
 	defer d.Unlock()
-	DefaultClient.Cks = make([]ckStatus, len(config.Cfg.BUserCk))
-	DefaultClient.RunTime = sync.Map{}
+
 	_u := config.Cfg.BUserCk
+	d.Cks = make([]ckStatus, len(_u))
+	d.RunTime = sync.Map{}
+
 	// utils.Shuffle(_u) // 打乱ck毫无必要，还增加了工作量，需要修改
 	for i := 0; i < len(_u); i++ {
-		DefaultClient.Cks[i].Ck = _u[i].Ck
-		DefaultClient.Cks[i].Uid = utils.CutUid(_u[i].Ck)
-		DefaultClient.Cks[i].Csrf = utils.CutCsrf(_u[i].Ck) // csrf可能为空，注意验证
-		DefaultClient.Cks[i].Access_key = _u[i].Access_key
+		d.Cks[i].Ck = _u[i].Ck
+		d.Cks[i].Uid = utils.CutUid(_u[i].Ck)
+		d.Cks[i].Csrf = utils.CutCsrf(_u[i].Ck) // csrf可能为空，注意验证
+		d.Cks[i].Access_key = _u[i].Access_key
 	}
 	go func() {
-		DefaultClient.CheckCkAlive(skip)
+		d.CheckCkAlive(skip)
 	}()
 }
 
@@ -327,8 +333,8 @@ func (d *defaultClient) RedundantDW(url string, tp string, dyTime time.Duration)
 	} else {
 		checkAlive := 0
 		for {
-			DefaultClient.Once.once.Do(func() {
-				close(DefaultClient.Once.ch)
+			d.Once.once.Do(func() {
+				close(d.Once.ch)
 			})
 			idx := d.Idx % int64(len(d.Cks))
 			if idx == 0 {
@@ -401,6 +407,7 @@ func (d *defaultClient) CheckCkAlive(skip bool) {
 	}
 	msg := "  ——————  账号检测  ———————  \n"
 	msg += fmt.Sprintf("现在是：%s\n", time.Now().Format("2006-01-02 15:04:05"))
+
 	d.AliveNum = len(d.Cks)
 	for idx := 0; idx < len(d.Cks); idx++ {
 		uid = utils.CutUid(d.Cks[idx].Ck)

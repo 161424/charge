@@ -100,6 +100,7 @@ func SignIn(uid string) bool {
 	fmt.Println(u, token, uid)
 	config.SetUck("ck", u, uid)
 	config.SetUck("token", token, uid)
+	config.Write()
 	return true
 }
 
