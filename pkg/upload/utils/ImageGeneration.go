@@ -123,9 +123,10 @@ func GetPixivPage(url string) []byte {
 		req.AddCookie(&http.Cookie{Name: a[0], Value: a[1]})
 	}
 	resp, err := client.Do(req)
-	if err == nil {
+	if err == nil || resp == nil {
 		return nil
 	}
+
 	body, _ := io.ReadAll(resp.Body)
 	defer resp.Body.Close()
 	return body
