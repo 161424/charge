@@ -120,7 +120,7 @@ func ExchangePoint(idx, tp int) {
 					s += skuInfo.Data.Rights_detail[k].Content
 				}
 			}
-
+			//  todo 不要content，没啥作用
 			notifyDesc += fmt.Sprintf("- 【%s】:%s\n", skuInfo.Data.Title, s)
 
 			// 商品页面

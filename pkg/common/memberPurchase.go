@@ -189,7 +189,6 @@ func MemberGoodsInfo(idx int) {
 
 }
 
-var mUa = "Mozilla/5.0 (Linux; Android 12; 24031PN0DC Build/V417IR; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/101.0.4951.61 Safari/537.36 BiliApp/8020300 mobi_app/android isNotchWindow/0 NotchHeight=1 mallVersion/8020300 mVersion/263 disable_rcmd/0"
 var stop = 0
 var hadReceive = true
 var modelMemberTask = "会员购签到"

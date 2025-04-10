@@ -44,7 +44,6 @@ func init() {
 			<-t.C
 			Note.Wait.Wait()
 			Note.HasSub = false
-			Note.Desc = ""
 		}
 	}()
 }
@@ -69,7 +68,7 @@ func (n *note) Register(title string) (stop bool) {
 		n.HasSub = true
 	} else if ac.RunTimes >= 1 { // 每轮第二次及以上运行
 		n.HasSub = false
-		n.AddString("  **%s**\n", title)
+		n.AddString("\n  **%s**\n", title)
 		n.lastTitle = title
 		n.HasSub = true
 
@@ -110,24 +109,31 @@ func (n *note) AddString(format string, a ...any) {
 // serve酱的文本采用的是markdown格式，因此消息也是markdown格式
 func DailyTask() func() {
 	return func() {
+		day := time.Now().Format(time.DateTime)
+
 		monitor := sender.Monitor{}
 		monitor.Tag = "Daily Tasks"
-		cks := inet.DefaultClient.Cks
-		day := time.Now().Format(time.DateTime)
 		monitor.Title = fmt.Sprintf("每日任务（%s）", day)
+
+		Note.Desc = ""
 		Note.AddString("#  --------  Daily Tasks  --------\n")
+		cks := inet.DefaultClient.Cks
+
 		for idx := range len(cks) {
 			Note.Uid = cks[idx].Uid
+
 			if idx > MaxRunCKNum {
 				break
 			}
+
 			var uS string
 			if cks[idx].Uname != "" {
 				uS = fmt.Sprintf("%s uid:%s", cks[idx].Uname, cks[idx].Uid)
 			} else {
 				uS = fmt.Sprintf("uid:%s", cks[idx].Uid)
 			}
-			Note.AddString("现在是%s", day)
+
+			Note.AddString("现在是%s\n", day)
 			if cks[idx].Alive == false {
 				Note.AddString("## 第%d个账号【%s】Ck已失活\n", idx+1, uS)
 				continue
@@ -236,7 +242,7 @@ func DailyTask() func() {
 
 		// 每日远程通知一次
 		fmt.Println("打印通知")
-		//fmt.Println(Note.String())
+
 		monitor.Desp = Note.String()
 		monitor.PushS()
 		log.Write(Note.Desc, day)
@@ -249,15 +255,16 @@ func DailyTask() func() {
 //		金币兑换魔晶0点刷新，有效期1天。秒没
 func GiftExchange() func() {
 	return func() {
-		tm := time.Now()
+
 		Gift := false
+		tm := time.Now()
 		if tm.Weekday() == time.Saturday || tm.Weekday() == time.Sunday {
 			Gift = true
 		}
 		Note.AddString("  --------  Gift  Exchange  --------\n")
 		cks := inet.DefaultClient.Cks
 		for idx := range len(cks) {
-			// 战令魔晶
+			// 战令魔晶(乱用积分)
 			if Gift {
 				MagicWarOrder(idx, 2)
 			}
@@ -266,7 +273,7 @@ func GiftExchange() func() {
 				go func() {
 					time.Sleep(12 * time.Hour)
 					// 全勤月兑换10天大会员，需要2400积分。   -404 bug
-					if Gift {
+					if false {
 						ExchangePoint(idx, 2) // 比1多花费500积分兑换魔晶
 					} else {
 						ExchangePoint(idx, 1)

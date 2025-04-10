@@ -34,6 +34,11 @@ func RespNewCk(uid string) string {
 	return ""
 }
 
+// todo 报错出现失误
+// Get "http://localhost:15700/open/auth/token?client_secret=y112y2WwJwsIFx_78L_ExtRs&client_id=G_NnpUwLV8dq": dial tcp [::1]:15700: connectex: No connection could be made because the target machine actively refused it.
+//函数【%s】json解析错误，应该是参数出现了问题。错误信息:%s，返回数据：%s
+// UpdateLocalEnv unexpected end of JSON input
+
 func GetQLEnv(token string) {
 	qlCk.cks = make(map[string]string)
 	qlCk.tim = time.Now()
