@@ -192,7 +192,9 @@ func BigPoint(idx int) {
 
 // 签到
 func VSign(idx int) int {
-	url := "https://api.bilibili.com/pgc/activity/score/task/sign"
+	// url := "https://api.bilibili.com/pgc/activity/score/task/sign"
+	url := "https://api.bilibili.com/pgc/activity/score/task/sign2"
+
 	resp := inet.DefaultClient.CheckSelectPost(url, "", "", "", idx, nil)
 	reS := &reSign{}
 	err := json.Unmarshal(resp, reS)
