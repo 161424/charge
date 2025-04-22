@@ -6,8 +6,12 @@ require (
 	github.com/2mf8/Go-QQ-SDK v0.0.6
 	github.com/PuerkitoBio/goquery v1.10.0
 	github.com/easychen/serverchan-sdk-golang v1.0.0
+	github.com/elliotchance/pie/v2 v2.9.1
 	github.com/gin-gonic/gin v1.10.0
+	github.com/go-co-op/gocron/v2 v2.14.2
+	github.com/goccy/go-json v0.10.2
 	github.com/redis/go-redis/v9 v9.7.0
+	github.com/tidwall/gjson v1.9.3
 	gopkg.in/yaml.v3 v3.0.1
 )
 
@@ -22,17 +26,13 @@ require (
 	github.com/fanliao/go-promise v0.0.0-20141029170127-1890db352a72 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
-	github.com/go-co-op/gocron/v2 v2.14.2 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-playground/validator/v10 v10.20.0 // indirect
 	github.com/go-resty/resty/v2 v2.6.0 // indirect
-	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
-	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/gopherjs/gopherjs v1.17.2 // indirect
-	github.com/jinzhu/copier v0.4.0 // indirect
 	github.com/jonboulle/clockwork v0.4.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/jtolds/gls v4.20.0+incompatible // indirect
@@ -52,7 +52,6 @@ require (
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	github.com/smarty/assertions v1.16.0 // indirect
 	github.com/t-tomalak/logrus-easy-formatter v0.0.0-20190827215021-c074f06c5816 // indirect
-	github.com/tidwall/gjson v1.9.3 // indirect
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.0 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
@@ -64,5 +63,4 @@ require (
 	golang.org/x/sys v0.25.0 // indirect
 	golang.org/x/text v0.18.0 // indirect
 	google.golang.org/protobuf v1.34.1 // indirect
-	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 )

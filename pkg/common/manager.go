@@ -6,6 +6,7 @@ import (
 	"charge/log"
 	"charge/sender"
 	"fmt"
+	"github.com/elliotchance/pie/v2"
 	"math/rand"
 	"sync"
 	"time"
@@ -16,25 +17,26 @@ var MaxRunCKNum = 99
 type note struct {
 	Wait sync.WaitGroup
 
-	Status    map[string]map[string]*Active
-	HasSub    bool
-	lastTitle string
-	Uid       string
-	Desc      string
+	Uid   string
+	Title string
+
+	Status sync.Map
+
+	HasSub bool
+	Desc   string
 }
 
 type Active struct {
-	Name     string // 模块名称
-	RunTimes int
+	Name string // 模块名称
 
-	ErrMsg     string
-	LastErrMsg string
+	ErrMsg    string
+	oldErrMsg string
 }
 
 var Note = &note{}
 var User = map[string]UserInfo{} // user cache
 func init() {
-	Note.Status = make(map[string]map[string]*Active) //  角色 + 活动 + 模块
+	// Note.Status 角色 + 活动 + 模块
 	go func() {
 		for {
 			now := time.Now()
@@ -48,38 +50,32 @@ func init() {
 	}()
 }
 
-func (n *note) Register(title string) (stop bool) {
-	sc := sync.Mutex{}
-	sc.Lock()
-	if _, ok := n.Status[n.Uid]; ok == false {
-		n.Status[n.Uid] = make(map[string]*Active)
-	}
-	u := n.Status[n.Uid]
-	if _, ok := u[title]; ok == false {
-		u[title] = &Active{}
-	}
-	ac := u[title]
-	sc.Unlock()
+func (n *note) SetUid(uid string) {
+	n.Uid = uid
+	n.Status.LoadOrStore(uid, []*Active{})
+}
 
-	if ac.RunTimes == 0 { // 每轮第一次运行
-		n.HasSub = false
-		n.AddString("  **%s**\n", title)
-		n.lastTitle = title
-		n.HasSub = true
-	} else if ac.RunTimes >= 1 { // 每轮第二次及以上运行
+// map[string][]*Active
+func (n *note) Register(title string) (stop bool) {
+	ac := n.findActive(title)
+
+	printHead := func() {
 		n.HasSub = false
 		n.AddString("\n  **%s**\n", title)
-		n.lastTitle = title
+		n.Title = title
 		n.HasSub = true
-
-		ac.LastErrMsg = ac.ErrMsg
-		ac.ErrMsg = ""
-
-		if ac.LastErrMsg == "" {
-			return true
-		}
-		n.AddString("上次执行Err信息：`%s`\n", ac.LastErrMsg)
 	}
+
+	printHead()
+
+	ac.oldErrMsg = ac.ErrMsg
+	ac.ErrMsg = ""
+
+	if ac.oldErrMsg == "" {
+		return true
+	}
+	n.AddString("上次执行Err信息：`%s`\n", ac.oldErrMsg)
+
 	return false
 
 }
@@ -89,9 +85,9 @@ func (n *note) String() string {
 }
 
 func (n *note) StatusAddString(format string, a ...any) {
-	if _, ok := n.Status[n.lastTitle]; ok {
-		n.Status[n.Uid][n.lastTitle].ErrMsg = fmt.Sprintf(format, a...)
-	}
+	ac := n.findActive(n.Title)
+	ac.ErrMsg = fmt.Sprintf(format, a...)
+
 	n.AddString(format, a...)
 }
 
@@ -103,6 +99,31 @@ func (n *note) AddString(format string, a ...any) {
 	s += fmt.Sprintf(format, a...)
 	n.Desc += s
 	fmt.Printf(s)
+}
+
+func (n *note) findActive(title string) *Active {
+	_userAcList, _ := n.Status.LoadOrStore(n.Uid, []*Active{})
+	userAcList := _userAcList.([]*Active)
+
+	var ac *Active
+	var idx int
+
+	if idx = pie.FindFirstUsing(userAcList, func(value *Active) bool {
+		return value.Name == title
+	}); idx != -1 {
+		ac = userAcList[idx]
+	} else {
+		ac = &Active{}
+		ac.Name = title
+	}
+
+	if idx != -1 {
+		userAcList[idx] = ac
+	} else {
+		userAcList = append(userAcList, ac)
+	}
+	n.Status.Store(n.Uid, userAcList)
+	return ac
 }
 
 // 每日任务执行
@@ -120,7 +141,7 @@ func DailyTask() func() {
 		cks := inet.DefaultClient.Cks
 
 		for idx := range len(cks) {
-			Note.Uid = cks[idx].Uid
+			Note.SetUid(cks[idx].Uid)
 
 			if idx > MaxRunCKNum {
 				break

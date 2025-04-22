@@ -1,0 +1,410 @@
+[opus]目前统计到0个Lottery，重复率是NaN。
+查看用户uid:【100680137】。
+会员购任务【投票抽红包至高88元！】成功领取15个金币 √
+[opus]目前统计到0个Lottery，重复率是NaN。
+查看用户uid:【5536630】。
+[opus]目前统计到0个Lottery，重复率是NaN。
+查看用户uid:【226257459】。
+会员购签到完毕。现在有1144个金币
+[opus]目前统计到0个Lottery，重复率是NaN。
+查看用户uid:【492426375】。
+fatal error: concurrent map writes
+fatal error: concurrent map writes
+
+goroutine 3050 [running]:
+charge/inet.(*defaultClient).CheckSelectPost(0xd30940, {0x9ca286?, 0x52613d?}, {0x0, 0x0}, {0x9d45a7, 0xa3}, {0x0, 0x0}, 0x0, ...)
+        G:/编程/goland/project/try/charge/inet/inet.go:184 +0x6a5
+charge/pkg/common.magicRegister(0x0, 0x1)
+        G:/编程/goland/project/try/charge/pkg/common/magics.go:139 +0x85
+charge/pkg/common.MagicRegister(0x0)
+        G:/编程/goland/project/try/charge/pkg/common/magics.go:131 +0x287
+charge/server.Run.DailyTask.func7()
+        G:/编程/goland/project/try/charge/pkg/common/manager.go:182 +0x9da
+reflect.Value.call({0x8de6c0?, 0x9f0248?, 0x13?}, {0x9ad446, 0x4}, {0xd77180, 0x0, 0x0?})
+        C:/Program Files/Go/src/reflect/value.go:581 +0xca6
+reflect.Value.Call({0x8de6c0?, 0x9f0248?, 0xc0005b17f8?}, {0xd77180?, 0xc000110620?, 0xc000110000?})
+        C:/Program Files/Go/src/reflect/value.go:365 +0xb9
+github.com/go-co-op/gocron/v2.callJobFuncWithParams({0x8de6c0?, 0x9f0248?}, {0x0, 0x0, 0x532bdf?})
+        C:/Users/11251/go/pkg/mod/github.com/go-co-op/gocron/v2@v2.14.2/util.go:29 +0x1f7
+github.com/go-co-op/gocron/v2.(*executor).runJob(_, {{0xa6fcd0, 0xc000095400}, 0xc00002e6b0, {0x41, 0x81, 0xd4, 0x83, 0x10, 0xa9, ...}, ...}, ...)
+        C:/Users/11251/go/pkg/mod/github.com/go-co-op/gocron/v2@v2.14.2/executor.go:417 +0x834
+github.com/go-co-op/gocron/v2.(*executor).start.func1.1({{0xa6fcd0, 0xc000095400}, 0xc00002e6b0, {0x41, 0x81, 0xd4, 0x83, 0x10, 0xa9, 0x4f, ...}, ...})
+        C:/Users/11251/go/pkg/mod/github.com/go-co-op/gocron/v2@v2.14.2/executor.go:223 +0x6f
+created by github.com/go-co-op/gocron/v2.(*executor).start.func1 in goroutine 3049
+        C:/Users/11251/go/pkg/mod/github.com/go-co-op/gocron/v2@v2.14.2/executor.go:222 +0x6ad
+
+goroutine 1 [select (no cases), 1169 minutes]:
+charge/server.Run()
+        G:/编程/goland/project/try/charge/server/app.go:76 +0xa50
+main.main()
+        G:/编程/goland/project/try/charge/main.go:9 +0x25
+
+goroutine 21 [chan receive, 961 minutes]:
+charge/pkg/common.init.1.func1()
+        G:/编程/goland/project/try/charge/pkg/common/manager.go:45 +0x174
+created by charge/pkg/common.init.1 in goroutine 1
+        G:/编程/goland/project/try/charge/pkg/common/manager.go:36 +0x1a
+
+goroutine 3118 [IO wait]:
+internal/poll.runtime_pollWait(0x20fdb950a58, 0x72)
+        C:/Program Files/Go/src/runtime/netpoll.go:351 +0x85
+internal/poll.(*pollDesc).wait(0x88ca4044ba17b571?, 0xa5ceef5dcf0bce8e?, 0x0)
+        C:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x27
+internal/poll.execIO(0xc000254520, 0x9f0dd0)
+        C:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x105
+internal/poll.(*FD).Read(0xc000254508, {0xc00039c000, 0x1300, 0x1300})
+        C:/Program Files/Go/src/internal/poll/fd_windows.go:438 +0x2a7
+net.(*netFD).Read(0xc000254508, {0xc00039c000?, 0xc0002705c0?, 0xc0007059a0?})
+        C:/Program Files/Go/src/net/fd_posix.go:55 +0x25
+net.(*conn).Read(0xc0006bc050, {0xc00039c000?, 0xc0002705c0?, 0xc00039c15f?})
+        C:/Program Files/Go/src/net/net.go:189 +0x45
+crypto/tls.(*atLeastReader).Read(0xc0003ed2c0, {0xc00039c000?, 0x0?, 0xc0003ed2c0?})
+        C:/Program Files/Go/src/crypto/tls/conn.go:809 +0x3b
+bytes.(*Buffer).ReadFrom(0xc0005d4d38, {0xa6d600, 0xc0003ed2c0})
+        C:/Program Files/Go/src/bytes/buffer.go:211 +0x98
+crypto/tls.(*Conn).readFromUntil(0xc0005d4a88, {0x20fdb950fc0, 0xc0006bc050}, 0xc000705a10?)
+        C:/Program Files/Go/src/crypto/tls/conn.go:831 +0xde
+crypto/tls.(*Conn).readRecordOrCCS(0xc0005d4a88, 0x0)
+        C:/Program Files/Go/src/crypto/tls/conn.go:629 +0x3cf
+crypto/tls.(*Conn).readRecord(...)
+        C:/Program Files/Go/src/crypto/tls/conn.go:591
+crypto/tls.(*Conn).Read(0xc0005d4a88, {0xc0003f6000, 0x1000, 0xc000523c00?})
+        C:/Program Files/Go/src/crypto/tls/conn.go:1385 +0x150
+bufio.(*Reader).Read(0xc0006734a0, {0xc000372660, 0x9, 0xd19df0?})
+        C:/Program Files/Go/src/bufio/bufio.go:241 +0x197
+io.ReadAtLeast({0xa6cdc0, 0xc0006734a0}, {0xc000372660, 0x9, 0x9}, 0x9)
+        C:/Program Files/Go/src/io/io.go:335 +0x90
+io.ReadFull(...)
+        C:/Program Files/Go/src/io/io.go:354
+net/http.http2readFrameHeader({0xc000372660, 0x9, 0xc000542ff0?}, {0xa6cdc0?, 0xc0006734a0?})
+        C:/Program Files/Go/src/net/http/h2_bundle.go:1642 +0x65
+net/http.(*http2Framer).ReadFrame(0xc000372620)
+        C:/Program Files/Go/src/net/http/h2_bundle.go:1909 +0x85
+net/http.(*http2clientConnReadLoop).run(0xc000705fa8)
+        C:/Program Files/Go/src/net/http/h2_bundle.go:9496 +0xda
+net/http.(*http2ClientConn).readLoop(0xc00017e300)
+        C:/Program Files/Go/src/net/http/h2_bundle.go:9392 +0x7c
+created by net/http.(*http2Transport).newClientConn in goroutine 3117
+        C:/Program Files/Go/src/net/http/h2_bundle.go:8006 +0xd1b
+
+goroutine 22 [select, 1 minutes]:
+github.com/go-co-op/gocron/v2.NewScheduler.func1()
+        C:/Users/11251/go/pkg/mod/github.com/go-co-op/gocron/v2@v2.14.2/scheduler.go:171 +0x31f
+created by github.com/go-co-op/gocron/v2.NewScheduler in goroutine 1
+        C:/Users/11251/go/pkg/mod/github.com/go-co-op/gocron/v2@v2.14.2/scheduler.go:168 +0x5b6
+
+goroutine 3079 [IO wait]:
+internal/poll.runtime_pollWait(0x20fdb950638, 0x72)
+        C:/Program Files/Go/src/runtime/netpoll.go:351 +0x85
+internal/poll.(*pollDesc).wait(0xd2953836efb28311?, 0x547ad9a8a85d394a?, 0x0)
+        C:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x27
+internal/poll.execIO(0xc0002547a0, 0x9f0dd0)
+        C:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x105
+internal/poll.(*FD).Read(0xc000254788, {0xc00025f300, 0x1300, 0x1300})
+        C:/Program Files/Go/src/internal/poll/fd_windows.go:438 +0x2a7
+net.(*netFD).Read(0xc000254788, {0xc00025f300?, 0x1000000723372?, 0xc0001719a0?})
+        C:/Program Files/Go/src/net/fd_posix.go:55 +0x25
+net.(*conn).Read(0xc000126388, {0xc00025f300?, 0xc00040e860?, 0xc00025f5c4?})
+        C:/Program Files/Go/src/net/net.go:189 +0x45
+crypto/tls.(*atLeastReader).Read(0xc0003ed9e0, {0xc00025f300?, 0x0?, 0xc0003ed9e0?})
+        C:/Program Files/Go/src/crypto/tls/conn.go:809 +0x3b
+bytes.(*Buffer).ReadFrom(0xc00036b7b8, {0xa6d600, 0xc0003ed9e0})
+        C:/Program Files/Go/src/bytes/buffer.go:211 +0x98
+crypto/tls.(*Conn).readFromUntil(0xc00036b508, {0x20fdb950fc0, 0xc000126388}, 0xc000171a10?)
+        C:/Program Files/Go/src/crypto/tls/conn.go:831 +0xde
+crypto/tls.(*Conn).readRecordOrCCS(0xc00036b508, 0x0)
+        C:/Program Files/Go/src/crypto/tls/conn.go:629 +0x3cf
+crypto/tls.(*Conn).readRecord(...)
+        C:/Program Files/Go/src/crypto/tls/conn.go:591
+crypto/tls.(*Conn).Read(0xc00036b508, {0xc00073d000, 0x1000, 0xc0003fddc0?})
+        C:/Program Files/Go/src/crypto/tls/conn.go:1385 +0x150
+bufio.(*Reader).Read(0xc000417da0, {0xc00023c900, 0x9, 0xd19df0?})
+        C:/Program Files/Go/src/bufio/bufio.go:241 +0x197
+io.ReadAtLeast({0xa6cdc0, 0xc000417da0}, {0xc00023c900, 0x9, 0x9}, 0x9)
+        C:/Program Files/Go/src/io/io.go:335 +0x90
+io.ReadFull(...)
+        C:/Program Files/Go/src/io/io.go:354
+net/http.http2readFrameHeader({0xc00023c900, 0x9, 0xc0006c0e70?}, {0xa6cdc0?, 0xc000417da0?})
+        C:/Program Files/Go/src/net/http/h2_bundle.go:1642 +0x65
+net/http.(*http2Framer).ReadFrame(0xc00023c8c0)
+        C:/Program Files/Go/src/net/http/h2_bundle.go:1909 +0x85
+net/http.(*http2clientConnReadLoop).run(0xc000171fa8)
+        C:/Program Files/Go/src/net/http/h2_bundle.go:9496 +0xda
+net/http.(*http2ClientConn).readLoop(0xc000002780)
+        C:/Program Files/Go/src/net/http/h2_bundle.go:9392 +0x7c
+created by net/http.(*http2Transport).newClientConn in goroutine 3078
+        C:/Program Files/Go/src/net/http/h2_bundle.go:8006 +0xd1b
+
+goroutine 212 [chan receive, 1173 minutes]:
+charge/pkg/utils.ListenUpForLotteryVideo.func1()
+        G:/编程/goland/project/try/charge/pkg/utils/listenLottery.go:257 +0x45
+created by charge/pkg/utils.ListenUpForLotteryVideo in goroutine 1
+        G:/编程/goland/project/try/charge/pkg/utils/listenLottery.go:256 +0x5c5
+
+goroutine 415 [select, 1 minutes]:
+github.com/go-co-op/gocron/v2.(*executor).start(0xc00017e018)
+        C:/Users/11251/go/pkg/mod/github.com/go-co-op/gocron/v2@v2.14.2/executor.go:102 +0x18e
+created by github.com/go-co-op/gocron/v2.(*scheduler).selectStart in goroutine 22
+        C:/Users/11251/go/pkg/mod/github.com/go-co-op/gocron/v2@v2.14.2/scheduler.go:488 +0x8b
+
+goroutine 937 [chan receive, 959 minutes]:
+charge/pkg/utils.ListenUpForLotteryVideo.func1()
+        G:/编程/goland/project/try/charge/pkg/utils/listenLottery.go:257 +0x45
+created by charge/pkg/utils.ListenUpForLotteryVideo in goroutine 693
+        G:/编程/goland/project/try/charge/pkg/utils/listenLottery.go:256 +0x5c5
+
+goroutine 3076 [IO wait]:
+internal/poll.runtime_pollWait(0x20fdb950740, 0x72)
+        C:/Program Files/Go/src/runtime/netpoll.go:351 +0x85
+internal/poll.(*pollDesc).wait(0xf0b50fd9663c2f33?, 0x95f6025e68e76ccd?, 0x0)
+        C:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x27
+internal/poll.execIO(0xc000254020, 0x9f0dd0)
+        C:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x105
+internal/poll.(*FD).Read(0xc000254008, {0xc0006d3000, 0x1000, 0x1000})
+        C:/Program Files/Go/src/internal/poll/fd_windows.go:438 +0x2a7
+net.(*netFD).Read(0xc000254008, {0xc0006d3000?, 0x723372?, 0x20fdbdb0008?})
+        C:/Program Files/Go/src/net/fd_posix.go:55 +0x25
+net.(*conn).Read(0xc000126108, {0xc0006d3000?, 0xc00011c8c0?, 0x0?})
+        C:/Program Files/Go/src/net/net.go:189 +0x45
+crypto/tls.(*atLeastReader).Read(0xc000290150, {0xc0006d3000?, 0x0?, 0xc000290150?})
+        C:/Program Files/Go/src/crypto/tls/conn.go:809 +0x3b
+bytes.(*Buffer).ReadFrom(0xc00036a2b8, {0xa6d600, 0xc000290150})
+        C:/Program Files/Go/src/bytes/buffer.go:211 +0x98
+crypto/tls.(*Conn).readFromUntil(0xc00036a008, {0x20fdb950fc0, 0xc000126108}, 0xc0005e7a10?)
+        C:/Program Files/Go/src/crypto/tls/conn.go:831 +0xde
+crypto/tls.(*Conn).readRecordOrCCS(0xc00036a008, 0x0)
+        C:/Program Files/Go/src/crypto/tls/conn.go:629 +0x3cf
+crypto/tls.(*Conn).readRecord(...)
+        C:/Program Files/Go/src/crypto/tls/conn.go:591
+crypto/tls.(*Conn).Read(0xc00036a008, {0xc00073b000, 0x1000, 0xc00011b6c0?})
+        C:/Program Files/Go/src/crypto/tls/conn.go:1385 +0x150
+bufio.(*Reader).Read(0xc000417800, {0xc00023c580, 0x9, 0xd19df0?})
+        C:/Program Files/Go/src/bufio/bufio.go:241 +0x197
+io.ReadAtLeast({0xa6cdc0, 0xc000417800}, {0xc00023c580, 0x9, 0x9}, 0x9)
+        C:/Program Files/Go/src/io/io.go:335 +0x90
+io.ReadFull(...)
+        C:/Program Files/Go/src/io/io.go:354
+net/http.http2readFrameHeader({0xc00023c580, 0x9, 0x43efc0?}, {0xa6cdc0?, 0xc000417800?})
+        C:/Program Files/Go/src/net/http/h2_bundle.go:1642 +0x65
+net/http.(*http2Framer).ReadFrame(0xc00023c540)
+        C:/Program Files/Go/src/net/http/h2_bundle.go:1909 +0x85
+net/http.(*http2clientConnReadLoop).run(0xc0005e7fa8)
+        C:/Program Files/Go/src/net/http/h2_bundle.go:9496 +0xda
+net/http.(*http2ClientConn).readLoop(0xc000002000)
+        C:/Program Files/Go/src/net/http/h2_bundle.go:9392 +0x7c
+created by net/http.(*http2Transport).newClientConn in goroutine 3075
+        C:/Program Files/Go/src/net/http/h2_bundle.go:8006 +0xd1b
+
+goroutine 3184 [running]:
+        goroutine running on other thread; stack unavailable
+created by charge/inet.(*defaultClient).RedundantDW in goroutine 3031
+        G:/编程/goland/project/try/charge/inet/inet.go:358 +0x386
+
+goroutine 2490 [sleep, 361 minutes]:
+time.Sleep(0x213ccbbe4a00)
+        C:/Program Files/Go/src/runtime/time.go:315 +0xf7
+charge/server.Run.PushOpus.func4()
+        G:/编程/goland/project/try/charge/pkg/upload/uploadOpus/Opus.go:20 +0xb1
+reflect.Value.call({0x8de6c0?, 0x9f0270?, 0x13?}, {0x9ad446, 0x4}, {0xd77180, 0x0, 0x0?})
+        C:/Program Files/Go/src/reflect/value.go:581 +0xca6
+reflect.Value.Call({0x8de6c0?, 0x9f0270?, 0xc0002d8380?}, {0xd77180?, 0xc000110620?, 0xc000110000?})
+        C:/Program Files/Go/src/reflect/value.go:365 +0xb9
+github.com/go-co-op/gocron/v2.callJobFuncWithParams({0x8de6c0?, 0x9f0270?}, {0x0, 0x0, 0x3d5?})
+        C:/Users/11251/go/pkg/mod/github.com/go-co-op/gocron/v2@v2.14.2/util.go:29 +0x1f7
+github.com/go-co-op/gocron/v2.(*executor).runJob(_, {{0xa6fcd0, 0xc0001219f0}, 0xc0002a5b30, {0xaa, 0xd, 0x4d, 0x57, 0xed, 0x3, ...}, ...}, ...)
+        C:/Users/11251/go/pkg/mod/github.com/go-co-op/gocron/v2@v2.14.2/executor.go:417 +0x834
+github.com/go-co-op/gocron/v2.(*executor).start.func1.1({{0xa6fcd0, 0xc0001219f0}, 0xc0002a5b30, {0xaa, 0xd, 0x4d, 0x57, 0xed, 0x3, 0x4d, ...}, ...})
+        C:/Users/11251/go/pkg/mod/github.com/go-co-op/gocron/v2@v2.14.2/executor.go:223 +0x6f
+created by github.com/go-co-op/gocron/v2.(*executor).start.func1 in goroutine 2489
+        C:/Users/11251/go/pkg/mod/github.com/go-co-op/gocron/v2@v2.14.2/executor.go:222 +0x6ad
+
+goroutine 3188 [IO wait]:
+internal/poll.runtime_pollWait(0x20fdb950848, 0x72)
+        C:/Program Files/Go/src/runtime/netpoll.go:351 +0x85
+internal/poll.(*pollDesc).wait(0xdb8ce2c7ff15023?, 0xe9194604b49b45e9?, 0x0)
+        C:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x27
+internal/poll.execIO(0xc000254ca0, 0x9f0dd0)
+        C:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x105
+internal/poll.(*FD).Read(0xc000254c88, {0xc00039f900, 0x1300, 0x1300})
+        C:/Program Files/Go/src/internal/poll/fd_windows.go:438 +0x2a7
+net.(*netFD).Read(0xc000254c88, {0xc00039f900?, 0x1000000723372?, 0x20fdb4d0738?})
+        C:/Program Files/Go/src/net/fd_posix.go:55 +0x25
+net.(*conn).Read(0xc000126138, {0xc00039f900?, 0xc000336b08?, 0xc000336b00?})
+        C:/Program Files/Go/src/net/net.go:189 +0x45
+crypto/tls.(*atLeastReader).Read(0xc000412378, {0xc00039f900?, 0x0?, 0xc000412378?})
+        C:/Program Files/Go/src/crypto/tls/conn.go:809 +0x3b
+bytes.(*Buffer).ReadFrom(0xc0004ced38, {0xa6d600, 0xc000412378})
+        C:/Program Files/Go/src/bytes/buffer.go:211 +0x98
+crypto/tls.(*Conn).readFromUntil(0xc0004cea88, {0x20fdb950fc0, 0xc000126138}, 0xc00075fa10?)
+        C:/Program Files/Go/src/crypto/tls/conn.go:831 +0xde
+crypto/tls.(*Conn).readRecordOrCCS(0xc0004cea88, 0x0)
+        C:/Program Files/Go/src/crypto/tls/conn.go:629 +0x3cf
+crypto/tls.(*Conn).readRecord(...)
+        C:/Program Files/Go/src/crypto/tls/conn.go:591
+crypto/tls.(*Conn).Read(0xc0004cea88, {0xc0004bb000, 0x1000, 0x737002?})
+        C:/Program Files/Go/src/crypto/tls/conn.go:1385 +0x150
+bufio.(*Reader).Read(0xc000316300, {0xc000294740, 0x9, 0x0?})
+        C:/Program Files/Go/src/bufio/bufio.go:241 +0x197
+io.ReadAtLeast({0xa6cdc0, 0xc000316300}, {0xc000294740, 0x9, 0x9}, 0x9)
+        C:/Program Files/Go/src/io/io.go:335 +0x90
+io.ReadFull(...)
+        C:/Program Files/Go/src/io/io.go:354
+net/http.http2readFrameHeader({0xc000294740, 0x9, 0x6df020?}, {0xa6cdc0?, 0xc000316300?})
+        C:/Program Files/Go/src/net/http/h2_bundle.go:1642 +0x65
+net/http.(*http2Framer).ReadFrame(0xc000294700)
+        C:/Program Files/Go/src/net/http/h2_bundle.go:1909 +0x85
+net/http.(*http2clientConnReadLoop).run(0xc00075ffa8)
+        C:/Program Files/Go/src/net/http/h2_bundle.go:9496 +0xda
+net/http.(*http2ClientConn).readLoop(0xc0004aa000)
+        C:/Program Files/Go/src/net/http/h2_bundle.go:9392 +0x7c
+created by net/http.(*http2Transport).newClientConn in goroutine 3187
+        C:/Program Files/Go/src/net/http/h2_bundle.go:8006 +0xd1b
+
+goroutine 3202 [select]:
+net/http.(*http2clientStream).writeRequest(0xc000400a80, 0xc0006bedc0, 0x0)
+        C:/Program Files/Go/src/net/http/h2_bundle.go:8673 +0xa65
+net/http.(*http2clientStream).doRequest(0xc000400a80, 0x75c3a5?, 0xc000646120?)
+        C:/Program Files/Go/src/net/http/h2_bundle.go:8551 +0x56
+created by net/http.(*http2ClientConn).roundTrip in goroutine 3050
+        C:/Program Files/Go/src/net/http/h2_bundle.go:8456 +0x3d8
+
+goroutine 3031 [sleep]:
+time.Sleep(0x12a05f200)
+        C:/Program Files/Go/src/runtime/time.go:315 +0xf7
+charge/inet.(*defaultClient).RedundantDW(0xd30940, {0xc0002821e0, 0x5b}, {0x9ad9ae, 0x5}, 0x12a05f200)
+        G:/编程/goland/project/try/charge/inet/inet.go:365 +0x393
+charge/pkg/utils.ListenUpForLotteryOpus({0xc00017c000, 0x7, 0x7}, 0xc000096310)
+        G:/编程/goland/project/try/charge/pkg/utils/listenLottery.go:83 +0x2d6
+charge/server.Run.ListenLotteryUp.func5()
+        G:/编程/goland/project/try/charge/pkg/LotteryUp/ListenUpForLottery.go:64 +0xba
+reflect.Value.call({0x8de6c0?, 0x9f0268?, 0x13?}, {0x9ad446, 0x4}, {0xd77180, 0x0, 0x0?})
+        C:/Program Files/Go/src/reflect/value.go:581 +0xca6
+reflect.Value.Call({0x8de6c0?, 0x9f0268?, 0xc0003057f8?}, {0xd77180?, 0xc000110620?, 0xc000110000?})
+        C:/Program Files/Go/src/reflect/value.go:365 +0xb9
+github.com/go-co-op/gocron/v2.callJobFuncWithParams({0x8de6c0?, 0x9f0268?}, {0x0, 0x0, 0x4d1fa5?})
+        C:/Users/11251/go/pkg/mod/github.com/go-co-op/gocron/v2@v2.14.2/util.go:29 +0x1f7
+github.com/go-co-op/gocron/v2.(*executor).runJob(_, {{0xa6fcd0, 0xc000508000}, 0xc00002e1a0, {0x3d, 0x79, 0x7d, 0xe0, 0x86, 0x33, ...}, ...}, ...)
+        C:/Users/11251/go/pkg/mod/github.com/go-co-op/gocron/v2@v2.14.2/executor.go:417 +0x834
+github.com/go-co-op/gocron/v2.(*executor).start.func1.1({{0xa6fcd0, 0xc000508000}, 0xc00002e1a0, {0x3d, 0x79, 0x7d, 0xe0, 0x86, 0x33, 0x47, ...}, ...})
+        C:/Users/11251/go/pkg/mod/github.com/go-co-op/gocron/v2@v2.14.2/executor.go:223 +0x6f
+created by github.com/go-co-op/gocron/v2.(*executor).start.func1 in goroutine 3064
+        C:/Users/11251/go/pkg/mod/github.com/go-co-op/gocron/v2@v2.14.2/executor.go:222 +0x6ad
+
+goroutine 1863 [chan receive, 479 minutes]:
+charge/pkg/utils.ListenUpForLotteryVideo.func1()
+        G:/编程/goland/project/try/charge/pkg/utils/listenLottery.go:257 +0x45
+created by charge/pkg/utils.ListenUpForLotteryVideo in goroutine 1834
+        G:/编程/goland/project/try/charge/pkg/utils/listenLottery.go:256 +0x5c5
+
+goroutine 1676 [chan receive, 719 minutes]:
+charge/pkg/utils.ListenUpForLotteryVideo.func1()
+        G:/编程/goland/project/try/charge/pkg/utils/listenLottery.go:257 +0x45
+created by charge/pkg/utils.ListenUpForLotteryVideo in goroutine 1534
+        G:/编程/goland/project/try/charge/pkg/utils/listenLottery.go:256 +0x5c5
+
+goroutine 2837 [chan receive, 239 minutes]:
+charge/pkg/utils.ListenUpForLotteryVideo.func1()
+        G:/编程/goland/project/try/charge/pkg/utils/listenLottery.go:257 +0x45
+created by charge/pkg/utils.ListenUpForLotteryVideo in goroutine 2694
+        G:/编程/goland/project/try/charge/pkg/utils/listenLottery.go:256 +0x5c5
+
+goroutine 3148 [IO wait]:
+internal/poll.runtime_pollWait(0x20fdb950530, 0x72)
+        C:/Program Files/Go/src/runtime/netpoll.go:351 +0x85
+internal/poll.(*pollDesc).wait(0x6efb7cc68dbb8982?, 0xad6018189f2d5c7d?, 0x0)
+        C:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x27
+internal/poll.execIO(0xc000254a20, 0x9f0dd0)
+        C:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x105
+internal/poll.(*FD).Read(0xc000254a08, {0xc00039d300, 0x1300, 0x1300})
+        C:/Program Files/Go/src/internal/poll/fd_windows.go:438 +0x2a7
+net.(*netFD).Read(0xc000254a08, {0xc00039d300?, 0x1000000723372?, 0xc0006879a0?})
+        C:/Program Files/Go/src/net/fd_posix.go:55 +0x25
+net.(*conn).Read(0xc0006bc060, {0xc00039d300?, 0xc00040ebc0?, 0xc00039d4cb?})
+        C:/Program Files/Go/src/net/net.go:189 +0x45
+crypto/tls.(*atLeastReader).Read(0xc000412228, {0xc00039d300?, 0x0?, 0xc000412228?})
+        C:/Program Files/Go/src/crypto/tls/conn.go:809 +0x3b
+bytes.(*Buffer).ReadFrom(0xc0004ce9b8, {0xa6d600, 0xc000412228})
+        C:/Program Files/Go/src/bytes/buffer.go:211 +0x98
+crypto/tls.(*Conn).readFromUntil(0xc0004ce708, {0x20fdb950fc0, 0xc0006bc060}, 0xc000687a10?)
+        C:/Program Files/Go/src/crypto/tls/conn.go:831 +0xde
+crypto/tls.(*Conn).readRecordOrCCS(0xc0004ce708, 0x0)
+        C:/Program Files/Go/src/crypto/tls/conn.go:629 +0x3cf
+crypto/tls.(*Conn).readRecord(...)
+        C:/Program Files/Go/src/crypto/tls/conn.go:591
+crypto/tls.(*Conn).Read(0xc0004ce708, {0xc0002c6000, 0x1000, 0xc0002e81c0?})
+        C:/Program Files/Go/src/crypto/tls/conn.go:1385 +0x150
+bufio.(*Reader).Read(0xc00029bec0, {0xc000372820, 0x9, 0xd19df0?})
+        C:/Program Files/Go/src/bufio/bufio.go:241 +0x197
+io.ReadAtLeast({0xa6cdc0, 0xc00029bec0}, {0xc000372820, 0x9, 0x9}, 0x9)
+        C:/Program Files/Go/src/io/io.go:335 +0x90
+io.ReadFull(...)
+        C:/Program Files/Go/src/io/io.go:354
+net/http.http2readFrameHeader({0xc000372820, 0x9, 0xc0006de8d0?}, {0xa6cdc0?, 0xc00029bec0?})
+        C:/Program Files/Go/src/net/http/h2_bundle.go:1642 +0x65
+net/http.(*http2Framer).ReadFrame(0xc0003727e0)
+        C:/Program Files/Go/src/net/http/h2_bundle.go:1909 +0x85
+net/http.(*http2clientConnReadLoop).run(0xc000687fa8)
+        C:/Program Files/Go/src/net/http/h2_bundle.go:9496 +0xda
+net/http.(*http2ClientConn).readLoop(0xc000002900)
+        C:/Program Files/Go/src/net/http/h2_bundle.go:9392 +0x7c
+created by net/http.(*http2Transport).newClientConn in goroutine 3147
+        C:/Program Files/Go/src/net/http/h2_bundle.go:8006 +0xd1b
+
+goroutine 3185 [runnable]:
+net/http.(*http2clientStream).writeRequest(0xc000400900, 0xc0006bec80, 0x0)
+        C:/Program Files/Go/src/net/http/h2_bundle.go:8673 +0xa65
+net/http.(*http2clientStream).doRequest(0xc000400900, 0x75c345?, 0xc000646120?)
+        C:/Program Files/Go/src/net/http/h2_bundle.go:8551 +0x56
+created by net/http.(*http2ClientConn).roundTrip in goroutine 3184
+        C:/Program Files/Go/src/net/http/h2_bundle.go:8456 +0x3d8
+
+goroutine 3164 [IO wait]:
+internal/poll.runtime_pollWait(0x20fdb950b60, 0x72)
+        C:/Program Files/Go/src/runtime/netpoll.go:351 +0x85
+internal/poll.(*pollDesc).wait(0xf80b83eb42211e27?, 0x54c7fb4cdc4b7dd7?, 0x0)
+        C:/Program Files/Go/src/internal/poll/fd_poll_runtime.go:84 +0x27
+internal/poll.execIO(0xc0000a0520, 0x9f0dd0)
+        C:/Program Files/Go/src/internal/poll/fd_windows.go:177 +0x105
+internal/poll.(*FD).Read(0xc0000a0508, {0xc000260600, 0x1300, 0x1300})
+        C:/Program Files/Go/src/internal/poll/fd_windows.go:438 +0x2a7
+net.(*netFD).Read(0xc0000a0508, {0xc000260600?, 0xc0000831e0?, 0xc0008839a0?})
+        C:/Program Files/Go/src/net/fd_posix.go:55 +0x25
+net.(*conn).Read(0xc0001262f0, {0xc000260600?, 0xc0000831e0?, 0xc0002609f2?})
+        C:/Program Files/Go/src/net/net.go:189 +0x45
+crypto/tls.(*atLeastReader).Read(0xc000290a50, {0xc000260600?, 0x0?, 0xc000290a50?})
+        C:/Program Files/Go/src/crypto/tls/conn.go:809 +0x3b
+bytes.(*Buffer).ReadFrom(0xc0005d42b8, {0xa6d600, 0xc000290a50})
+        C:/Program Files/Go/src/bytes/buffer.go:211 +0x98
+crypto/tls.(*Conn).readFromUntil(0xc0005d4008, {0x20fdb950fc0, 0xc0001262f0}, 0xc000883a10?)
+        C:/Program Files/Go/src/crypto/tls/conn.go:831 +0xde
+crypto/tls.(*Conn).readRecordOrCCS(0xc0005d4008, 0x0)
+        C:/Program Files/Go/src/crypto/tls/conn.go:629 +0x3cf
+crypto/tls.(*Conn).readRecord(...)
+        C:/Program Files/Go/src/crypto/tls/conn.go:591
+crypto/tls.(*Conn).Read(0xc0005d4008, {0xc000571000, 0x1000, 0xc0002e81c0?})
+        C:/Program Files/Go/src/crypto/tls/conn.go:1385 +0x150
+bufio.(*Reader).Read(0xc000316f60, {0xc00023c740, 0x9, 0xd19df0?})
+        C:/Program Files/Go/src/bufio/bufio.go:241 +0x197
+io.ReadAtLeast({0xa6cdc0, 0xc000316f60}, {0xc00023c740, 0x9, 0x9}, 0x9)
+        C:/Program Files/Go/src/io/io.go:335 +0x90
+io.ReadFull(...)
+        C:/Program Files/Go/src/io/io.go:354
+net/http.http2readFrameHeader({0xc00023c740, 0x9, 0xc00043fc20?}, {0xa6cdc0?, 0xc000316f60?})
+        C:/Program Files/Go/src/net/http/h2_bundle.go:1642 +0x65
+net/http.(*http2Framer).ReadFrame(0xc00023c700)
+        C:/Program Files/Go/src/net/http/h2_bundle.go:1909 +0x85
+net/http.(*http2clientConnReadLoop).run(0xc000883fa8)
+        C:/Program Files/Go/src/net/http/h2_bundle.go:9496 +0xda
+net/http.(*http2ClientConn).readLoop(0xc000400600)
+        C:/Program Files/Go/src/net/http/h2_bundle.go:9392 +0x7c
+created by net/http.(*http2Transport).newClientConn in goroutine 3163
+        C:/Program Files/Go/src/net/http/h2_bundle.go:8006 +0xd1b
+
+goroutine 3184 [running]:
+charge/inet.(*defaultClient).CheckSelect(0xd30940, {0xc0002821e0?, 0xc0002d5f48?}, 0x6)
+        G:/编程/goland/project/try/charge/inet/inet.go:151 +0x3a5
+charge/inet.(*defaultClient).RedundantDW.func2()
+        G:/编程/goland/project/try/charge/inet/inet.go:360 +0x79
+created by charge/inet.(*defaultClient).RedundantDW in goroutine 3031
+        G:/编程/goland/project/try/charge/inet/inet.go:358 +0x386
+exit status 2

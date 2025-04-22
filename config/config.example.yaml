@@ -21,6 +21,7 @@ SpecialUid: []
 WebUserAgent: ""
 MobileUserAgent: ""
 DDNS:
+    Update: false
     ZoneID: ""
     DnsRecordId: ""
     ApiToken: ""
