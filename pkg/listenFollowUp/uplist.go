@@ -39,6 +39,9 @@ type Following struct {
 
 func ListenFollowUp() func() {
 	return func() {
+		if redis.RedisClient == nil {
+			return
+		}
 		cks := inet.DefaultClient.Cks
 		ctx := context.Background()
 		monitor := sender.Monitor{}

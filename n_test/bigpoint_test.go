@@ -1,6 +1,9 @@
 package n
 
 import (
+	"charge/config"
+	"charge/dao/redis"
+	"charge/inet"
 	"charge/pkg/common"
 	"fmt"
 	"testing"
@@ -37,7 +40,10 @@ func TestGetTodayPoint(t *testing.T) {
 }
 
 func TestVSign(t *testing.T) {
-	n := common.VSign(0)
+	config.Start()
+	redis.Start()
+	inet.DefaultClient.ReFresh(true)
+	n := common.VSign(2)
 	fmt.Println(n)
 	fmt.Println("【123】，【哈哈哈】，[123]，[哈哈哈]")
 }

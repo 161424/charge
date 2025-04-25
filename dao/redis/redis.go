@@ -63,10 +63,11 @@ func Start() {
 	ok = redisClient.Ping(context.Background())
 	if ok.Err() != nil {
 		fmt.Println("访问 redis地址 第3次失败。访问不到redis数据库")
-		panic(ok.Err())
+		RedisClient = nil
+	} else {
+		RedisClient = redisClient
+		fmt.Println("访问 远程redis 成功！", utils2.DDNSCheck(addr))
 	}
-	RedisClient = redisClient
-	fmt.Println("访问 远程redis 成功！", utils2.DDNSCheck(addr))
 
 }
 

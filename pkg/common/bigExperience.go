@@ -32,7 +32,7 @@ func BigExperience(idx int) {
 	}
 	url := "https://api.bilibili.com/x/vip/experience/add"
 	reqBody := url2.Values{}
-	reqBody.Set("csrf", utils.CutCsrf(inet.DefaultClient.Cks[idx].Ck))
+	reqBody.Set("csrf", inet.DefaultClient.Cks[idx].Csrf)
 	be := &bE{}
 	resp := inet.DefaultClient.CheckSelectPost(url, utils.ContentType["x"], "", "", idx, strings.NewReader(reqBody.Encode()))
 	err := json.Unmarshal(resp, be)

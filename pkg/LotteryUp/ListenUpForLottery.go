@@ -57,6 +57,9 @@ type BLottery struct {
 func ListenLotteryUp() func() {
 	inet.DefaultClient.RegisterTp(modelTp)
 	return func() {
+		if redis.RedisClient == nil {
+			return
+		}
 		monitor := sender.Monitor{}
 		monitor.Tag = "lottery"
 		monitor.Title = "每日lottery(ByUp)监控"

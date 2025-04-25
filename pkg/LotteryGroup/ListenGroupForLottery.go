@@ -1,6 +1,7 @@
 package LotteryGroup
 
 import (
+	"charge/dao/redis"
 	"charge/inet"
 	"charge/pkg/LotteryUp"
 	"charge/sender"
@@ -42,6 +43,9 @@ var modelTp = "lotteryGroup"
 // 监听大锦鲤频道
 func ListenGroupForLottery() func() {
 	return func() {
+		if redis.RedisClient == nil {
+			return
+		}
 		size := 20
 		ReadGroup(size)
 	}

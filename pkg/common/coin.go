@@ -152,9 +152,9 @@ func getAidByRecommend(idx, coin int) {
 		url = "https://api.bilibili.com/x/web-interface/coin/add" // 正文参数（ application/x-www-form-urlencoded ）
 		postData := url2.Values{}
 		postData.Add("aid", strconv.Itoa(item.Id))
-		postData.Add("multiply", strconv.Itoa(ct))                          // 投币数量
-		postData.Add("csrf", utils.CutCsrf(inet.DefaultClient.Cks[idx].Ck)) // 必要
-		postData.Add("select_like", "1")                                    // 进行点赞
+		postData.Add("multiply", strconv.Itoa(ct))             // 投币数量
+		postData.Add("csrf", inet.DefaultClient.Cks[idx].Csrf) // 必要
+		postData.Add("select_like", "1")                       // 进行点赞
 		resp = inet.DefaultClient.CheckSelectPost(url, "application/x-www-form-urlencoded", "", "", idx, strings.NewReader(postData.Encode()))
 		aC := &addCoin{}
 		err = json.Unmarshal(resp, aC)

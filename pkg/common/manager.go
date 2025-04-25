@@ -221,10 +221,12 @@ func DailyTask() func() {
 
 			// manga    没漫画需求，先不做吧。漫画积分以及兑换品都会失效
 
+			// 大会员积分
+			BigPoint(idx) // 每日积分签到，保底45~50。最少1350，最多2700
+
 			// 大会员栏目
 			if userInfo.Data.VipStatus == 1 {
-				// 大会员积分
-				BigPoint(idx) // 每日积分签到，保底45~50。最少1350，最多2700
+
 				// 会员BB券提醒,含领取功能。当即将过期会对B币进行兑换
 				BCoinState(idx)
 				// BB券充电。检测到马上过期，会自动充电

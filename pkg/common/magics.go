@@ -827,9 +827,9 @@ func MagicWarOrderWish(idx int) {
 		Note.StatusAddString(utils.ErrMsg["code"], "magicWarOrderWish", magicWarOrderBoxPage.Code, string(resp))
 		return
 	}
-	if len(cWarOrderBoxPage.Data.Vo.List) == 0 {
+	if len(magicWarOrderBoxPage.Data.Vo.List) == 0 {
 		Note.StatusAddString(utils.ErrMsg["code"], "magicWarOrderWish", magicWarOrderBoxPage.Code, "未获取到正确未获取到正确的的ItemsId")
-		return 
+		return
 	}
 	itemsId := magicWarOrderBoxPage.Data.Vo.List[0].ItemsId
 	for i := 0; i < len(magicWarOrderBoxPage.Data.Vo.List); i++ {

@@ -56,6 +56,12 @@ type VipTask struct {
 	}
 }
 
+type reqSign struct {
+	T      int64  `json:"t"`
+	Device string `json:"device"`
+	Ts     int64  `json:"ts"`
+}
+
 type reSign struct {
 	Code    int
 	Message string
@@ -192,12 +198,20 @@ func BigPoint(idx int) {
 
 // 签到
 func VSign(idx int) int {
-	// url := "https://api.bilibili.com/pgc/activity/score/task/sign"
-	url := "https://api.bilibili.com/pgc/activity/score/task/sign2"
+	// url :(= "https://api.bilibili.com/pgc/activity/score/task/sign"
+	url := "https://api.bilibili.com/pgc/activity/score/task/sign2?csrf=08d0510a26f10c5e84d0601570472382"
 
-	resp := inet.DefaultClient.CheckSelectPost(url, "", "", "", idx, nil)
+	reqSignBody := &reqSign{
+		T:      time.Now().UnixMilli(),
+		Device: "phone",
+		Ts:     time.Now().Unix(),
+	}
+
+	reqSignBodyStr, err := json.Marshal(reqSignBody)
+	fmt.Println(string(reqSignBodyStr))
+	resp := inet.DefaultClient.CheckSelectPost(url, "", "", config.Cfg.MobileUserAgent, idx, strings.NewReader(string(reqSignBodyStr)))
 	reS := &reSign{}
-	err := json.Unmarshal(resp, reS)
+	err = json.Unmarshal(resp, reS)
 	//fmt.Println(string(resp), reS)
 	if err != nil {
 		Note.StatusAddString(utils.ErrMsg["json"], "VSign", err.Error(), string(resp))

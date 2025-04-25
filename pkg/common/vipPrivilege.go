@@ -157,7 +157,7 @@ func BCoinReceive(idx int) {
 
 	reqBody := url2.Values{}
 	reqBody.Set("type", "1") // 1.大会员B币券；2.大会员福利
-	reqBody.Set("csrf", utils.CutCsrf(inet.DefaultClient.Cks[idx].Ck))
+	reqBody.Set("csrf", inet.DefaultClient.Cks[idx].Csrf)
 	resp := inet.DefaultClient.CheckSelectPost(url, utils.ContentType["x"], "https://www.bilibili.com/", "", idx, strings.NewReader(reqBody.Encode()))
 	pR := &pReceive{}
 	err := json.Unmarshal(resp, &pR)
@@ -186,7 +186,7 @@ func BCoinExchangeForUp(idx int, bnum int) {
 	reqBody.Set("up_mid", upMid)               // 充电对象用户UID
 	reqBody.Set("otype", "up")                 // 充电来源 up：空间充电 archive：视频充电
 	reqBody.Set("oid", upMid)                  // 充电来源代码 空间充电：充电对象用户mid 视频充电：稿件avid
-	reqBody.Set("csrf", utils.CutCsrf(inet.DefaultClient.Cks[idx].Ck))
+	reqBody.Set("csrf", inet.DefaultClient.Cks[idx].Csrf)
 	resp := inet.DefaultClient.CheckSelectPost(url, utils.ContentType["x"], "https://www.bilibili.com/", "", idx, strings.NewReader(reqBody.Encode()))
 	cU := &ChargeUp{}
 	err := json.Unmarshal(resp, &cU)
