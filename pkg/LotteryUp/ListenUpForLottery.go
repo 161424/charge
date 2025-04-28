@@ -64,8 +64,10 @@ func ListenLotteryUp() func() {
 		monitor.Tag = "lottery"
 		monitor.Title = "每日lottery(ByUp)监控"
 		complete := make(chan struct{})
-		lotterys := utils.ListenUpForLotteryOpus(config.Cfg.LotteryUid, complete)
-		lotterys = append(lotterys, utils.ListenUpForLotteryVideo(config.Cfg.SpecialUid, complete)...)
+		opusUid := utils.TakeUid(config.Cfg.LotteryUid)
+		videoUid := utils.TakeUid(config.Cfg.SpecialUid)
+		lotterys := utils.ListenUpForLotteryOpus(opusUid, complete)
+		lotterys = append(lotterys, utils.ListenUpForLotteryVideo(videoUid, complete)...)
 		time.Sleep(20 * time.Second)
 		if len(lotterys) == 0 {
 			fmt.Println("并未获取到有效的lottery")

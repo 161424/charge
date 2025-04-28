@@ -15,7 +15,6 @@ import (
 var DefaultUrl = "https://api.bilibili.com/x/polymer/web-dynamic/v1/opus/feed/space?page=1&host_mid="
 var DefaultSpaceVideo = "https://api.bilibili.com/x/space/wbi/arc/search?mid=%s&pn=1&ps=10"
 var SpaceUrl = "https://www.bilibili.com/opus/"
-var modelTp = "utils"
 
 type UserSpace struct {
 	Code    int

@@ -4,12 +4,14 @@ import (
 	"charge/config"
 	"charge/inet"
 	"charge/utils"
+	"encoding/json"
 	"fmt"
 	"math/rand"
 	"net/http"
-	"strings"
 	"time"
 )
+
+var modelTp = "utils"
 
 func init() {
 	inet.DefaultClient.RegisterTp(modelTp)
@@ -29,26 +31,11 @@ func DaleyTimeRandom2_10() func() {
 	start := time.Now()
 	return func() {
 		nt := time.Now()
-		dyT := config.Cfg.DaleyTime
-		if dyT == 0 {
-			dyT = 2 + rand.Int63n(8)
-		}
+		dyT := 2 + rand.Int63n(8)
+
 		if nt.Sub(start) < time.Duration(dyT*1000) {
 			time.Sleep(start.Add(time.Duration(dyT * 1000)).Sub(nt))
 		}
-	}
-}
-
-// 睡眠10分钟
-func CheckFK(b []byte) {
-	s := string(b)
-	isSleep := false
-	if strings.Contains(s, "由于触发哔哩哔哩安全风控策略，该次访问请求被拒绝。") {
-		isSleep = true
-	}
-
-	if isSleep {
-		time.Sleep(10 * time.Minute)
 	}
 }
 
@@ -72,6 +59,24 @@ func Btv2opus(tv string) string {
 		return redirectURL
 	} else {
 		return ""
+	}
+}
+
+func TakeUid(user []config.User) []string {
+	uid := []string{}
+	for _, u := range user {
+		uid = append(uid, u.Uid)
+	}
+	return uid
+}
+
+func TakeName(user *[]config.User) {
+	_inet := inet.DefaultClient
+	for i, u := range *user {
+		respBody := _inet.Http("GET", "https://api.bilibili.com/x/space/acc/info?mid="+u.Uid, "", nil)
+		var body = map[string]interface{}{}
+		json.Unmarshal(respBody, &body)
+		(*user)[i].Name = body["data"].(map[string]interface{})["name"].(string)
 	}
 }
 

@@ -3,11 +3,11 @@ package redis
 import (
 	"charge/config"
 	"charge/router/types"
-	utils2 "charge/sender/utils"
 	"charge/utils"
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/elliotchance/pie/v2"
 	"github.com/redis/go-redis/v9"
 	"strconv"
 	"time"
@@ -22,61 +22,58 @@ var Month = time.Now().Month().String()
 
 // 启动redis，并做ping检查
 func Start() {
-	addr := config.IP
-	_addr := ""
+
 	var redisClient *redis.Client
 	//confusion
 	// 当使用ipv6访问本机wsl中redis时，会访问失败，但是远程客户端使用ipv6访问本机redis服务器时，就能访问成功
-
-	if config.Cfg.Redis.Addr != "" {
-		_addr = config.Cfg.Redis.Addr
-		fmt.Println("默认redis地址1：", _addr)
-		redisClient = start(_addr)
+	defaultAddr := "127.0.0.1"
+	idx := pie.FindFirstUsing(config.Cfg.Device, func(value config.Device) bool {
+		return value.Host
+	})
+	hostInfo := config.Cfg.Device[idx]
+	if config.Cfg.DeviceType == "Host" {
+		addr := defaultAddr + ":" + hostInfo.RedisPort
+		redisClient = start(addr)
 		ok := redisClient.Ping(context.Background())
 
 		if ok.Err() == nil {
 			RedisClient = redisClient
-			fmt.Println("访问 redis地址 成功！")
+			fmt.Printf("成功访问 Host.Redis地址%s\n", addr)
 			return
 		}
-		fmt.Println("访问 redis地址 第1次失败")
+		fmt.Printf("访问 Host.Redis地址 %s 失败。err:%s\n", addr, ok.Err())
+	} else if config.Cfg.Redis.Addr != "" {
+		addr := config.Cfg.Redis.Addr
+		redisClient = start(addr)
+		ok := redisClient.Ping(context.Background())
+
+		if ok.Err() == nil {
+			RedisClient = redisClient
+			fmt.Printf("成功访问 Local.Redis地址%s\n", addr)
+
+			return
+		}
+		fmt.Printf("访问 Local.Redis地址 %s 失败。err:%s\n", addr, ok.Err())
 	}
 
-	if config.Pod == "Docker" {
-		_addr = "host.docker.internal"
-	} else {
-		_addr = "127.0.0.1"
-	}
-	fmt.Println("默认redis地址2：", _addr)
-	redisClient = start(_addr)
+	addr := hostInfo.IP + ":" + hostInfo.RedisPort
+	redisClient = start(addr)
 	ok := redisClient.Ping(context.Background())
 
 	if ok.Err() == nil {
 		RedisClient = redisClient
-		fmt.Println("访问 redis地址 成功！")
+		fmt.Printf("成功访问Remote.Host.redis地址%s\n", addr)
+
 		return
 	}
-	fmt.Println("访问 redis地址 第2次失败")
-
-	fmt.Println("默认redis地址3：", addr)
-	redisClient = start(addr)
-	ok = redisClient.Ping(context.Background())
-	if ok.Err() != nil {
-		fmt.Println("访问 redis地址 第3次失败。访问不到redis数据库")
-		RedisClient = nil
-	} else {
-		RedisClient = redisClient
-		fmt.Println("访问 远程redis 成功！", utils2.DDNSCheck(addr))
-	}
+	fmt.Printf("访问 Remote.Host.redis %s 失败。部分任务无法执行！！！。err:%s\n", addr, ok.Err())
 
 }
 
 func start(addr string) *redis.Client {
-	if config.Cfg.Redis.Port == "" {
-		config.Cfg.Redis.Port = "6379"
-	}
+
 	return redis.NewClient(&redis.Options{
-		Addr:     addr + ":" + config.Cfg.Redis.Port,
+		Addr:     addr,
 		Network:  "tcp",
 		Password: config.Cfg.Redis.Password,
 	})

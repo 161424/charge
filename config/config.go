@@ -11,32 +11,21 @@ import (
 )
 
 type config struct {
-	GIP struct {
-		IPV4 string `yaml:"IPV4"`
-		IPV6 string `yaml:"IPV6"`
-	} `yaml:"GIP"`
+	WebPort    string `yaml:"WebPort"`
+	DeviceType string
+	Device     []Device `yaml:"Device"`
 
-	WebPort string `yaml:"WebPort"`
-	Redis   Redis  `yaml:"Redis"`
-	Mongodb struct {
-		IsLocal  bool   `yaml:"IsLocal"`
-		Addr     string `yaml:"Addr"`
-		Port     string `yaml:"Port"`
-		Password string `yaml:"Password"`
-	} `yaml:"Mongodb"`
-	Refresh bool      `yaml:"Refresh"`
+	Redis   Redis     `yaml:"Redis"`
 	BUserCk []BUserCk `yaml:"BUserCk"`
 
-	ChargeUid       []string `yaml:"ChargeUid"`
-	LotteryUid      []string `yaml:"LotteryUid"`
-	FakeLotteryUid  []string `yaml:"FakeLotteryUid"`
-	SpecialUid      []string `yaml:"SpecialUid"`
-	WebUserAgent    string   `yaml:"WebUserAgent"`
-	MobileUserAgent string   `yaml:"MobileUserAgent"`
+	ChargeUid       []User `yaml:"ChargeUid"`
+	LotteryUid      []User `yaml:"LotteryUid"`
+	SpecialUid      []User `yaml:"SpecialUid"`
+	WebUserAgent    string `yaml:"WebUserAgent"`
+	MobileUserAgent string `yaml:"MobileUserAgent"`
 
 	DDNS DDNS `yaml:"DDNS"`
 
-	DaleyTime     int64  `yaml:"DaleyTime"`
 	Server3       string `yaml:"Server3"`
 	BCoinExchange string `yaml:"BCoinExchange"`
 	Ql            Ql     `yaml:"Ql"`
@@ -44,9 +33,16 @@ type config struct {
 	Model string `yaml:"Model"`
 }
 
+type Device struct {
+	Host      bool `yaml:"Host"`
+	IP        string
+	RedisPort string
+	QLPort    string
+	Name      string
+}
+
 type Redis struct {
 	Addr     string `yaml:"Addr"`
-	Port     string `yaml:"Port"`
 	Password string `yaml:"Password"`
 	Id_rsa   string `yaml:"Id_rsa"`
 }
@@ -58,6 +54,11 @@ type BUserCk struct {
 	Group      string `yaml:"Group"`
 	Uname      string `yaml:"Uname"`
 	Uid        int64  `yaml:"Uid"`
+}
+
+type User struct {
+	Name string `yaml:"Name"`
+	Uid  string `yaml:"Uid"`
 }
 
 type DDNS struct {
@@ -79,7 +80,6 @@ type Ql struct {
 var Cfg = &config{}
 var Ps = string(os.PathSeparator)
 var Path = ""
-var IP = "127.0.0.1"
 var Pod = os.Getenv("Pod")
 
 func init() {
@@ -94,7 +94,7 @@ func Start() {
 }
 
 func Read() {
-	//fmt.Println(Pod)
+
 	Path, _ = os.Getwd()
 
 	npath := strings.Split(Path, Ps)
@@ -119,11 +119,6 @@ func Read() {
 		log.Fatalf("解析 YAML 失败: %v", err)
 	}
 	fmt.Println("config:", Cfg)
-	if Cfg.GIP.IPV4 != "" {
-		IP = Cfg.GIP.IPV4
-	} else if Cfg.GIP.IPV6 != "" {
-		IP = "[" + Cfg.GIP.IPV6 + "]"
-	}
 
 }
 

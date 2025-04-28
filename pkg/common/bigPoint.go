@@ -199,7 +199,7 @@ func BigPoint(idx int) {
 // 签到
 func VSign(idx int) int {
 	// url :(= "https://api.bilibili.com/pgc/activity/score/task/sign"
-	url := "https://api.bilibili.com/pgc/activity/score/task/sign2?csrf=08d0510a26f10c5e84d0601570472382"
+	url := "https://api.bilibili.com/pgc/activity/score/task/sign2"
 
 	reqSignBody := &reqSign{
 		T:      time.Now().UnixMilli(),

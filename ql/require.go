@@ -5,6 +5,7 @@ import (
 	"charge/utils"
 	"encoding/json"
 	"fmt"
+	"github.com/elliotchance/pie/v2"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -26,38 +27,42 @@ func init() {
 			IdleConnTimeout: 30 * time.Second,
 		},
 	}
-	port := "5700"
-	if config.Cfg.Ql.Port != "" {
-		port = config.Cfg.Ql.Port
-	}
-
-	if config.Cfg.Ql.Addr != "" {
-		QlClient.Addr = config.Cfg.Ql.Addr
-	} else {
-		if config.Pod == "Docker" {
-			QlClient.Addr = "host.docker.internal"
-		} else {
-			QlClient.Addr = "127.0.0.1"
-		}
-	}
-
-	QlClient.Addr = "http://" + QlClient.Addr + ":" + port
 	QlClient.ClientId = config.Cfg.Ql.ClientId
 	QlClient.ClientSecret = config.Cfg.Ql.ClientSecret
+	addr := ""
 
+	idx := pie.FindFirstUsing(config.Cfg.Device, func(value config.Device) bool {
+		return value.Host
+	})
+	port := config.Cfg.Device[idx].QLPort
+
+	if config.Cfg.DeviceType == "Host" {
+		addr = "127.0.0.1" + ":" + port
+		QlClient.Addr = "http://" + addr
+		ok := LinkQl()
+		if ok != "" {
+			fmt.Printf("成功访问 Host.QL地址%s\n", addr)
+			return
+		}
+		fmt.Printf("访问 Host.QL地址 %s 失败。\n", addr)
+	} else if config.Cfg.Ql.Addr != "" {
+		addr = config.Cfg.Ql.Addr
+		QlClient.Addr = "http://" + addr
+		ok := LinkQl()
+		if ok != "" {
+			fmt.Printf("成功访问 Local.QL地址%s\n", addr)
+			return
+		}
+		fmt.Printf("访问 Local.QL地址 %s 失败。\n", addr)
+	}
+
+	QlClient.Addr = "http://" + config.Cfg.Device[idx].IP + ":" + port
 	ok := LinkQl()
 	if ok != "" {
-		fmt.Println("青龙第一次连接成功", QlClient.Addr)
+		fmt.Printf("成功访问Remote.Host.QL地址%s\n", addr)
 		return
 	}
-	fmt.Println("青龙第一次连接失败", QlClient.Addr)
-	QlClient.Addr = "http://" + config.IP + ":" + port
-	ok = LinkQl()
-	if ok != "" {
-		fmt.Println("青龙第二次连接成功", QlClient.Addr)
-		return
-	}
-	fmt.Println("青龙第二次连接失败", QlClient.Addr)
+	fmt.Printf("访问 Remote.Host.QL %s 失败。部分任务无法执行！！！。\n", addr)
 
 }
 

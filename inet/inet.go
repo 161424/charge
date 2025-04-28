@@ -412,10 +412,9 @@ func (d *defaultClient) CheckCkAlive(skip bool) {
 	for idx := 0; idx < len(d.Cks); idx++ {
 		uid = utils.CutUid(d.Cks[idx].Ck)
 		code := -1
-		if config.Cfg.Refresh {
-			if config.Cfg.BUserCk[idx].Token != "" {
-				code = Refresh(idx) // Refresh中的刷新函数会刷新失败，报错-101，但是仍能访问个人空间。想当于失效了一半，但是在访问某些内容会-101未登录。可以看出csrf可用，但别的风控失效
-			}
+
+		if config.Cfg.BUserCk[idx].Token != "" {
+			code = Refresh(idx) // Refresh中的刷新函数会刷新失败，报错-101，但是仍能访问个人空间。想当于失效了一半，但是在访问某些内容会-101未登录。可以看出csrf可用，但别的风控失效
 		}
 
 		if code == 0 { // 0 表示登录或ck刷新成功，无需再确定活性

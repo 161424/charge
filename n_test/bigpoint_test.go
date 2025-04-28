@@ -43,7 +43,7 @@ func TestVSign(t *testing.T) {
 	config.Start()
 	redis.Start()
 	inet.DefaultClient.ReFresh(true)
-	n := common.VSign(2)
+	n := common.VSign(0)
 	fmt.Println(n)
 	fmt.Println("【123】，【哈哈哈】，[123]，[哈哈哈]")
 }
