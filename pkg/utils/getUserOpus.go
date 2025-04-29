@@ -2,6 +2,7 @@ package utils
 
 import (
 	"bytes"
+	"charge/config"
 	"charge/inet"
 	"charge/utils"
 	"encoding/json"
@@ -29,15 +30,15 @@ type UserSpace struct {
 
 // #todo 有err，还不想改
 // 获取uname最近的几个动态dity
-func GetUserOpus(Uid []string) []string {
+func GetUserOpus(user []config.User) []string {
 	opus := map[string]struct{}{} // 去重使用
 	d := inet.DefaultClient
 
-	if len(Uid) != 0 {
+	if len(user) != 0 {
 		re := regexp.MustCompile("[0-9]{18,}")
-		utils.Shuffle(Uid) // 打乱被监听者uid
-		for _, uid := range Uid {
-			url := DefaultUrl + uid
+		utils.Shuffle(user) // 打乱被监听者uid
+		for _, uid := range user {
+			url := DefaultUrl + uid.Uid
 			d.RedundantDW(url, modelTp, time.Second*5)
 			userSpace := UserSpace{}
 			body := <-d.AliveCh[modelTp]

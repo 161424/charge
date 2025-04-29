@@ -1,22 +1,13 @@
-GIP:
-    IPV4: ""
-    IPV6: ""
 WebPort: ""
+devicetype: ""
+Device: []
 Redis:
     Addr: ""
-    Port: ""
     Password: ""
     Id_rsa: ""
-Mongodb:
-    IsLocal: false
-    Addr: ""
-    Port: ""
-    Password: ""
-Refresh: false
 BUserCk: []
 ChargeUid: []
 LotteryUid: []
-FakeLotteryUid: []
 SpecialUid: []
 WebUserAgent: ""
 MobileUserAgent: ""
@@ -27,7 +18,6 @@ DDNS:
     ApiToken: ""
     Type: ""
     Name: ""
-DaleyTime: 0
 Server3: ""
 BCoinExchange: ""
 Ql:

@@ -69,10 +69,10 @@ func ListenUpForLotteryOpus(Uid []string, cmp chan struct{}) []string {
 
 		reBv := regexp.MustCompile("https://b23.tv/[A-Za-z0-9]{7,17}")
 		stopPage := 5
-		fmt.Println("[opus]监听专栏用户列表：", Uid)
+		fmt.Println("[opus]:监听专栏用户列表：", Uid)
 		hu := map[string]string{}
 		for _, uid := range Uid {
-			fmt.Printf("查看用户uid:【%s】。\n", uid)
+			fmt.Printf("[opus]:查看用户uid:【%s】。\n", uid)
 			if uid == "2595733" {
 				stopPage = 12
 			} else {
@@ -85,7 +85,7 @@ func ListenUpForLotteryOpus(Uid []string, cmp chan struct{}) []string {
 			userSpace := UserSpace{}
 			err := json.Unmarshal(body[:len(body)-1], &userSpace)
 			if err != nil {
-				fmt.Println(err)
+				fmt.Println("[opus]:1.", err.Error())
 				continue
 			}
 			his := redis.ListenUpHistory(ctx, uid)
@@ -93,7 +93,6 @@ func ListenUpForLotteryOpus(Uid []string, cmp chan struct{}) []string {
 			// 只获取前五个图文数据
 			counter := 0
 			for _, item := range userSpace.Data.Items {
-
 				if uid == "373018905" && counter == 1 {
 					break
 				}
@@ -120,14 +119,15 @@ func ListenUpForLotteryOpus(Uid []string, cmp chan struct{}) []string {
 				body = <-d.AliveCh[modelTp]
 				doc, err := goquery.NewDocumentFromReader(bytes.NewReader(body[:len(body)-1]))
 				if err != nil {
+					fmt.Println("[opus]:2.", err.Error())
 					continue
 				}
 
 				lTime := doc.Find(".opus-module-author__pub__text").Text()
 				if len(lTime) > 10 {
-					lTime = lTime[:10] + "..."
+					lTime = lTime[:5] + "..."
 				}
-				fmt.Printf("正在查看第【%d】页内容。文章id：%s；文章标题《%s》；%s\n", counter, item.OpusID, item.Content[:10], lTime)
+				fmt.Printf("[opus]:正在查看第【%d】页内容。文章id：%s；文章标题《%s》；%s\n", counter, item.OpusID, item.Content[:10], lTime)
 				d.ArticleLike(item.OpusID) // 给专栏点赞
 				doc.Find(".opus-module-content > p").Each(func(i int, s *goquery.Selection) {
 					//fmt.Println(1, s.Get(i), s.Text())
@@ -172,7 +172,7 @@ func ListenUpForLotteryOpus(Uid []string, cmp chan struct{}) []string {
 			for _, v := range opus {
 				lotteryRepetitionRate += v
 			}
-			fmt.Printf("[opus]目前统计到%d个Lottery，重复率是%f。\n", len(opus), float64(lotteryRepetitionRate)/float64(len(opus)))
+			fmt.Printf("[opus]:目前统计到%d个Lottery，重复率是%f。\n", len(opus), float64(lotteryRepetitionRate)/float64(len(opus)))
 		}
 		go func() {
 			<-cmp
@@ -196,10 +196,10 @@ func ListenUpForLotteryVideo(Uid []string, cmp chan struct{}) []string {
 
 	if len(Uid) != 0 {
 		utils.Shuffle(Uid) // 打乱被监听者uid
-		fmt.Println("[video]监听视频用户列表：", Uid)
+		fmt.Println("[video]:监听视频用户列表：", Uid)
 		hu := map[string]string{}
 		for _, uid := range Uid {
-			fmt.Printf("查看用户uid：【%s】。\n", uid)
+			fmt.Printf("[video]:查看用户uid：【%s】。\n", uid)
 			_url := "https://app.bilibili.com/x/v2/space/archive/cursor?vmid=" + uid
 			videos := &Videos{}
 			//fmt.Println(inet.DefaultClient)
@@ -250,7 +250,7 @@ func ListenUpForLotteryVideo(Uid []string, cmp chan struct{}) []string {
 			for _, v := range opus {
 				lotteryRepetitionRate += v
 			}
-			fmt.Printf("[video]目前统计到%d个Lottery，重复率是%f。\n", len(opus), float64(lotteryRepetitionRate)/float64(len(opus)))
+			fmt.Printf("[video]:目前统计到%d个Lottery，重复率是%f。\n", len(opus), float64(lotteryRepetitionRate)/float64(len(opus)))
 		}
 
 		go func() {
