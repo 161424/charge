@@ -127,7 +127,12 @@ func ListenUpForLotteryOpus(Uid []string, cmp chan struct{}) []string {
 				if len(lTime) > 10 {
 					lTime = lTime[:5] + "..."
 				}
-				fmt.Printf("[opus]:正在查看第【%d】页内容。文章id：%s；文章标题《%s》；%s\n", counter, item.OpusID, item.Content[:10], lTime)
+				if len(item.Content) > 10 {
+					fmt.Printf("[opus]:正在查看第【%d】页内容。文章id：%s；文章标题《%s》；%s\n", counter, item.OpusID, item.Content[:10], lTime)
+				} else {
+					fmt.Printf("[opus]:正在查看第【%d】页内容。文章id：%s；文章标题《%s》；%s\n", counter, item.OpusID, item.Content, lTime)
+				}
+
 				d.ArticleLike(item.OpusID) // 给专栏点赞
 				doc.Find(".opus-module-content > p").Each(func(i int, s *goquery.Selection) {
 					//fmt.Println(1, s.Get(i), s.Text())
