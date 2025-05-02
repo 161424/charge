@@ -24,7 +24,6 @@ var Month = time.Now().Month().String()
 func Start() {
 
 	var redisClient *redis.Client
-	//confusion
 	// 当使用ipv6访问本机wsl中redis时，会访问失败，但是远程客户端使用ipv6访问本机redis服务器时，就能访问成功
 	defaultAddr := "127.0.0.1"
 	idx := pie.FindFirstUsing(config.Cfg.Device, func(value config.Device) bool {
@@ -42,7 +41,20 @@ func Start() {
 			return
 		}
 		fmt.Printf("访问 Host.Redis地址 %s 失败。err:%s\n", addr, ok.Err())
-	} else if config.Cfg.Redis.Addr != "" {
+	}
+
+	addr := hostInfo.IP + ":" + hostInfo.RedisPort
+	redisClient = start(addr)
+	ok := redisClient.Ping(context.Background())
+
+	if ok.Err() == nil {
+		RedisClient = redisClient
+		fmt.Printf("成功访问Remote.Host.redis地址%s\n", addr)
+
+		return
+	}
+
+	if config.Cfg.Redis.Addr != "" {
 		addr := config.Cfg.Redis.Addr
 		redisClient = start(addr)
 		ok := redisClient.Ping(context.Background())
@@ -56,17 +68,7 @@ func Start() {
 		fmt.Printf("访问 Local.Redis地址 %s 失败。err:%s\n", addr, ok.Err())
 	}
 
-	addr := hostInfo.IP + ":" + hostInfo.RedisPort
-	redisClient = start(addr)
-	ok := redisClient.Ping(context.Background())
-
-	if ok.Err() == nil {
-		RedisClient = redisClient
-		fmt.Printf("成功访问Remote.Host.redis地址%s\n", addr)
-
-		return
-	}
-	fmt.Printf("访问 Remote.Host.redis %s 失败。部分任务无法执行！！！。err:%s\n", addr, ok.Err())
+	fmt.Printf("访问 redis %s 失败。部分任务无法执行！！！。err:%s\n", addr, ok.Err())
 
 }
 

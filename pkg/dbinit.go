@@ -1,7 +1,9 @@
 package pkg
 
 import (
+	"charge/config"
 	redis2 "charge/dao/redis"
+	utils2 "charge/pkg/utils"
 	"fmt"
 	"time"
 )
@@ -23,22 +25,14 @@ func Start() {
 		return
 	}
 
-	//f := getcharge.GetChargeFromMonitorDefaultUsersDynamic()
-	//fmt.Println("init start: getcharge.GetChargeFromMonitorDefaultUsersDynamic() ")
+	f := func() {
+		users := config.Cfg.ChargeUid
+		users = append(users, config.Cfg.LotteryUid...)
+		users = append(users, config.Cfg.SpecialUid...)
+		utils2.TakeName(&users)
+	}
 
-	//f := getcharge.GetChargeRecordFromCharger()
-	//fmt.Println("init start: getcharge.GetChargeRecordFromCharger()")
-	//lf = append(lf, f)
-
-	//f1 := listenUpForLottery.ListenLotteryUp()
-	//fmt.Println("init start: listenUpForLottery.ListenLotteryUp()")
-	//lf = append(lf, f1)
-	//f2 := listenGroup.ListenDJLChannel()
-	//fmt.Println("开始f2")
-	//lf = append(lf, f2)
-	//f2 := listenUpForLottery.BalanceLottery()
-	//fmt.Println("init start: listenUpForLottery.BalanceLottery()")
-	//lf = append(lf, f2)
+	lf = append(lf, f)
 
 	//lf = append(lf, common.DailyTask())
 	if len(lf) > 0 {
