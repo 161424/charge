@@ -25,14 +25,14 @@ func Start() {
 
 	var redisClient *redis.Client
 	// 当使用ipv6访问本机wsl中redis时，会访问失败，但是远程客户端使用ipv6访问本机redis服务器时，就能访问成功
-	defaultAddr := "127.0.0.1"
+
 	idx := pie.FindFirstUsing(config.Cfg.Device, func(value config.Device) bool {
 		return value.Host
 	})
 	hostInfo := config.Cfg.Device[idx]
 	// 如果是host节点
 	if config.Cfg.DeviceType == "Host" {
-		addr := defaultAddr + ":" + hostInfo.RedisPort
+		addr := hostInfo.IP + ":" + hostInfo.RedisPort
 		redisClient = start(addr)
 		ok := redisClient.Ping(context.Background())
 
@@ -44,8 +44,9 @@ func Start() {
 		fmt.Printf("访问 Host.Redis地址 %s 失败。err:%s\n", addr, ok.Err())
 	}
 
-	// 首选访问host节点
-	addr := hostInfo.IP + ":" + hostInfo.RedisPort
+	// 公网ip访问本地节点
+	ip := utils.GetCurrentIpv4()
+	addr := ip + ":" + hostInfo.RedisPort
 	redisClient = start(addr)
 	ok := redisClient.Ping(context.Background())
 
@@ -57,7 +58,7 @@ func Start() {
 		fmt.Printf("访问 Remote.Host.redis %s 失败。err:%s\n", addr, ok.Err())
 	}
 
-	// 最终访问本地节点
+	// 私网ip访问本地节点
 	if config.Cfg.Redis.Addr != "" {
 		addr := config.Cfg.Redis.Addr
 		redisClient = start(addr)

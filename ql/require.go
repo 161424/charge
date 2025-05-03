@@ -37,7 +37,9 @@ func init() {
 	if qlidx != -1 {
 		ql = config.Cfg.Device[qlidx].Ql
 	} else {
-		fmt.Println("ql.未知错误")
+		fmt.Println("ql.未找到公网ip")
+		ip = utils.GetCurrentIpv4Private()[0]
+		// 私有ip需要的信息
 	}
 
 	QlClient.ClientId = ql.ClientId
@@ -49,23 +51,14 @@ func init() {
 	})
 	port := config.Cfg.Device[idx].QLPort
 
-	addr = "127.0.0.1" + ":" + "5700"
-	QlClient.Addr = "http://" + addr
+	addr = ip + ":" + "15700"
+	QlClient.Addr = "http://" + port
 	ok := LinkQl()
 	if ok != "" {
 		fmt.Printf("成功访问 Local.QL地址%s\n", addr)
 		return
 	}
-	fmt.Printf("访问 Local.QL地址1 %s 失败。\n", addr)
 
-	addr = "127.0.0.1" + ":" + port
-	QlClient.Addr = "http://" + addr
-	ok = LinkQl()
-	if ok != "" {
-		fmt.Printf("成功访问 Local.QL地址%s\n", addr)
-		return
-	}
-	fmt.Printf("访问 Local.QL地址2 %s 失败。\n", addr)
 	fmt.Printf("访问 QL %s 失败。部分任务无法执行！！！。\n", QlClient.Addr)
 
 }
