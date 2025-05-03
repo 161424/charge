@@ -24,7 +24,7 @@ func TestRedisIpv6(t *testing.T) {
 		network = "tcp6"
 	}
 	redisClient := redis.NewClient(&redis.Options{
-		Addr:     addr + config.Cfg.Redis.Port,
+		Addr:     addr + ":6379",
 		Network:  network,
 		Password: config.Cfg.Redis.Password,
 	})

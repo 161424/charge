@@ -49,9 +49,10 @@ func Start() {
 
 	if ok.Err() == nil {
 		RedisClient = redisClient
-		fmt.Printf("成功访问Remote.Host.redis地址%s\n", addr)
-
+		fmt.Printf("成功访问 Remote.Host.redis地址%s\n", addr)
 		return
+	} else {
+		fmt.Printf("访问 Remote.Host.redis %s 失败。err:%s\n", addr, ok.Err())
 	}
 
 	if config.Cfg.Redis.Addr != "" {

@@ -64,8 +64,8 @@ func ListenLotteryUp() func() {
 		monitor.Tag = "lottery"
 		monitor.Title = "每日lottery(ByUp)监控"
 		complete := make(chan struct{})
-		opusUid := utils.TakeUid(config.Cfg.LotteryUid)
-		videoUid := utils.TakeUid(config.Cfg.SpecialUid)
+		opusUid := utils.GetUid(config.Cfg.LotteryUid)
+		videoUid := utils.GetUid(config.Cfg.SpecialUid)
 		lotterys := utils.ListenUpForLotteryOpus(opusUid, complete)
 		lotterys = append(lotterys, utils.ListenUpForLotteryVideo(videoUid, complete)...)
 		time.Sleep(20 * time.Second)

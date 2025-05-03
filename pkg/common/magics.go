@@ -893,11 +893,11 @@ func magicWarOrderReceive(idx int, acId string) {
 	resp := inet.DefaultClient.CheckSelectPost(url, "", "", "", idx, strings.NewReader(reqBody))
 	err := json.Unmarshal(resp, magicWarReceiveResp)
 	if err != nil {
-		Note.StatusAddString(utils.ErrMsg["json"], "magicWarOrderReceive1", err.Error(), string(resp))
+		Note.StatusAddString(utils.ErrMsg["json"], "magicWarOrderReceive1", err.Error(), magicWarReceiveResp.Message)
 		return
 	}
 	if magicWarReceiveResp.Code != 0 {
-		Note.StatusAddString(utils.ErrMsg["code"], "magicWarOrderReceive1", magicWarReceiveResp.Code, string(resp))
+		Note.StatusAddString(utils.ErrMsg["code"], "magicWarOrderReceive1", magicWarReceiveResp.Code, magicWarReceiveResp.Message)
 		return
 	}
 	url = pkg.Host["mall"] + "/mall-magic-c/internet/mls_pm/war_order/prize_receive"
@@ -908,11 +908,11 @@ func magicWarOrderReceive(idx int, acId string) {
 		resp = inet.DefaultClient.CheckSelectPost(url, "", "", "", idx, strings.NewReader(reqBody))
 		err = json.Unmarshal(resp, magicWarReceiveResp2)
 		if err != nil {
-			Note.StatusAddString(utils.ErrMsg["json"], "magicWarOrderReceive2", err.Error(), string(resp))
+			Note.StatusAddString(utils.ErrMsg["json"], "magicWarOrderReceive2", err.Error(), magicWarReceiveResp2.Message)
 			continue
 		}
 		if magicWarReceiveResp2.Code != 0 {
-			Note.StatusAddString(utils.ErrMsg["code"], "magicWarOrderReceive2", magicWarReceiveResp2.Code, string(resp))
+			Note.StatusAddString(utils.ErrMsg["code"], "magicWarOrderReceive2", magicWarReceiveResp2.Code, magicWarReceiveResp2.Message)
 			continue
 		} else {
 			fmt.Println("战令奖励领取成功")

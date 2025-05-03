@@ -159,6 +159,7 @@ func TestLottery6(t *testing.T) {
 	redis.Start()
 	inet.DefaultClient.ReFresh(true)
 	complete := make(chan struct{})
-	lotterys := utils2.ListenUpForLotteryVideo(config.Cfg.SpecialUid, complete)
+	videoUid := utils2.GetUid(config.Cfg.SpecialUid)
+	lotterys := utils2.ListenUpForLotteryVideo(videoUid, complete)
 	fmt.Println(lotterys)
 }

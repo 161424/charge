@@ -62,7 +62,7 @@ func Btv2opus(tv string) string {
 	}
 }
 
-func TakeUid(user []config.User) []string {
+func GetUid(user []config.User) []string {
 	uid := []string{}
 	for _, u := range user {
 		uid = append(uid, u.Uid)

@@ -48,7 +48,7 @@ func GetQLEnv(token string) {
 	resp, _ := QlClient.Get(url, token)
 	err := json.Unmarshal(resp, qlEnvs)
 	if err != nil {
-		fmt.Println(utils.ErrMsg["json"], "UpdateLocalEnv", err, string(resp))
+		fmt.Printf(utils.ErrMsg["json"], "UpdateLocalEnv", err, string(resp))
 		return
 	}
 	for _, ck := range config.Cfg.BUserCk {

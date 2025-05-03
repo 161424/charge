@@ -38,6 +38,7 @@ type Device struct {
 	IP        string
 	RedisPort string
 	QLPort    string
+	Proxy     string
 	Name      string
 }
 
