@@ -22,7 +22,7 @@ func PushOpus() func() {
 					UploadOpus(idx)
 				}(i)
 			} else {
-				rn := rand.Intn(5)
+				rn := rand.Intn(2)
 				if rn == 2 {
 					time.Sleep(time.Duration(rand.Intn(randomNumber)) * time.Second)
 					go func(idx int) {

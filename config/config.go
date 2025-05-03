@@ -28,7 +28,6 @@ type config struct {
 
 	Server3       string `yaml:"Server3"`
 	BCoinExchange string `yaml:"BCoinExchange"`
-	Ql            Ql     `yaml:"Ql"`
 
 	Model string `yaml:"Model"`
 }
@@ -38,8 +37,9 @@ type Device struct {
 	IP        string
 	RedisPort string
 	QLPort    string
-	Proxy     string
+	ProxyPort string
 	Name      string
+	Ql        Ql `yaml:"Ql"`
 }
 
 type Redis struct {
@@ -73,7 +73,6 @@ type DDNS struct {
 
 type Ql struct {
 	Addr         string `yaml:"Addr"`
-	Port         string `yaml:"Port"`
 	ClientId     string `yaml:"ClientId"`
 	ClientSecret string `yaml:"ClientSecret"`
 }
@@ -102,9 +101,9 @@ func Read() {
 	if npath[len(npath)-1] != "charge" {
 		npath = npath[:len(npath)-1]
 	}
-	fmt.Println("Path:", Path)
-	Path = strings.Join(npath, "/")
 
+	Path = strings.Join(npath, "/")
+	fmt.Println("Path:", Path)
 	fmt.Println("rootPath:", Path+"/config/config.yaml")
 	data, err := os.OpenFile(Path+"/config/config.yaml", os.O_RDWR, 777)
 	if err != nil {

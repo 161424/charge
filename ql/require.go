@@ -21,14 +21,27 @@ type qlClient struct {
 
 var QlClient = qlClient{}
 
+// var QlClientRemote = qlClient{}
 func init() {
 	QlClient.Client = &http.Client{
 		Transport: &http.Transport{
 			IdleConnTimeout: 30 * time.Second,
 		},
 	}
-	QlClient.ClientId = config.Cfg.Ql.ClientId
-	QlClient.ClientSecret = config.Cfg.Ql.ClientSecret
+	var ql config.Ql
+
+	ip := utils.GetCurrentIpv4()
+	qlidx := pie.FindFirstUsing(config.Cfg.Device, func(value config.Device) bool {
+		return value.IP == ip
+	})
+	if qlidx != -1 {
+		ql = config.Cfg.Device[qlidx].Ql
+	} else {
+		fmt.Println("ql.未知错误")
+	}
+
+	QlClient.ClientId = ql.ClientId
+	QlClient.ClientSecret = ql.ClientSecret
 	addr := ""
 
 	idx := pie.FindFirstUsing(config.Cfg.Device, func(value config.Device) bool {
@@ -36,33 +49,24 @@ func init() {
 	})
 	port := config.Cfg.Device[idx].QLPort
 
-	if config.Cfg.DeviceType == "Host" {
-		addr = "127.0.0.1" + ":" + port
-		QlClient.Addr = "http://" + addr
-		ok := LinkQl()
-		if ok != "" {
-			fmt.Printf("成功访问 Host.QL地址%s\n", addr)
-			return
-		}
-		fmt.Printf("访问 Host.QL地址 %s 失败。\n", addr)
-	} else if config.Cfg.Ql.Addr != "" {
-		addr = config.Cfg.Ql.Addr
-		QlClient.Addr = "http://" + addr
-		ok := LinkQl()
-		if ok != "" {
-			fmt.Printf("成功访问 Local.QL地址%s\n", addr)
-			return
-		}
-		fmt.Printf("访问 Local.QL地址 %s 失败。\n", addr)
-	}
-
-	QlClient.Addr = "http://" + config.Cfg.Device[idx].IP + ":" + port
+	addr = "127.0.0.1" + ":" + "5700"
+	QlClient.Addr = "http://" + addr
 	ok := LinkQl()
 	if ok != "" {
-		fmt.Printf("成功访问Remote.Host.QL地址%s\n", addr)
+		fmt.Printf("成功访问 Local.QL地址%s\n", addr)
 		return
 	}
-	fmt.Printf("访问 Remote.Host.QL %s 失败。部分任务无法执行！！！。\n", addr)
+	fmt.Printf("访问 Local.QL地址1 %s 失败。\n", addr)
+
+	addr = "127.0.0.1" + ":" + port
+	QlClient.Addr = "http://" + addr
+	ok = LinkQl()
+	if ok != "" {
+		fmt.Printf("成功访问 Local.QL地址%s\n", addr)
+		return
+	}
+	fmt.Printf("访问 Local.QL地址2 %s 失败。\n", addr)
+	fmt.Printf("访问 QL %s 失败。部分任务无法执行！！！。\n", QlClient.Addr)
 
 }
 

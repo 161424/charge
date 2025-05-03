@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"charge/config"
 	"charge/sender"
+	"charge/utils"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -18,30 +19,6 @@ import (
 // var dns_record_id = ""     //DNS记录的ID
 // var api_token = "" // Cloudflare的API Token
 
-type GCI struct {
-	Result    bool
-	Code      string
-	Message   string
-	IP        string
-	IPVersion string
-}
-
-func GetCurrentIp() string {
-	url := "https://6.ipw.cn/api/ip/myip?json"
-	resp, err := http.Get(url)
-	if err != nil {
-		return ""
-	}
-	defer resp.Body.Close()
-	body, _ := io.ReadAll(resp.Body)
-	gci := &GCI{}
-	err = json.Unmarshal(body, gci)
-	if err != nil {
-		return ""
-	}
-	return gci.IP
-}
-
 func UpdateDnsRecode() func() {
 	return func() {
 		url := "https://api.cloudflare.com/client/v4/zones/%s/dns_records/%s"
@@ -54,7 +31,7 @@ func UpdateDnsRecode() func() {
 		monitor := sender.Monitor{}
 		monitor.Tag = "DDNS"
 		monitor.Title = "Ipv6"
-		ip := GetCurrentIp()
+		ip := utils.GetCurrentIpv6()
 		if ip == "" {
 			monitor.Desp = fmt.Sprintf("ipv6的ip获取失败")
 			monitor.PushS()
