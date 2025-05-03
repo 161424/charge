@@ -51,8 +51,8 @@ func init() {
 	})
 	port := config.Cfg.Device[idx].QLPort
 
-	addr = ip + ":" + "15700"
-	QlClient.Addr = "http://" + port
+	addr = ip + ":" + port
+	QlClient.Addr = "http://" + addr
 	ok := LinkQl()
 	if ok != "" {
 		fmt.Printf("成功访问 Local.QL地址%s\n", addr)
