@@ -33,13 +33,13 @@ type config struct {
 }
 
 type Device struct {
-	Host      bool `yaml:"Host"`
-	IP        string
-	RedisPort string
-	QLPort    string
-	ProxyPort string
-	Name      string
-	Ql        Ql `yaml:"Ql"`
+	Host      bool   `yaml:"Host"`
+	IP        string `yaml:"IP"`
+	RedisPort string `yaml:"RedisPort"`
+	QLPort    string `yaml:"QLPort"`
+	ProxyPort string `yaml:"ProxyPort"`
+	Name      string `yaml:"Name"`
+	Ql        Ql     `yaml:"Ql"`
 }
 
 type Redis struct {
