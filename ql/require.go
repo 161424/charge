@@ -117,6 +117,7 @@ type AToken struct {
 }
 
 func LinkQl() string {
+	time.Sleep(10 * time.Second)
 	if QlClient.ClientId == "" || QlClient.ClientSecret == "" {
 		fmt.Println("ql 身份验证失败")
 		return ""
