@@ -70,13 +70,32 @@ func GetUid(user []config.User) []string {
 	return uid
 }
 
+type midUser struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+	Ttl     int    `json:"ttl"`
+	Data    struct {
+		Mid  int    `json:"mid"`
+		Name string `json:"name"`
+	} `json:"data"`
+}
+
 func TakeName(user *[]config.User) {
 	_inet := inet.DefaultClient
 	for i, u := range *user {
 		respBody := _inet.Http("GET", "https://api.bilibili.com/x/space/acc/info?mid="+u.Uid, "", nil)
-		var body = map[string]interface{}{}
-		json.Unmarshal(respBody, &body)
-		(*user)[i].Name = body["data"].(map[string]interface{})["name"].(string)
+		var body = midUser{}
+		err := json.Unmarshal(respBody, &body)
+
+		if err != nil {
+			return
+		}
+		if body.Code != 0 {
+			return
+		}
+
+		(*user)[i].Name = body.Data.Name
+
 	}
 }
 

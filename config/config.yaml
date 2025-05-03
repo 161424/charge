@@ -1,0 +1,75 @@
+WebPort: 127.0.0.1:2025
+DeviceType: Host
+Device:
+  - Host: true
+    IP: 47.117.144.123
+    RedisPort: 16379
+    QLPort: 15700
+    ProxyPort: 0
+    Name: ali
+    Ql:
+      ClientId: G_NnpUwLV8dq
+      ClientSecret: y112y2WwJwsIFx_78L_ExtRs
+
+  - Host: false
+    IP: 115.120.234.147
+    Name: hw
+    Ql:
+      ClientId: z8y_k4DOHVl5
+      ClientSecret: XrCj-0ddMc3k7NgQhR6xdWM3
+
+Redis:
+    Addr: localhost:6379
+    Password: ""
+    Id_rsa: ""
+
+BUserCk:
+    - Ck: buvid4=BCBBE5DD-DA08-3323-C879-3B8B4181302D07932-023072221-u3CRc4RDNboKQbEiVxyj1w%3D%3D; header_theme_version=CLOSE; DedeUserID=74199115; DedeUserID__ckMd5=8d1ad2254e14c603; buvid_fp_plain=undefined; enable_web_push=DISABLE; is-2022-channel=1; CURRENT_BLACKGAP=0; FEED_LIVE_VERSION=V_WATCHLATER_PIP_WINDOW; buvid3=10783F3E-F0BB-478C-A9DD-C86A50E920B990117infoc; b_nut=1721570090; _uuid=2E2104DB3-C461-722A-10E5E-49D7B829823C96320infoc; rpdid=|(J~R~kJku|~0J'u~kRY~uk|u; LIVE_BUVID=AUTO8517339017486916; hit-dyn-v2=1; SESSDATA=f5d75d9e%2C1751708431%2C89f1d%2A11CjBXTOYfbPQ1_bQvts8gfgQbW652YB6R5nFgHX-RgUl00rt8pBR4C2R8SdHOdzymMg4SVkpRd0M2VlVnQTZOSGFWUnNrZGxwaDA5UXB5OTJVdnhQc0dLTHlQYmE2d2JiOWVhTkYtWkViX0NndmhCRHIwT0dDYzFPaDhfWC03TXoyVGJrdExaelh3IIEC; bili_jct=d363b63ee8162b3b9d280ddd0bd56b17; CURRENT_QUALITY=80; PVID=2; enable_feed_channel=ENABLE; fingerprint=e7b93da08d9d5a0a9234d5a93f96ba94; buvid_fp=060a3719514f8e7f4cb8fdd896b968a7; home_feed_column=5; bili_ticket=eyJhbGciOiJIUzI1NiIsImtpZCI6InMwMyIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDU2NzAxNDgsImlhdCI6MTc0NTQxMDg4OCwicGx0IjotMX0.LNEioyMc6bqM4-uLfFZ6fE517GBkinPnyozYqIWFYu8; bili_ticket_expires=1745670088; sid=8prkazaf; bp_t_offset_74199115=1059038024936980480; b_lsid=2EF975FA_1966CF21183; browser_resolution=1411-746; CURRENT_FNVAL=4048
+      Token: 430d967928c1f518a41f209c57887b21
+      Access_key: a5b0601c51002d014e446d4e498d0521CjAChJwsOSGDKtj34_UreNoy8xgTcVUjx1D_PiRwXh0kMQFIjWNRtOh2h_O-pDhWDCkSVlRFaTRHV1JwQkk5UUVNMDVqT05EMTFia29CQWJtVm9Od1V6LVlGaFJzaFhaRzctbTd6NzIzVHVFcnFvVFJpZy1QN2FoZ1JDc2QtZEYxamtuV0pEWVJBIIEC
+      Group: "221094376"
+    - Ck: buvid3=3A856780-D914-1194-A7BD-07C6AE218F9B85776infoc; b_nut=1719666985; _uuid=D210987110-B647-D7A3-D845-9D63DFB9A13784871infoc; buvid4=4C011800-F457-2012-7A0B-90805B2FF61386421-024062913-NanlpVDq39R0%2BDoO9C963w%3D%3D; enable_web_push=DISABLE; header_theme_version=CLOSE; buvid_fp_plain=undefined; LIVE_BUVID=AUTO3917259761943784; rpdid=|(J~R~kJk|Jk0J'u~klm~Yl|l; DedeUserID=2115950214; DedeUserID__ckMd5=a05872d7604d00ac; enable_feed_channel=ENABLE; fingerprint=7120a52f53e2714bd70f13ce62e2e433; buvid_fp=7120a52f53e2714bd70f13ce62e2e433; PVID=3; hit-dyn-v2=1; bili_ticket=eyJhbGciOiJIUzI1NiIsImtpZCI6InMwMyIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDYzNDI5NzIsImlhdCI6MTc0NjA4MzcxMiwicGx0IjotMX0.vB0lv8_yHQCgnEjDqDQhYf_oNFXaxXFn2-WNvzfoFZk; bili_ticket_expires=1746342912; SESSDATA=dce3f968%2C1761635773%2C891ce%2A51CjChH5IxofkSlkmrh9q5zUWd81SwBFfs8-xEzWQkZDwyrvhuaCIoBbPvUYgcAoxdKpwSVlktb0wzdlIzQW9ZYjBWd295RHhKaHhMcmN5RmQ0N2pmY0pPV0tOeUZETUdmSXlfWGgtWURWOHF0eW0wNkIzajVISUtDVExtUWFJZ1VWTEJIRVdIMEpBIIEC; bili_jct=f68e2ca2d73e7a43dec3e13fb1c7a5df; home_feed_column=5; browser_resolution=1912-954; CURRENT_FNVAL=2000; b_lsid=7101016BC10_19691AD2FA1; bmg_af_switch=1; bmg_src_def_domain=i0.hdslb.com; bp_t_offset_2115950214=1062413298000986112;
+      Token: ""
+      Access_key: ""
+      Group: ""
+
+ChargeUid:
+    - Uid: "2149231"
+      Name:
+LotteryUid:
+    - Uid: "2595733"
+      Name:
+    - Uid: "492426375"
+      Name:
+    - Uid: "100680137"
+      Name:
+    - Uid: "226257459"
+      Name:
+    - Uid: "5536630"
+      Name:
+    - Uid: "417545609"
+      Name:
+    - Uid: "373018905"
+      Name:
+SpecialUid:
+    - Uid: "885439"
+      Name:
+    - Uid: "1673762431"
+      Name:
+    - Uid: "373018905"
+      Name:
+    - Uid: "99584491"
+      Name:
+WebUserAgent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0
+MobileUserAgent: Mozilla/5.0 (Linux; Android 12; 24031PN0DC Build/V417IR; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/101.0.4951.61 Safari/537.36 Mobile os/android model/24031PN0DC build/8020300 osVer/12 sdkInt/32 network/2 BiliApp/8020300 mobi_app/android channel/yingyongbao Buvid/XU812D18534B34C4113916044792A64880198 sessionID/bde3aecb innerVer/8020300 c_locale/zh_CN s_locale/zh_CN disable_rcmd/0 8.2.0 os/android model/24031PN0DC mobi_app/android build/8020300 channel/yingyongbao innerVer/8020300 osVer/12 network/2
+DDNS:
+    ZoneID: f460ccc93a56c41d9b52de75087dca75
+    DnsRecordId: 3a72b0ea38ec3da31ee10d3b6068c5c1
+    ApiToken: qGM46X4qxqnts6WCq-lJg3rIaCrx3IXCC-3hhpTr
+    Type: AAAA
+    Name: like.151580.xyz
+
+Server3: sctp3776tdvvefnyamdjc7g51zvprjn
+BCoinExchange: "74199115"
+
+Model: test

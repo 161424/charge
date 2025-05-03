@@ -20,9 +20,4 @@ DDNS:
     Name: ""
 Server3: ""
 BCoinExchange: ""
-Ql:
-    Addr: ""
-    Port: ""
-    ClientId: ""
-    ClientSecret: ""
 Model: ""

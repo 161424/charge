@@ -32,15 +32,15 @@ func GetCurrentIpv6() string {
 }
 
 func GetCurrentIpv4() string {
-	resp, err := http.Get("https://api.ipify.org?format=text")
+	resp, err := http.Get("https://ipinfo.io/ip")
 	if err != nil {
-		panic(err)
+		return ""
 	}
 	defer resp.Body.Close()
 
 	ip, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		panic(err)
+		return ""
 	}
 
 	return string(ip)

@@ -118,7 +118,7 @@ type AToken struct {
 
 func LinkQl() string {
 	if QlClient.ClientId == "" || QlClient.ClientSecret == "" {
-		fmt.Println("身份验证失败")
+		fmt.Println("ql 身份验证失败")
 		return ""
 	}
 	url := QlClient.Addr + fmt.Sprintf("/open/auth/token?client_secret=%s&client_id=%s", QlClient.ClientSecret, QlClient.ClientId)
