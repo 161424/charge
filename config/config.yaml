@@ -1,27 +1,47 @@
 WebPort: 127.0.0.1:2025
 DeviceType: Host
-Device:
+RemoteDevice:
   - Host: true
     IP: 47.117.144.123
     RedisPort: 16379
-    QLPort: 15700
     ProxyPort: 0
     Name: ali
     Ql:
+      QLPort: 15700
       ClientId: G_NnpUwLV8dq
       ClientSecret: y112y2WwJwsIFx_78L_ExtRs
+    DDNS:
+      Type: AAAA
+      Name: like.151580.xyz
+    tools:
+      Daily: true
+      CrawlerLottery: true
+      DDNS: true
+
 
   - Host: false
     IP: 115.120.234.147
     Name: hw
     Ql:
+      QLPort: 15700
       ClientId: z8y_k4DOHVl5
       ClientSecret: XrCj-0ddMc3k7NgQhR6xdWM3
+    tools:
+      Daily: true
+      CrawlerLottery: true
+      DDNS: false
 
-Redis:
-    Addr: localhost:6379
-    Password: ""
-    Id_rsa: ""
+LocalDevice:
+  Name: LocalDevice
+  ProxyPort: 0
+  Ql:
+    QLPort: 15700
+    ClientId: -7KCeBLs2mb-
+    ClientSecret: 0CVI22Hgw_vmY3sPHkhrkCx2
+  tools:
+    Daily: true
+    CrawlerLottery: true
+    DDNS: false
 
 BUserCk:
     - Ck: buvid4=BCBBE5DD-DA08-3323-C879-3B8B4181302D07932-023072221-u3CRc4RDNboKQbEiVxyj1w%3D%3D; header_theme_version=CLOSE; DedeUserID=74199115; DedeUserID__ckMd5=8d1ad2254e14c603; buvid_fp_plain=undefined; enable_web_push=DISABLE; is-2022-channel=1; CURRENT_BLACKGAP=0; FEED_LIVE_VERSION=V_WATCHLATER_PIP_WINDOW; buvid3=10783F3E-F0BB-478C-A9DD-C86A50E920B990117infoc; b_nut=1721570090; _uuid=2E2104DB3-C461-722A-10E5E-49D7B829823C96320infoc; rpdid=|(J~R~kJku|~0J'u~kRY~uk|u; LIVE_BUVID=AUTO8517339017486916; hit-dyn-v2=1; SESSDATA=f5d75d9e%2C1751708431%2C89f1d%2A11CjBXTOYfbPQ1_bQvts8gfgQbW652YB6R5nFgHX-RgUl00rt8pBR4C2R8SdHOdzymMg4SVkpRd0M2VlVnQTZOSGFWUnNrZGxwaDA5UXB5OTJVdnhQc0dLTHlQYmE2d2JiOWVhTkYtWkViX0NndmhCRHIwT0dDYzFPaDhfWC03TXoyVGJrdExaelh3IIEC; bili_jct=d363b63ee8162b3b9d280ddd0bd56b17; CURRENT_QUALITY=80; PVID=2; enable_feed_channel=ENABLE; fingerprint=e7b93da08d9d5a0a9234d5a93f96ba94; buvid_fp=060a3719514f8e7f4cb8fdd896b968a7; home_feed_column=5; bili_ticket=eyJhbGciOiJIUzI1NiIsImtpZCI6InMwMyIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDU2NzAxNDgsImlhdCI6MTc0NTQxMDg4OCwicGx0IjotMX0.LNEioyMc6bqM4-uLfFZ6fE517GBkinPnyozYqIWFYu8; bili_ticket_expires=1745670088; sid=8prkazaf; bp_t_offset_74199115=1059038024936980480; b_lsid=2EF975FA_1966CF21183; browser_resolution=1411-746; CURRENT_FNVAL=4048
@@ -66,8 +86,6 @@ DDNS:
     ZoneID: f460ccc93a56c41d9b52de75087dca75
     DnsRecordId: 3a72b0ea38ec3da31ee10d3b6068c5c1
     ApiToken: qGM46X4qxqnts6WCq-lJg3rIaCrx3IXCC-3hhpTr
-    Type: AAAA
-    Name: like.151580.xyz
 
 Server3: sctp3776tdvvefnyamdjc7g51zvprjn
 BCoinExchange: "74199115"

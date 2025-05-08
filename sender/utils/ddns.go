@@ -2,9 +2,12 @@ package utils
 
 import (
 	"bytes"
+
 	"charge/config"
 	"charge/sender"
 	"charge/utils"
+	"github.com/elliotchance/pie/v2"
+
 	"encoding/json"
 	"fmt"
 	"io"
@@ -22,16 +25,23 @@ import (
 func UpdateDnsRecode() func() {
 	return func() {
 		url := "https://api.cloudflare.com/client/v4/zones/%s/dns_records/%s"
-		ddns := config.Cfg.DDNS
-		isCheck := ddns.Update
-		if !isCheck {
-			return
+
+		ip := utils.GetCurrentIpv4()
+		qlidx := pie.FindFirstUsing(config.Cfg.RemoteDevice, func(value config.Device) bool {
+			return value.IP == ip
+		})
+
+		var device = config.Cfg.LocalDevice
+		if qlidx != -1 {
+			device = config.Cfg.RemoteDevice[qlidx]
 		}
+
+		ddns := device.DDNS
 
 		monitor := sender.Monitor{}
 		monitor.Tag = "DDNS"
 		monitor.Title = "Ipv6"
-		ip := utils.GetCurrentIpv6()
+		ip = utils.GetCurrentIpv6()
 		if ip == "" {
 			monitor.Desp = fmt.Sprintf("ipv6的ip获取失败")
 			monitor.PushS()

@@ -1,19 +1,21 @@
 package config
 
 import (
-	"charge/utils"
 	"fmt"
-	"gopkg.in/yaml.v3"
 	"io"
 	"log"
 	"os"
 	"strings"
+
+	"charge/utils"
+	"gopkg.in/yaml.v3"
 )
 
 type config struct {
-	WebPort    string `yaml:"WebPort"`
-	DeviceType string
-	Device     []Device `yaml:"Device"`
+	WebPort      string `yaml:"WebPort"`
+	DeviceType   string
+	RemoteDevice []Device `yaml:"RemoteDevice"`
+	LocalDevice  Device   `yaml:"LocalDevice"`
 
 	Redis   Redis     `yaml:"Redis"`
 	BUserCk []BUserCk `yaml:"BUserCk"`
@@ -23,8 +25,6 @@ type config struct {
 	SpecialUid      []User `yaml:"SpecialUid"`
 	WebUserAgent    string `yaml:"WebUserAgent"`
 	MobileUserAgent string `yaml:"MobileUserAgent"`
-
-	DDNS DDNS `yaml:"DDNS"`
 
 	Server3       string `yaml:"Server3"`
 	BCoinExchange string `yaml:"BCoinExchange"`
@@ -40,6 +40,14 @@ type Device struct {
 	ProxyPort string `yaml:"ProxyPort"`
 	Name      string `yaml:"Name"`
 	Ql        Ql     `yaml:"Ql"`
+	DDNS      DDNS   `yaml:"DDNS"`
+	Tools     Tools  `yaml:"Tools"`
+}
+
+type Tools struct {
+	Daily          bool `yaml:"Daily"`
+	CrawlerLottery bool `yaml:"CrawlerLottery"`
+	DDNS           bool `yaml:"DDNS"`
 }
 
 type Redis struct {
@@ -63,7 +71,6 @@ type User struct {
 }
 
 type DDNS struct {
-	Update      bool   `yaml:"Update"`
 	ZoneID      string `yaml:"ZoneID"`
 	DnsRecordId string `yaml:"DnsRecordId"`
 	ApiToken    string `yaml:"ApiToken"`
@@ -72,7 +79,7 @@ type DDNS struct {
 }
 
 type Ql struct {
-	Addr         string `yaml:"Addr"`
+	QLPort       string `yaml:"QLPort"`
 	ClientId     string `yaml:"ClientId"`
 	ClientSecret string `yaml:"ClientSecret"`
 }
@@ -101,9 +108,9 @@ func Read() {
 	if npath[len(npath)-1] != "charge" {
 		npath = npath[:len(npath)-1]
 	}
-
+	fmt.Println("Path:", Path, npath)
 	Path = strings.Join(npath, "/")
-	fmt.Println("Path:", Path)
+
 	fmt.Println("rootPath:", Path+"/config/config.yaml")
 	data, err := os.OpenFile(Path+"/config/config.yaml", os.O_RDWR, 777)
 	if err != nil {

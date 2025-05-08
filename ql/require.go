@@ -1,15 +1,16 @@
 package ql
 
 import (
-	"charge/config"
-	"charge/utils"
 	"encoding/json"
 	"fmt"
-	"github.com/elliotchance/pie/v2"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"time"
+
+	"charge/config"
+	"charge/utils"
+	"github.com/elliotchance/pie/v2"
 )
 
 type qlClient struct {
@@ -29,27 +30,25 @@ func init() {
 		},
 	}
 	var ql config.Ql
-
+	var addr string
+	var device = config.Cfg.LocalDevice
 	ip := utils.GetCurrentIpv4()
-	qlidx := pie.FindFirstUsing(config.Cfg.Device, func(value config.Device) bool {
+	qlidx := pie.FindFirstUsing(config.Cfg.RemoteDevice, func(value config.Device) bool {
 		return value.IP == ip
 	})
+
 	if qlidx != -1 {
-		ql = config.Cfg.Device[qlidx].Ql
+		device = config.Cfg.RemoteDevice[qlidx]
 	} else {
-		fmt.Println("ql.未找到公网ip")
-		ip = utils.GetCurrentIpv4Private()[0]
+		fmt.Println("ql.未找到公网ip，尝试连接本地服务")
+		ip = "localhost"
+
 		// 私有ip需要的信息
 	}
-
+	ql = device.Ql
 	QlClient.ClientId = ql.ClientId
 	QlClient.ClientSecret = ql.ClientSecret
-	addr := ""
-
-	idx := pie.FindFirstUsing(config.Cfg.Device, func(value config.Device) bool {
-		return value.Host
-	})
-	port := config.Cfg.Device[idx].QLPort
+	port := ql.QLPort
 
 	addr = ip + ":" + port
 	QlClient.Addr = "http://" + addr

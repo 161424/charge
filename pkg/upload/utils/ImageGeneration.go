@@ -2,9 +2,6 @@ package utils
 
 import (
 	"bytes"
-	"charge/config"
-	"charge/dao/redis"
-	"charge/inet"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -16,6 +13,12 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"charge/config"
+	"charge/dao/redis"
+	"charge/inet"
+	"charge/utils"
+	"github.com/elliotchance/pie/v2"
 )
 
 var rank = []string{"daily", "weekly", "monthly"}
@@ -95,12 +98,36 @@ type Illust struct {
 	} `json:"urls"`
 }
 
-var u, _ = url.Parse("http://127.0.0.1" + ":" + "10809")
-var PixivClient = &http.Client{
-	Timeout: time.Second * 60,
-	Transport: &http.Transport{
-		Proxy: http.ProxyURL(u),
-	},
+var PixivClient = &http.Client{}
+
+func init() {
+	var t = &http.Transport{}
+	var port = ""
+	var device = config.Cfg.LocalDevice
+	ip := utils.GetCurrentIpv4()
+	qlidx := pie.FindFirstUsing(config.Cfg.RemoteDevice, func(value config.Device) bool {
+		return value.IP == ip
+	})
+
+	if qlidx != -1 {
+		device = config.Cfg.RemoteDevice[qlidx]
+	}
+	port = device.ProxyPort
+
+	if port != "0" {
+		ip = device.IP
+		if ip == "" {
+			ip = "localhost"
+		}
+		var u, _ = url.Parse("http://" + ip + ":" + port)
+		t.Proxy = http.ProxyURL(u)
+	}
+
+	PixivClient = &http.Client{
+		Timeout:   time.Second * 60,
+		Transport: t,
+	}
+
 }
 
 func LinkPixiv() {

@@ -1,16 +1,17 @@
 package redis
 
 import (
-	"charge/config"
-	"charge/router/types"
-	"charge/utils"
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/elliotchance/pie/v2"
-	"github.com/redis/go-redis/v9"
 	"strconv"
 	"time"
+
+	"charge/config"
+	"charge/router/types"
+	"charge/utils"
+	"github.com/elliotchance/pie/v2"
+	"github.com/redis/go-redis/v9"
 )
 
 var RedisClient *redis.Client
@@ -26,54 +27,23 @@ func Start() {
 	var redisClient *redis.Client
 	// 当使用ipv6访问本机wsl中redis时，会访问失败，但是远程客户端使用ipv6访问本机redis服务器时，就能访问成功
 
-	idx := pie.FindFirstUsing(config.Cfg.Device, func(value config.Device) bool {
+	idx := pie.FindFirstUsing(config.Cfg.RemoteDevice, func(value config.Device) bool {
 		return value.Host
 	})
-	hostInfo := config.Cfg.Device[idx]
-	// 如果是host节点
-	if config.Cfg.DeviceType == "Host" {
-		addr := hostInfo.IP + ":" + hostInfo.RedisPort
-		redisClient = start(addr)
-		ok := redisClient.Ping(context.Background())
+	hostInfo := config.Cfg.RemoteDevice[idx]
 
-		if ok.Err() == nil {
-			RedisClient = redisClient
-			fmt.Printf("成功访问 Host.Redis地址%s\n", addr)
-			return
-		}
-		fmt.Printf("访问 Host.Redis地址 %s 失败。err:%s\n", addr, ok.Err())
-	}
-
-	// 公网ip访问本地节点
-	ip := utils.GetCurrentIpv4()
-	addr := ip + ":" + hostInfo.RedisPort
+	// 连接host节点
+	addr := hostInfo.IP + ":" + hostInfo.RedisPort
 	redisClient = start(addr)
 	ok := redisClient.Ping(context.Background())
 
 	if ok.Err() == nil {
 		RedisClient = redisClient
-		fmt.Printf("成功访问 Remote.Host.redis地址%s\n", addr)
+		fmt.Printf("成功访问 Host.Redis地址%s\n", addr)
 		return
-	} else {
-		fmt.Printf("访问 Remote.Host.redis %s 失败。err:%s\n", addr, ok.Err())
 	}
 
-	// 私网ip访问本地节点
-	if config.Cfg.Redis.Addr != "" {
-		addr := config.Cfg.Redis.Addr
-		redisClient = start(addr)
-		ok := redisClient.Ping(context.Background())
-
-		if ok.Err() == nil {
-			RedisClient = redisClient
-			fmt.Printf("成功访问 Local.Redis地址%s\n", addr)
-
-			return
-		}
-		fmt.Printf("访问 Local.Redis地址 %s 失败。err:%s\n", addr, ok.Err())
-	}
-
-	fmt.Printf("访问 redis %s 失败。部分任务无法执行！！！。err:%s\n", addr, ok.Err())
+	fmt.Printf("访问  Host.Redis地址 %s 失败。部分任务无法执行！！！。err:%s\n", addr, ok.Err())
 
 }
 
