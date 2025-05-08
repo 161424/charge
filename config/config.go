@@ -1,14 +1,12 @@
 package config
 
 import (
+	"charge/utils"
 	"fmt"
+	"gopkg.in/yaml.v3"
 	"io"
 	"log"
 	"os"
-	"strings"
-
-	"charge/utils"
-	"gopkg.in/yaml.v3"
 )
 
 type config struct {
@@ -103,13 +101,6 @@ func Start() {
 func Read() {
 
 	Path, _ = os.Getwd()
-
-	npath := strings.Split(Path, Ps)
-	if npath[len(npath)-1] != "charge" {
-		npath = npath[:len(npath)-1]
-	}
-	fmt.Println("Path:", Path, npath)
-	Path = strings.Join(npath, "/")
 
 	fmt.Println("rootPath:", Path+"/config/config.yaml")
 	data, err := os.OpenFile(Path+"/config/config.yaml", os.O_RDWR, 777)

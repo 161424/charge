@@ -11,7 +11,9 @@ import (
 	utils2 "charge/pkg/utils"
 	"charge/ql"
 	"charge/sender/utils"
+	utils3 "charge/utils"
 	"fmt"
+	"github.com/elliotchance/pie/v2"
 	"github.com/go-co-op/gocron/v2"
 	"time"
 )
@@ -38,15 +40,32 @@ func Run() {
 		panic(err)
 	}
 	var app []App
-	app = append(app, App{"DDNS每日更新", "0 12 * * *", utils.UpdateDnsRecode()})
-	app = append(app, App{"Config模板更新", "0 10 * * *", config.UpdateConfigExample()})
+	var device = config.Cfg.LocalDevice
+	ip := utils3.GetCurrentIpv4()
+	qlidx := pie.FindFirstUsing(config.Cfg.RemoteDevice, func(value config.Device) bool {
+		return value.IP == ip
+	})
+	if qlidx != -1 {
+		device = config.Cfg.RemoteDevice[qlidx]
+	}
 
+	if device.Tools.DDNS == true {
+		app = append(app, App{"DDNS每日更新", "0 12 * * *", utils.UpdateDnsRecode()})
+	}
+
+	app = append(app, App{"Config模板更新", "0 10 * * *", config.UpdateConfigExample()})
 	app = append(app, App{Name: "青龙更新CK", Cron: "0 */1 * * *", Task: ql.LinkQLAndUpdateCk()})
 	app = append(app, App{Name: "自动发表评论", Cron: "0 10 * * *", Task: uploadOpus.PushOpus()})
 
-	app = append(app, App{"监听lottery", "0 */4 * * *", LotteryUp.ListenLotteryUp()}) // 0 4 8 12 16 20
-	app = append(app, App{"监听lotteryGroup", "0 */6 * * *", LotteryGroup.ListenGroupForLottery()})
-	app = append(app, App{"DailyTask", "0 8/8 * * *", common.DailyTask()})
+	if device.Tools.CrawlerLottery == true {
+		app = append(app, App{"监听lottery", "0 */4 * * *", LotteryUp.ListenLotteryUp()}) // 0 4 8 12 16 20
+		app = append(app, App{"监听lotteryGroup", "0 */6 * * *", LotteryGroup.ListenGroupForLottery()})
+	}
+
+	if device.Tools.Daily == true {
+		app = append(app, App{"DailyTask", "0 8/8 * * *", common.DailyTask()})
+	}
+
 	app = append(app, App{"GiftExchange", "0 0 * * *", common.GiftExchange()})
 	// todo 自动参与充电抽奖
 
