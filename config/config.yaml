@@ -18,7 +18,6 @@ RemoteDevice:
       CrawlerLottery: true
       DDNS: true
 
-
   - Host: false
     IP: 115.120.234.147
     Name: hw
