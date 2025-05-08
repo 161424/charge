@@ -34,7 +34,6 @@ func init() {
 	var device = config.Cfg.LocalDevice
 	ip := utils.GetCurrentIpv4()
 	qlidx := pie.FindFirstUsing(config.Cfg.RemoteDevice, func(value config.Device) bool {
-		fmt.Println(value.IP, ip, value.IP == ip)
 		return value.IP == ip
 	})
 

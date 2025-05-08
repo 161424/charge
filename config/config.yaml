@@ -13,7 +13,7 @@ RemoteDevice:
     DDNS:
       Type: AAAA
       Name: like.151580.xyz
-    tools:
+    Tools:
       Daily: true
       CrawlerLottery: true
       DDNS: true
@@ -25,7 +25,7 @@ RemoteDevice:
       QLPort: 15700
       ClientId: z8y_k4DOHVl5
       ClientSecret: XrCj-0ddMc3k7NgQhR6xdWM3
-    tools:
+    Tools:
       Daily: true
       CrawlerLottery: true
       DDNS: false
@@ -37,7 +37,7 @@ LocalDevice:
     QLPort: 15700
     ClientId: -7KCeBLs2mb-
     ClientSecret: 0CVI22Hgw_vmY3sPHkhrkCx2
-  tools:
+  Tools:
     Daily: true
     CrawlerLottery: true
     DDNS: false
