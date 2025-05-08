@@ -2,6 +2,7 @@ package utils
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net"
@@ -35,15 +36,17 @@ func GetCurrentIpv6() string {
 func GetCurrentIpv4() string {
 	resp, err := http.Get("https://ipinfo.io/ip")
 	if err != nil {
+		fmt.Println("未找到公网ipv4")
 		return ""
 	}
 	defer resp.Body.Close()
 
 	ip, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
+		fmt.Println("公网ipv4解析错误", string(ip), err.Error())
 		return ""
 	}
-
+	fmt.Println("公网ipv4:", string(ip))
 	return string(ip)
 }
 

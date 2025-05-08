@@ -37,6 +37,10 @@ func Start() {
 	redisClient = start(addr)
 	ok := redisClient.Ping(context.Background())
 
+	fmt.Printf("/-------- redis---------/\n"+
+		"hostInfo.IP:%s\n"+
+		"hostInfo.RedisPort:%s\n\n", hostInfo.IP, hostInfo.RedisPort)
+
 	if ok.Err() == nil {
 		RedisClient = redisClient
 		fmt.Printf("成功访问 Host.Redis地址%s\n", addr)

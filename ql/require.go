@@ -40,16 +40,18 @@ func init() {
 	if qlidx != -1 {
 		device = config.Cfg.RemoteDevice[qlidx]
 	} else {
-		fmt.Println("ql.未找到公网ip，尝试连接本地服务")
+		fmt.Printf("ql.未找到公网ip:%s,尝试连接本地服务\n", ip)
 		ip = "localhost"
 
-		// 私有ip需要的信息
 	}
 	ql = device.Ql
 	QlClient.ClientId = ql.ClientId
 	QlClient.ClientSecret = ql.ClientSecret
 	port := ql.QLPort
-
+	fmt.Printf("/-------- ql---------/\n"+
+		"ClientId:%s\n"+
+		"ClientSecret:%s\n"+
+		"QLPort:%s\n\n", ql.ClientId, ql.ClientSecret, ql.QLPort)
 	addr = ip + ":" + port
 	QlClient.Addr = "http://" + addr
 	ok := LinkQl()
