@@ -34,13 +34,14 @@ func init() {
 	var device = config.Cfg.LocalDevice
 	ip := utils.GetCurrentIpv4()
 	qlidx := pie.FindFirstUsing(config.Cfg.RemoteDevice, func(value config.Device) bool {
+		fmt.Println(value.IP, ip, value.IP == ip)
 		return value.IP == ip
 	})
 
 	if qlidx != -1 {
 		device = config.Cfg.RemoteDevice[qlidx]
 	} else {
-		fmt.Printf("ql.未找到公网ip:%s,尝试连接本地服务\n", ip)
+		fmt.Printf("ql.未找到公网ip: %s,尝试连接本地服务\n", ip)
 		ip = "localhost"
 
 	}
