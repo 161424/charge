@@ -1,20 +1,22 @@
 package server3
 
 import (
-	"charge/config"
 	"encoding/json"
 	"fmt"
+
+	"charge/config"
 	serverchan_sdk "github.com/easychen/serverchan-sdk-golang"
 )
 
-func Push(title, desp, tag string) {
+func Push(title, desp, tag, Channel string) {
 	resp, err := serverchan_sdk.ScSend(config.Cfg.Server3, title, desp, &serverchan_sdk.ScSendOptions{
-		Tags: tag, // 传入 tags 参数
+		Tags:    tag, // 传入 tags 参数
+		Channel: Channel,
 	})
 	if err != nil {
 		desp, _ := json.Marshal(resp)
 		fmt.Println(string(desp))
-		Push("发送错误", string(desp), "错误")
+		Push("发送错误", string(desp), "错误", Channel)
 	}
 	if resp == nil {
 		fmt.Println("server酱返回信息为nil？？？")

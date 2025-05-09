@@ -10,7 +10,6 @@ import (
 
 	"charge/config"
 	"charge/utils"
-	"github.com/elliotchance/pie/v2"
 )
 
 type qlClient struct {
@@ -29,21 +28,16 @@ func init() {
 			IdleConnTimeout: 30 * time.Second,
 		},
 	}
+
 	var ql config.Ql
+	var ip string
 	var addr string
-	var device = config.Cfg.LocalDevice
-	ip := utils.GetCurrentIpv4()
-	qlidx := pie.FindFirstUsing(config.Cfg.RemoteDevice, func(value config.Device) bool {
-		return value.IP == ip
-	})
+	var device = config.GetDevice()
 
-	if qlidx != -1 {
-		device = config.Cfg.RemoteDevice[qlidx]
-	} else {
-		fmt.Printf("ql.未找到公网ip: %s,尝试连接本地服务\n", ip)
+	if device.IP == "" {
 		ip = "localhost"
-
 	}
+
 	ql = device.Ql
 	QlClient.ClientId = ql.ClientId
 	QlClient.ClientSecret = ql.ClientSecret

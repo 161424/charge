@@ -1,12 +1,14 @@
 package config
 
 import (
-	"charge/utils"
 	"fmt"
-	"gopkg.in/yaml.v3"
 	"io"
 	"log"
 	"os"
+
+	"charge/utils"
+	"github.com/elliotchance/pie/v2"
+	"gopkg.in/yaml.v3"
 )
 
 type config struct {
@@ -85,7 +87,6 @@ type Ql struct {
 var Cfg = &config{}
 var Ps = string(os.PathSeparator)
 var Path = ""
-var Pod = os.Getenv("Pod")
 
 func init() {
 	// 读取 YAML 文件
@@ -96,6 +97,19 @@ func Start() {
 	if len(Cfg.BUserCk) == 0 {
 		panic("BUserCk为无效配置，无法启动服务")
 	}
+}
+
+func GetDevice() *Device {
+	var device = Cfg.LocalDevice
+	ip := utils.GetCurrentIpv4()
+	qlidx := pie.FindFirstUsing(Cfg.RemoteDevice, func(value Device) bool {
+		return value.IP == ip
+	})
+
+	if qlidx != -1 {
+		device = Cfg.RemoteDevice[qlidx]
+	}
+	return &device
 }
 
 func Read() {
