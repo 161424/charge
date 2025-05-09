@@ -7,7 +7,10 @@ import (
 	"io/ioutil"
 	"net"
 	"net/http"
+	"sync"
 )
+
+var ones = sync.Once{}
 
 type GCI struct {
 	Result    bool
@@ -46,7 +49,10 @@ func GetCurrentIpv4() string {
 		fmt.Println("公网ipv4解析错误", string(ip), err.Error())
 		return ""
 	}
-	fmt.Println("公网ipv4:", string(ip))
+	ones.Do(func() {
+		fmt.Println("公网ipv4:", string(ip))
+	})
+
 	return string(ip)
 }
 

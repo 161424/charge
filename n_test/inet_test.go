@@ -4,6 +4,7 @@ import (
 	"charge/config"
 	"charge/inet"
 	"charge/sender/utils"
+	utils2 "charge/utils"
 	"fmt"
 	"io"
 	"net"
@@ -18,7 +19,7 @@ var modelTp = "test"
 
 // 2409:8a44:4b12:c6e0:69ec:d9ee:89b:7878
 func TestDDNS(t *testing.T) {
-	ip := utils.GetCurrentIp()
+	ip := utils2.GetCurrentIpv6()
 	fmt.Println(ip)
 	utils.UpdateDnsRecode()
 }

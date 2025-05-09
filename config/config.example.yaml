@@ -1,6 +1,27 @@
 WebPort: ""
 devicetype: ""
-Device: []
+RemoteDevice: []
+LocalDevice:
+    Host: false
+    IP: ""
+    RedisPort: ""
+    QLPort: ""
+    ProxyPort: ""
+    Name: ""
+    Ql:
+        QLPort: ""
+        ClientId: ""
+        ClientSecret: ""
+    DDNS:
+        ZoneID: ""
+        DnsRecordId: ""
+        ApiToken: ""
+        Type: ""
+        Name: ""
+    Tools:
+        Daily: false
+        CrawlerLottery: false
+        DDNS: false
 Redis:
     Addr: ""
     Password: ""
@@ -11,13 +32,6 @@ LotteryUid: []
 SpecialUid: []
 WebUserAgent: ""
 MobileUserAgent: ""
-DDNS:
-    Update: false
-    ZoneID: ""
-    DnsRecordId: ""
-    ApiToken: ""
-    Type: ""
-    Name: ""
 Server3: ""
 BCoinExchange: ""
 Model: ""

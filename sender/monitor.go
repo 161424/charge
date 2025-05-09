@@ -3,6 +3,7 @@ package sender
 import (
 	"charge/config"
 	"charge/sender/server3"
+	"fmt"
 )
 
 type Monitor struct {
@@ -14,7 +15,8 @@ type Monitor struct {
 var device = config.GetDevice()
 
 func (m *Monitor) PushS() {
-	server3.Push(m.Title, m.Desp, m.Tag, device.Name)
+	title := fmt.Sprintf("[%s]-%s", device.Name, m.Title)
+	server3.Push(title, m.Desp, m.Tag)
 }
 
 func (m *Monitor) PushQ() {}
