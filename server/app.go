@@ -11,9 +11,7 @@ import (
 	utils2 "charge/pkg/utils"
 	"charge/ql"
 	"charge/sender/utils"
-	utils3 "charge/utils"
 	"fmt"
-	"github.com/elliotchance/pie/v2"
 	"github.com/go-co-op/gocron/v2"
 	"time"
 )
@@ -40,14 +38,7 @@ func Run() {
 		panic(err)
 	}
 	var app []App
-	var device = config.Cfg.LocalDevice
-	ip := utils3.GetCurrentIpv4()
-	qlidx := pie.FindFirstUsing(config.Cfg.RemoteDevice, func(value config.Device) bool {
-		return value.IP == ip
-	})
-	if qlidx != -1 {
-		device = config.Cfg.RemoteDevice[qlidx]
-	}
+	var device = config.GetDevice()
 
 	if device.Tools.DDNS == true {
 		app = append(app, App{"DDNS每日更新", "0 12 * * *", utils.UpdateDnsRecode()})

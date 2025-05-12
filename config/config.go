@@ -36,7 +36,6 @@ type Device struct {
 	Host      bool   `yaml:"Host"`
 	IP        string `yaml:"IP"`
 	RedisPort string `yaml:"RedisPort"`
-	QLPort    string `yaml:"QLPort"`
 	ProxyPort string `yaml:"ProxyPort"`
 	Name      string `yaml:"Name"`
 	Ql        Ql     `yaml:"Ql"`

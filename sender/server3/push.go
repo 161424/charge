@@ -11,7 +11,6 @@ import (
 func Push(title, desp, tag string) {
 	resp, err := serverchan_sdk.ScSend(config.Cfg.Server3, title, desp, &serverchan_sdk.ScSendOptions{
 		Tags: tag, // 传入 tags 参数
-
 	})
 	if err != nil {
 		desp, _ := json.Marshal(resp)

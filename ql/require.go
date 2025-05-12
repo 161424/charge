@@ -36,6 +36,8 @@ func init() {
 
 	if device.IP == "" {
 		ip = "localhost"
+	} else {
+		ip = device.IP
 	}
 
 	ql = device.Ql
