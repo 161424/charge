@@ -1,19 +1,19 @@
 package inet
 
 import (
-	"charge/config"
-	"charge/utils"
 	"context"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
-	url2 "net/url"
 	"strconv"
 	"strings"
 	"sync"
 	"sync/atomic"
 	"time"
+
+	"charge/config"
+	"charge/utils"
 )
 
 var nUrl = "https://api.bilibili.com/x/web-interface/nav"
@@ -29,9 +29,9 @@ type Unav struct {
 
 type defaultClient struct {
 	sync.Mutex
-	Client   *http.Client
-	Tracker  <-chan time.Time
-	Idx      int64
+	Client *http.Client
+
+	Idx      int
 	Cks      []ckStatus
 	AliveNum int
 	AliveCh  map[string]chan []byte // 控制访问并发数量
@@ -55,6 +55,8 @@ type ckStatus struct {
 }
 
 var DefaultClient = &defaultClient{}
+var pttime = 25
+var calltime = 0
 
 func init() {
 	context.WithCancel(context.Background())
@@ -132,7 +134,7 @@ func (d *defaultClient) CheckFirst(url string) []byte {
 	if err != nil {
 		return nil
 	}
-	//d.RunT()
+	d.RunT()
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	return body
@@ -153,7 +155,7 @@ func (d *defaultClient) CheckSelect(url string, idx int) []byte {
 	if err != nil {
 		return nil
 	}
-	//d.RunT()
+	d.RunT()
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 
@@ -185,7 +187,7 @@ func (d *defaultClient) CheckSelectPost(url string, contentType, referer, ua str
 	if err != nil {
 		return nil
 	}
-	//d.RunT()
+	d.RunT()
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	return body
@@ -216,7 +218,7 @@ func (d *defaultClient) CheckSelectOptions(url string, contentType, referer, ua 
 	if err != nil {
 		return nil
 	}
-	//d.RunT()
+	d.RunT()
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	return body
@@ -247,7 +249,7 @@ func (d *defaultClient) APPCheckSelect(url, ua, re string, idx int) []byte {
 		return nil
 	}
 
-	//d.RunT()
+	d.RunT()
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -289,7 +291,7 @@ func (d *defaultClient) APPCheckSelectPost(url string, contentType, referer, ua 
 		return nil
 	}
 
-	//d.RunT()
+	d.RunT()
 	defer resp.Body.Close()
 	body, err := io.ReadAll(resp.Body)
 	return body
@@ -313,7 +315,7 @@ func (d *defaultClient) CheckSelectPost2(url string, idx int, ck string, rbody i
 	if err != nil {
 		return nil, nil
 	}
-	//d.RunT()
+	d.RunT()
 	defer resp.Body.Close()
 	cookies := resp.Header.Values("set-cookie")
 	body, err := io.ReadAll(resp.Body)
@@ -331,20 +333,20 @@ func (d *defaultClient) RedundantDW(url string, tp string, dyTime time.Duration)
 		time.Sleep(dyTime)
 		return
 	} else {
-		checkAlive := 0
+		checkTimes := 0
 		for {
 			d.Once.once.Do(func() {
 				close(d.Once.ch)
 			})
-			idx := d.Idx % int64(len(d.Cks))
+			idx := d.Idx % len(d.Cks)
 			if idx == 0 {
-				checkAlive++
+				checkTimes++
 			}
-			if checkAlive == 3 { // 经过3轮仍未找到合适的ck来执行任务。在超出ck长度的任务在运行时，可能会出发panic
+			if checkTimes == 3 { // 经过3轮仍未找到合适的ck来执行任务。在超出ck长度的任务在运行时，可能会出发panic
 				d.CheckCkAlive(false)
 				time.Sleep(dyTime)
 				if d.AliveNum == 0 {
-					panic("没有存活的ck")
+					fmt.Errorf("没有存活的ck")
 					return
 				}
 			}
@@ -373,7 +375,7 @@ func (d *defaultClient) RedundantDW(url string, tp string, dyTime time.Duration)
 			time.Sleep(dyTime)
 		}
 	}
-	return
+
 }
 
 // code:-101 未登录
@@ -404,6 +406,8 @@ func (d *defaultClient) CheckCkAlive(skip bool) {
 				d.Once.ch = nil
 			}
 		}
+	} else {
+		close(d.Once.ch)
 	}
 	msg := "  ——————  账号检测  ———————  \n"
 	msg += fmt.Sprintf("现在是：%s\n", time.Now().Format("2006-01-02 15:04:05"))
@@ -462,28 +466,23 @@ func (d *defaultClient) CheckCkAlive(skip bool) {
 func (d *defaultClient) RunT() {
 	v, _ := d.RunTime.Load(d.Cks[0].Uid)
 	d.RunTime.Store(d.Cks[0].Uid, v.(int)+1)
-	if config.Cfg.Model == "test" {
+
+	calltime++
+	if calltime != pttime {
 		return
 	}
+	calltime /= pttime
+
 	w := []string{}
 	for _, k := range d.Cks {
 		v, _ := d.RunTime.Load(k.Uid)
 		w = append(w, k.Uid+":"+strconv.Itoa(v.(int)))
 	}
 	s := strings.Join(w, "; ")
-	fmt.Println("访问次数：", s)
+	fmt.Println("ck访问次数：", s)
 }
 
 func (d *defaultClient) Sleep(idx int, td time.Duration) {
 	d.Cks[idx].DynamicSleep = true
 	d.Cks[idx].DynamicSleepTime = time.Now().Add(td)
-}
-
-func (d *defaultClient) ArticleLike(bid string) {
-	url := "https://api.bilibili.com/x/article/like"
-	reqBody := url2.Values{}
-	reqBody.Set("id", bid)
-	reqBody.Set("type", "1")
-	reqBody.Set("csrf", d.Cks[0].Csrf)
-	d.CheckSelectPost(url, utils.ContentType["json"], "", "", 0, strings.NewReader(reqBody.Encode()))
 }

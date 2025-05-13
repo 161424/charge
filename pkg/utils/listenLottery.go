@@ -2,16 +2,17 @@ package utils
 
 import (
 	"bytes"
-	"charge/dao/redis"
-	"charge/inet"
-	"charge/utils"
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/PuerkitoBio/goquery"
 	"regexp"
 	"strings"
 	"time"
+
+	"charge/dao/redis"
+	"charge/inet"
+	"charge/utils"
+	"github.com/PuerkitoBio/goquery"
 )
 
 // 视频简介 和 专栏两种
@@ -133,7 +134,7 @@ func ListenUpForLotteryOpus(Uid []string, cmp chan struct{}) []string {
 					fmt.Printf("[opus]:正在查看第【%d】页内容。文章id：%s；文章标题《%s》；%s\n", counter, item.OpusID, item.Content, lTime)
 				}
 
-				d.ArticleLike(item.OpusID) // 给专栏点赞
+				ArticleLike(item.OpusID) // 给专栏点赞
 				doc.Find(".opus-module-content > p").Each(func(i int, s *goquery.Selection) {
 					//fmt.Println(1, s.Get(i), s.Text())
 					if v := s.Find("span").Text(); v != "" { // 文字内容

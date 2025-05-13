@@ -1,17 +1,18 @@
 package LotteryGroup
 
 import (
-	"charge/dao/redis"
-	"charge/inet"
-	"charge/pkg/LotteryUp"
-	"charge/sender"
-	utils2 "charge/utils"
 	"context"
 	"encoding/json"
 	"fmt"
 	"regexp"
 	"strconv"
 	"time"
+
+	"charge/dao/redis"
+	"charge/inet"
+	"charge/pkg/lottery/LotteryUp"
+	"charge/sender"
+	utils2 "charge/utils"
 )
 
 type GroupData struct {
@@ -98,7 +99,7 @@ func ReadGroup(size int) {
 	fmt.Printf("ListenLotteryGroup complete。从lottery(ByGroup)获取到的有效动态数:【%d】，上一次读取Group时间是: 【%s】\n", ExecFreq, time.Unix(lastTime, 0).Format("2006-01-02 15:04:05"))
 	if ExecFreq > 0 {
 		//monitor.Desp = fmt.Sprintf("从group获的【%d】个lottery", ExecFreq)
-		monitor.Desp = fmt.Sprintf("%slottery(ByGroup)新增【%d】个lottery。", t.Format("2006-01-02"), ExecFreq)
+		monitor.Desp = fmt.Sprintf("%s lottery(ByGroup)新增【%d】个lottery。", t.Format("2006-01-02"), ExecFreq)
 		monitor.PushS()
 	}
 

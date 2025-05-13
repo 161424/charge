@@ -1,18 +1,19 @@
 package n
 
 import (
-	"charge/config"
-	"charge/dao/redis"
-	"charge/inet"
-	"charge/pkg/getcharge"
-	"charge/router/types"
-	"charge/utils"
 	"context"
 	"encoding/json"
 	"fmt"
 	"regexp"
 	"testing"
 	"time"
+
+	"charge/config"
+	"charge/dao/redis"
+	"charge/inet"
+	getcharge2 "charge/pkg/charge/getcharge"
+	"charge/router/types"
+	"charge/utils"
 )
 
 func TestChargeInfo(t *testing.T) {
@@ -22,7 +23,7 @@ func TestChargeInfo(t *testing.T) {
 	data := types.FormResp{}
 	re := regexp.MustCompile(`\d+`)
 	// 过滤出有用信息
-	detail := getcharge.ChargeDetail{}
+	detail := getcharge2.ChargeDetail{}
 	err := json.Unmarshal(body, &detail)
 	mainBody := detail.Data.Item.Modules
 	data.IsParticipants = mainBody.Module_dynamic.Additional.Upower_lottery.Button.Check.Text
@@ -50,7 +51,7 @@ func TestChargeOtherInfo(t *testing.T) {
 	_url := "https://api.vc.bilibili.com/lottery_svr/v1/lottery_svr/lottery_notice?business_id=1006518945822277649&business_type=12"
 	body := inet.DefaultClient.CheckFirst(_url)
 
-	detail := getcharge.ChargeOtherInfo{}
+	detail := getcharge2.ChargeOtherInfo{}
 	err := json.Unmarshal(body, &detail)
 	fmt.Println(err, detail)
 
@@ -60,7 +61,7 @@ func TestGetChargeFromMonitorDefaultUsersDynamic(t *testing.T) {
 	defer utils.Tracker(time.Now())
 	config.Start()
 	redis.Start()
-	f := getcharge.GetChargeFromMonitorDefaultUsersDynamic()
+	f := getcharge2.GetChargeFromMonitorDefaultUsersDynamic()
 	f()
 	time.Sleep(5 * time.Second)
 	fmt.Println("end")
@@ -93,7 +94,7 @@ func TestGetChargeRecordFromCharger(t *testing.T) {
 	config.Start()
 	redis.Start()
 	defer utils.Tracker(time.Now())
-	f := getcharge.GetChargeRecordFromCharger()
+	f := getcharge2.GetChargeRecordFromCharger()
 	f()
 }
 

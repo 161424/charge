@@ -1,12 +1,13 @@
 package n
 
 import (
-	"charge/config"
-	"charge/dao/redis"
-	"charge/pkg/LotteryGroup"
-	"charge/utils"
 	"testing"
 	"time"
+
+	"charge/config"
+	"charge/dao/redis"
+	"charge/pkg/lottery/LotteryGroup"
+	"charge/utils"
 )
 
 func TestGroup(t *testing.T) {

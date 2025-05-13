@@ -2,19 +2,20 @@ package LotteryUp
 
 import (
 	"bytes"
-	"charge/config"
-	"charge/dao/redis"
-	"charge/inet"
-	"charge/pkg/getcharge"
-	"charge/pkg/utils"
-	"charge/sender"
-	utils2 "charge/utils"
 	"context"
 	"encoding/json"
 	"fmt"
 	"sort"
 	"strconv"
 	"time"
+
+	"charge/config"
+	"charge/dao/redis"
+	"charge/inet"
+	"charge/pkg/charge/getcharge"
+	"charge/pkg/utils"
+	"charge/sender"
+	utils2 "charge/utils"
 )
 
 var CU = "https://api.bilibili.com/x/polymer/web-dynamic/v1/detail?id="                                        // 获取动态创建时间
@@ -60,34 +61,41 @@ func ListenLotteryUp() func() {
 		if redis.RedisClient == nil {
 			return
 		}
+
 		monitor := sender.Monitor{}
 		monitor.Tag = "lottery"
 		monitor.Title = "每日lottery(ByUp)监控"
+
 		complete := make(chan struct{})
 		opusUid := utils.GetUid(config.Cfg.LotteryUid)
 		videoUid := utils.GetUid(config.Cfg.SpecialUid)
 		lotterys := utils.ListenUpForLotteryOpus(opusUid, complete)
 		lotterys = append(lotterys, utils.ListenUpForLotteryVideo(videoUid, complete)...)
+
 		time.Sleep(20 * time.Second)
 		if len(lotterys) == 0 {
 			fmt.Println("并未获取到有效的lottery")
 			return
 		}
+
 		t := time.Now()
 		ctx := context.Background()
 		SleepStep = 0
 		ExecFreq := 0
+
 		for _, lottery := range lotterys {
 			if LotteryDetail(ctx, modelTp, lottery, t) {
 				ExecFreq++
 			}
 		}
+
 		inet.DefaultClient.Lock()
 		defer inet.DefaultClient.Unlock()
+
 		fmt.Println("ListenLotteryUp complete。从lottery(ByUp)获取到的有效动态数:", ExecFreq)
 		complete <- struct{}{}
 		if ExecFreq != 0 {
-			monitor.Desp = fmt.Sprintf("%slottery(ByUp)新增【%d】个lottery。", t.Format("2006-01-02"), ExecFreq)
+			monitor.Desp = fmt.Sprintf("%s lottery(ByUp)新增【%d】个lottery。", t.Format("2006-01-02"), ExecFreq)
 			monitor.PushS()
 		}
 

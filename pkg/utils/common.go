@@ -1,20 +1,23 @@
 package utils
 
 import (
-	"charge/config"
-	"charge/inet"
-	"charge/utils"
 	"encoding/json"
 	"fmt"
 	"math/rand"
 	"net/http"
+	"strings"
 	"time"
+
+	"charge/config"
+	"charge/inet"
+	"charge/utils"
 )
 
 var modelTp = "utils"
+var _inet = inet.DefaultClient
 
 func init() {
-	inet.DefaultClient.RegisterTp(modelTp)
+	_inet.RegisterTp(modelTp)
 }
 
 var DefaultUid = ""
@@ -81,7 +84,7 @@ type midUser struct {
 }
 
 func TakeName(user *[]config.User) {
-	_inet := inet.DefaultClient
+
 	for i, u := range *user {
 		respBody := _inet.Http("GET", "https://api.bilibili.com/x/space/acc/info?mid="+u.Uid, "", nil)
 		var body = midUser{}
@@ -97,6 +100,39 @@ func TakeName(user *[]config.User) {
 		(*user)[i].Name = body.Data.Name
 
 	}
+}
+
+// https://api.bilibili.com/x/web-interface/archive/like POST 视频
+// aid 114483913563020
+// like 1
+// from_spmid 333.934.0.0
+// spmid 333.788.0.0
+// statistics {"appId":100,"platform":5}
+// eab_x 2
+// ramval 0
+// source web_normal
+// ga 1
+// csrf c70fccdddfbfa4cbadede7a9926f8f4e
+func ArticleLike(bid string) {
+
+	idx := (_inet.Idx - 1 + len(_inet.Cks)) % len(_inet.Cks)
+	urlStruct := UrlTable.OpusLike
+
+	url := fmt.Sprintf(urlStruct.Url, _inet.Cks[idx].Csrf)
+	reqBody := fmt.Sprintf(urlStruct.Body, bid)
+
+	_inet.CheckSelectPost(url, urlStruct.ContentType, "", "", idx, strings.NewReader(reqBody))
+}
+
+func VideoLike(bid string) {
+
+	idx := (_inet.Idx - 1 + len(_inet.Cks)) % len(_inet.Cks)
+	urlStruct := UrlTable.VideoLike
+
+	url := urlStruct.Url
+	reqBody := fmt.Sprintf(urlStruct.Body, bid, _inet.Cks[idx].Csrf)
+
+	_inet.CheckSelectPost(url, urlStruct.ContentType, "", "", idx, strings.NewReader(reqBody))
 }
 
 //func ErrCode(err error) int {

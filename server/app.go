@@ -1,19 +1,20 @@
 package server
 
 import (
+	"fmt"
+	"time"
+
 	"charge/config"
 	"charge/dao/redis"
 	"charge/pkg"
-	"charge/pkg/LotteryGroup"
-	"charge/pkg/LotteryUp"
 	"charge/pkg/common"
+	"charge/pkg/lottery/LotteryGroup"
+	"charge/pkg/lottery/LotteryUp"
 	"charge/pkg/upload/uploadOpus"
 	utils2 "charge/pkg/utils"
 	"charge/ql"
 	"charge/sender/utils"
-	"fmt"
 	"github.com/go-co-op/gocron/v2"
-	"time"
 )
 
 type App struct {

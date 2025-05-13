@@ -2,7 +2,8 @@ package LotteryUp
 
 import (
 	"charge/dao/redis"
-	"charge/pkg/listenFollowUp"
+	"charge/pkg/up/listenFollowUp"
+
 	"context"
 	"encoding/json"
 	"fmt"
@@ -38,9 +39,5 @@ func LotteryRecords(tp string, input interface{}) {
 			redis.UpdateUp(ctx, vFollowData.Mid, vFollowData.String()) //
 		}
 	}
-
-}
-
-func ListenUp() {
 
 }

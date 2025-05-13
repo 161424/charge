@@ -1,20 +1,21 @@
 package n
 
 import (
-	"charge/config"
-	"charge/dao/redis"
-	"charge/inet"
-	"charge/pkg/LotteryGroup"
-	"charge/pkg/LotteryUp"
-	utils2 "charge/pkg/utils"
-	"charge/utils"
 	"context"
 	"fmt"
-	"github.com/PuerkitoBio/goquery"
 	"os"
 	"regexp"
 	"testing"
 	"time"
+
+	"charge/config"
+	"charge/dao/redis"
+	"charge/inet"
+	"charge/pkg/lottery/LotteryGroup"
+	"charge/pkg/lottery/LotteryUp"
+	utils2 "charge/pkg/utils"
+	"charge/utils"
+	"github.com/PuerkitoBio/goquery"
 )
 
 func TestLottery2(t *testing.T) {

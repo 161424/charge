@@ -2,7 +2,8 @@ package n
 
 import (
 	"charge/dao/redis"
-	"charge/pkg/listenFollowUp"
+	"charge/pkg/up/listenFollowUp"
+
 	"testing"
 )
 
