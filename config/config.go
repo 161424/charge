@@ -92,12 +92,6 @@ func init() {
 	Read()
 }
 
-func Start() {
-	if len(Cfg.BUserCk) == 0 {
-		panic("BUserCk为无效配置，无法启动服务")
-	}
-}
-
 func GetDevice() *Device {
 	var device = Cfg.LocalDevice
 	ip := utils.GetCurrentIpv4()
@@ -129,6 +123,7 @@ func Read() {
 	if err != nil {
 		log.Fatalf("解析 YAML 失败: %v", err)
 	}
+	Cfg.BUserCk = make([]BUserCk, 0)
 	fmt.Println("config:", Cfg)
 
 }
@@ -187,7 +182,12 @@ func SetUck(tp string, value, uid string) {
 func UpdateConfigExample() func() {
 	return func() {
 		newCfg := &config{}
-		newCfg.BUserCk = []BUserCk{}
+		newCfg.BUserCk = append([]BUserCk{}, BUserCk{})
+		newCfg.RemoteDevice = append([]Device{}, Device{})
+		newCfg.ChargeUid = append([]User{}, User{})
+		newCfg.LotteryUid = append([]User{}, User{})
+		newCfg.SpecialUid = append([]User{}, User{})
+
 		o, err := yaml.Marshal(newCfg)
 		data, err := os.OpenFile(Path+"/config/config.example.yaml", os.O_RDWR|os.O_TRUNC, 777)
 		if err != nil {

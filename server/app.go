@@ -25,7 +25,6 @@ type App struct {
 
 // Start 启动基础服务
 func Start() {
-	config.Start()
 	redis.Start()
 	pkg.Start()
 	utils2.SetDefaultUid("")
