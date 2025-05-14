@@ -1,13 +1,14 @@
 package ql
 
 import (
-	"charge/config"
-	"charge/inet"
-	"charge/utils"
 	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
+
+	"charge/config"
+	"charge/inet"
+	"charge/utils"
 )
 
 type QlEnvs struct {
@@ -104,8 +105,4 @@ func LinkQLAndUpdateCk() func() {
 		inet.DefaultClient.ReFresh(false)
 		fmt.Println("inet CK更新完毕")
 	}
-}
-
-func UpdateQlEnv() {
-
 }

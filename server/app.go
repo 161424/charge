@@ -11,7 +11,6 @@ import (
 	"charge/pkg/lottery/LotteryGroup"
 	"charge/pkg/lottery/LotteryUp"
 	"charge/pkg/upload/uploadOpus"
-	utils2 "charge/pkg/utils"
 	"charge/ql"
 	"charge/sender/utils"
 	"github.com/go-co-op/gocron/v2"
@@ -27,7 +26,6 @@ type App struct {
 func Start() {
 	redis.Start()
 	pkg.Start()
-	utils2.SetDefaultUid("")
 }
 
 var s, err = gocron.NewScheduler()

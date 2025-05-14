@@ -107,7 +107,6 @@ type AToken struct {
 }
 
 func LinkQl() string {
-	time.Sleep(10 * time.Second)
 	if QlClient.ClientId == "" || QlClient.ClientSecret == "" {
 		fmt.Println("ql 身份验证失败")
 		return ""
@@ -122,12 +121,12 @@ func LinkQl() string {
 	aToken := &AToken{}
 	err := json.Unmarshal(resp, aToken)
 	if err != nil {
-		fmt.Println(utils.ErrMsg["json"], "LinkQl", err, string(resp))
+		fmt.Printf(utils.ErrMsg["json"], "LinkQl", err, string(resp))
 		fmt.Println("err", err)
 		return ""
 	}
 	if aToken.Code != 200 {
-		fmt.Println(utils.ErrMsg["code"], "LinkQl", aToken.Code, string(resp))
+		fmt.Printf(utils.ErrMsg["code"], "LinkQl", aToken.Code, string(resp))
 		return ""
 	}
 	return aToken.Data.Token

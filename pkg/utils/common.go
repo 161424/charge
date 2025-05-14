@@ -10,7 +10,6 @@ import (
 
 	"charge/config"
 	"charge/inet"
-	"charge/utils"
 )
 
 var modelTp = "utils"
@@ -18,16 +17,6 @@ var _inet = inet.DefaultClient
 
 func init() {
 	_inet.RegisterTp(modelTp)
-}
-
-var DefaultUid = ""
-
-func SetDefaultUid(uid string) {
-	if uid == "" {
-		DefaultUid = utils.CutUid(config.Cfg.BUserCk[0].Ck)
-	} else {
-		DefaultUid = utils.CutUid(uid)
-	}
 }
 
 func DaleyTimeRandom2_10() func() {

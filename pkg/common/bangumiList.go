@@ -1,12 +1,10 @@
 package common
 
 import (
-	"charge/config"
 	"encoding/json"
 	"log"
 	"math/rand"
 	"os"
-	"strings"
 )
 
 type Bangumi struct {
@@ -41,11 +39,6 @@ func init() {
 	BangumiList.Type = 3
 
 	path, _ := os.Getwd()
-	npath := strings.Split(path, config.Ps)
-	if npath[len(npath)-1] != "charge" {
-		npath = npath[:len(npath)-1]
-	}
-	path = strings.Join(npath, "/")
 
 	f, err := os.OpenFile(path+"/data/243343066.json", os.O_RDWR, 777)
 	if err != nil {

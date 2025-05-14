@@ -1,11 +1,29 @@
 WebPort: ""
 devicetype: ""
-RemoteDevice: []
+RemoteDevice:
+    - Host: false
+      IP: ""
+      RedisPort: ""
+      ProxyPort: ""
+      Name: ""
+      Ql:
+        QLPort: ""
+        ClientId: ""
+        ClientSecret: ""
+      DDNS:
+        ZoneID: ""
+        DnsRecordId: ""
+        ApiToken: ""
+        Type: ""
+        Name: ""
+      Tools:
+        Daily: false
+        CrawlerLottery: false
+        DDNS: false
 LocalDevice:
     Host: false
     IP: ""
     RedisPort: ""
-    QLPort: ""
     ProxyPort: ""
     Name: ""
     Ql:
@@ -26,10 +44,22 @@ Redis:
     Addr: ""
     Password: ""
     Id_rsa: ""
-BUserCk: []
-ChargeUid: []
-LotteryUid: []
-SpecialUid: []
+BUserCk:
+    - Ck: ""
+      Token: ""
+      Access_key: ""
+      Group: ""
+      Uname: ""
+      Uid: 0
+ChargeUid:
+    - Name: ""
+      Uid: ""
+LotteryUid:
+    - Name: ""
+      Uid: ""
+SpecialUid:
+    - Name: ""
+      Uid: ""
 WebUserAgent: ""
 MobileUserAgent: ""
 Server3: ""

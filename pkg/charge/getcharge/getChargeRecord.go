@@ -11,7 +11,6 @@ import (
 	"strconv"
 	"time"
 
-	utils2 "charge/pkg/utils"
 	"charge/sender"
 	"charge/utils"
 )
@@ -129,7 +128,7 @@ func AutoJoinCharge() func() {
 	return func() {
 		ctx := context.Background()
 		charges := redis.FindAllCharge(ctx, "")
-		chargeRecords := redis.FindAllChargeRecord(ctx, utils2.DefaultUid)
+		chargeRecords := redis.FindAllChargeRecord(ctx, "")
 		//var resp = make(map[string]getcharge.ChargeRecordLoad)
 		//for k, v := range result {
 		//	j := getcharge.ChargeRecordLoad{}

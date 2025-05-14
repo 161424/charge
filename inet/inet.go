@@ -338,6 +338,9 @@ func (d *defaultClient) RedundantDW(url string, tp string, dyTime time.Duration)
 			d.Once.once.Do(func() {
 				close(d.Once.ch)
 			})
+			if len(d.Cks) == 0 {
+				return nil
+			}
 			idx := d.Idx % len(d.Cks)
 			if idx == 0 {
 				checkTimes++
