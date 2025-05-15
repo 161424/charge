@@ -42,7 +42,11 @@ func Run() {
 		app = append(app, App{"DDNS每日更新", "0 12 * * *", utils.UpdateDnsRecode()})
 	}
 
-	app = append(app, App{"Config模板更新", "0 10 * * *", config.UpdateConfigExample()})
+	// 会导致git pull 失败
+	if false {
+		app = append(app, App{"Config模板更新", "0 10 * * *", config.UpdateConfigExample()})
+	}
+
 	app = append(app, App{Name: "青龙更新CK", Cron: "0 */1 * * *", Task: ql.LinkQLAndUpdateCk()})
 	app = append(app, App{Name: "自动发表评论", Cron: "0 10 * * *", Task: uploadOpus.PushOpus()})
 
