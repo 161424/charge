@@ -123,6 +123,7 @@ func GetChargeFromMonitorDefaultUsersDynamic() func() {
 			data.NumParticipants = oDetail.Data.Participants
 			data.NumPrizes = oDetail.Data.FirstPrize + oDetail.Data.SecondPrize + oDetail.Data.ThirdPrize
 			ChargerUid := utils2.CutUid(config.Cfg.BUserCk[0].Ck)
+
 			data.ChargerUid = ChargerUid
 			data.BusinessId = op
 

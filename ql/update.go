@@ -54,8 +54,12 @@ func GetQLEnv(token string) {
 	}
 	for _, ck := range config.Cfg.BUserCk {
 		c := utils.CutUid(ck.Ck)
+		if c == "" {
+			continue
+		}
 		qlCk.cks[c] = ""
 	}
+
 	for _, v := range qlEnvs.Data {
 		if v.Status == 1 { // 表示禁用
 			continue
@@ -68,6 +72,9 @@ func GetQLEnv(token string) {
 		uid_name_token := strings.Split(v.Remarks, "_")
 		_ = uid_name_token[0]
 		uid := utils.CutUid(v.Value)
+		if uid == "" {
+			continue
+		}
 		acTime := ""
 		if len(uid_name_token) >= 3 && uid_name_token[2] != "" {
 			acTime = uid_name_token[2]

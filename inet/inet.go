@@ -90,8 +90,12 @@ func (d *defaultClient) ReFresh(skip bool) {
 
 	// utils.Shuffle(_u) // 打乱ck毫无必要，还增加了工作量，需要修改
 	for i := 0; i < len(_u); i++ {
+		_uid := utils.CutUid(_u[i].Ck)
+		if _uid == "" {
+			continue
+		}
 		d.Cks[i].Ck = _u[i].Ck
-		d.Cks[i].Uid = utils.CutUid(_u[i].Ck)
+		d.Cks[i].Uid = _uid
 		d.Cks[i].Csrf = utils.CutCsrf(_u[i].Ck) // csrf可能为空，注意验证
 		d.Cks[i].Access_key = _u[i].Access_key
 	}
@@ -418,6 +422,9 @@ func (d *defaultClient) CheckCkAlive(skip bool) {
 	d.AliveNum = len(d.Cks)
 	for idx := 0; idx < len(d.Cks); idx++ {
 		uid = utils.CutUid(d.Cks[idx].Ck)
+		if uid == "" {
+			continue
+		}
 		code := -1
 
 		//if config.Cfg.BUserCk[idx].Token != "" {

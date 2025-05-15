@@ -27,6 +27,9 @@ func Shuffle(arr interface{}) {
 func CutUid(s string) string {
 	re := regexp.MustCompile("DedeUserID=[0-9]+")
 	nre := re.FindAllString(s, -1)
+	if !strings.Contains(nre[0], "=") {
+		return ""
+	}
 	nre = strings.Split(nre[0], "=")
 	return nre[1]
 }

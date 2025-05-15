@@ -2,8 +2,6 @@ package inet
 
 import (
 	"bytes"
-	"charge/config"
-	"charge/utils"
 	"crypto/rand"
 	"crypto/rsa"
 	"crypto/sha256"
@@ -12,11 +10,14 @@ import (
 	"encoding/json"
 	"encoding/pem"
 	"fmt"
-	"github.com/PuerkitoBio/goquery"
 	"log"
 	url2 "net/url"
 	"strings"
 	"time"
+
+	"charge/config"
+	"charge/utils"
+	"github.com/PuerkitoBio/goquery"
 )
 
 type T struct {
@@ -57,6 +58,9 @@ func Refresh(idx int) int {
 		return -1
 	}
 	uid = utils.CutUid(config.Cfg.BUserCk[idx].Ck)
+	if uid == "" {
+		return -1
+	}
 	csrf = utils.CutCsrf(config.Cfg.BUserCk[idx].Ck)
 	if t.Code == 0 {
 		if t.Data.Refresh {

@@ -123,7 +123,10 @@ func Read() {
 	if err != nil {
 		log.Fatalf("解析 YAML 失败: %v", err)
 	}
-	Cfg.BUserCk = make([]BUserCk, 0)
+	if len(Cfg.BUserCk) == 0 {
+		Cfg.BUserCk = append([]BUserCk{}, BUserCk{})
+	}
+
 	fmt.Println("config:", Cfg)
 
 }
