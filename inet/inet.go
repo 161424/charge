@@ -474,7 +474,7 @@ func (d *defaultClient) CheckCkAlive(skip bool) {
 }
 
 func (d *defaultClient) RunT() {
-	v, _ := d.RunTime.Load(d.Cks[0].Uid)
+	v, _ := d.RunTime.LoadOrStore(d.Cks[0].Uid, 0)
 	d.RunTime.Store(d.Cks[0].Uid, v.(int)+1)
 
 	calltime++
@@ -485,7 +485,7 @@ func (d *defaultClient) RunT() {
 
 	w := []string{}
 	for _, k := range d.Cks {
-		v, _ := d.RunTime.Load(k.Uid)
+		v, _ := d.RunTime.LoadOrStore(d.Cks[0].Uid, 1)
 		w = append(w, k.Uid+":"+strconv.Itoa(v.(int)))
 	}
 	s := strings.Join(w, "; ")

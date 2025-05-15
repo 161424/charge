@@ -78,7 +78,7 @@ func Run() {
 		// each job has a unique id
 		fmt.Printf("任务【%s】的ID是：%s\n", a.Name, j.ID())
 
-		time.Sleep(10 * time.Second)
+		time.Sleep(5 * time.Second)
 	}
 	// start the scheduler
 	s.Start()
