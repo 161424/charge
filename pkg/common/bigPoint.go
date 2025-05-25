@@ -91,7 +91,7 @@ var modelBigTask = "大会员积分签到"
 // 签到
 func VSign(idx int) int {
 	// url :(= "https://api.bilibili.com/pgc/activity/score/task/sign"
-	url := "https://api.bilibili.com/pgc/activity/score/task/sign"
+	url := "https://api.bilibili.com/pgc/activity/score/task/sign2"
 
 	reqSignBody := &reqSign{
 		T:      time.Now().UnixMilli(),
@@ -100,11 +100,10 @@ func VSign(idx int) int {
 	}
 
 	reqSignBodyStr, err := json.Marshal(reqSignBody)
-	fmt.Println(string(reqSignBodyStr))
 	resp := inet.DefaultClient.CheckSelectPost(url, "", "", config.Cfg.MobileUserAgent, idx, strings.NewReader(string(reqSignBodyStr)))
 	reS := &reSign{}
 	err = json.Unmarshal(resp, reS)
-	//fmt.Println(string(resp), reS)
+
 	if err != nil {
 		Note.StatusAddString(utils.ErrMsg["json"], "VSign", err.Error(), string(resp))
 		return -1
@@ -122,7 +121,6 @@ func BigPoint(idx int) {
 		Note.AddString("今日【%s】已执行完毕\n", modelBigTask)
 		return
 	}
-	config.Read() // 确保access尽可能正确
 
 	url := "https://api.bilibili.com/x/vip_point/task/combine"
 	vTask := &VipTask{}

@@ -73,7 +73,7 @@ func ListenUpForLotteryOpus(Uid []string, cmp chan struct{}) []string {
 		fmt.Println("[opus]:监听专栏用户列表：", Uid)
 		hu := map[string]string{}
 		for _, uid := range Uid {
-			fmt.Printf("[opus]:查看用户uid:【%s】。\n", uid)
+			fmt.Printf("[opus]:查看用户uid:【%s】\n", uid)
 			if uid == "2595733" {
 				stopPage = 12
 			} else {

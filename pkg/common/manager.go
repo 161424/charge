@@ -162,10 +162,10 @@ func DailyTask() func() {
 			}
 
 			Note.AddString("现在是%s\n", day)
-			if cks[idx].Alive == false {
-				Note.AddString("## 第%d个账号【%s】Ck已失活\n", idx+1, uS)
-				continue
-			}
+			//if cks[idx].Alive == false {
+			//	Note.AddString("## 第%d个账号【%s】Ck已失活\n", idx+1, uS)
+			//	continue
+			//}
 			Note.AddString("## 正在执行第%d个账号【%s】的每日任务\n", idx+1, uS)
 
 			// userinfo

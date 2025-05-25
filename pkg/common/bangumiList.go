@@ -31,13 +31,13 @@ type bangumiBody struct {
 
 var BangumiList = &bangumiList{}
 
-func (b bangumiList) ReadFile() {
+func (b *bangumiList) ReadFile() {
 	// 默认观看西游记，但没有观看api，暂时还没有作用
 	//GET https://api.bilibili.com/pgc/review/user?media_id=28229051
-	BangumiList.Md = 28229051
+	b.Md = 28229051
 	// GET https://api.bilibili.com/pgc/view/web/ep/list?season_id=33622
-	BangumiList.Season = 33622
-	BangumiList.Type = 3
+	b.Season = 33622
+	b.Type = 3
 
 	path := config.Path
 	f, err := os.OpenFile(path+"/data/243343066.json", os.O_RDWR, 777)
@@ -51,12 +51,10 @@ func (b bangumiList) ReadFile() {
 	if err != nil {
 		panic(err)
 	}
-	BangumiList.List = bangumibody.Result.Episodes
-	//
-	bangumibody = nil
+	b.List = bangumibody.Result.Episodes
 }
 
-func (b bangumiList) Random() Bangumi {
+func (b *bangumiList) Random() Bangumi {
 	b.ReadFile()
 	return b.List[rand.Intn(len(b.List))]
 }

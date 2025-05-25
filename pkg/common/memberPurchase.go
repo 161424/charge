@@ -234,6 +234,9 @@ func MemberRegister(idx int) {
 		}
 		newGold = num2 - num1 + todayG
 	}
+	if inet.DefaultClient.Cks[idx].Access_key != "" {
+		Note.AddString("warning 没有Access_key。无法领取金币\n")
+	}
 	Note.AddString("会员购签到完毕。现在有*%d*个金币,今日已获得*%d*个金币\n", num1, newGold)
 }
 

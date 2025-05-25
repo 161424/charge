@@ -237,7 +237,7 @@ func MagicExpiredReminder(idx int) {
 	}
 
 	if len(mCard.Data.PageInfo.List) == 0 {
-		Note.AddString("暂无权益卡可以使用")
+		Note.AddString("暂无权益卡可以使用\n")
 	}
 
 	// 两次返回类型基本相同
@@ -261,7 +261,7 @@ func MagicExpiredReminder(idx int) {
 		sl = append(sl, fmt.Sprintf("【%s】权益卡在%d天%.1f小时后过期", en, g1, g2))
 	}
 
-	Note.AddString("权益卡数量：【*%d*】。%s。\n", len(mCard.Data.PageInfo.List), strings.Join(sl, ","))
+	Note.AddString("权益卡数量：【*%d*】 %s。\n", len(mCard.Data.PageInfo.List), strings.Join(sl, ","))
 
 }
 
@@ -761,7 +761,7 @@ func MagicWarOrderView(idx int, acId string) {
 	herculesId := magicWarPage.Data.TaskList.NormalTasks[0].GuideLink
 	herculesIds := strings.Split(herculesId, "=")
 	if len(herculesIds) != 2 {
-		fmt.Println(herculesId)
+		fmt.Println("herculesId=", herculesId)
 		return
 	}
 	taskId := herculesIds[1]
@@ -785,7 +785,7 @@ func MagicWarOrderView(idx int, acId string) {
 	magicWarViewResp := &MagicWarViewResp{}
 	err = json.Unmarshal(resp, magicWarViewResp)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("err=", err)
 		return
 	}
 	if magicWarViewResp.Code != 0 {

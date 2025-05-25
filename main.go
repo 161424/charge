@@ -7,7 +7,6 @@ import (
 func main() {
 	server.Start()
 	server.Run()
-
 	defer server.Stop()
 
 }

@@ -43,7 +43,7 @@ var Ct = &ct{}
 
 func init() {
 	UrlsHostname.Api = "https://api.bilibili.com"
-	UrlsHostname.Big = "https://api.bilibili.com"
+	UrlsHostname.Big = "https://big.bilibili.com"
 	UrlsHostname.Data = "https://data.bilibili.com"
 
 	Ct.Form = "application/x-www-form-urlencoded"
