@@ -51,7 +51,6 @@ func TestLottery2(t *testing.T) {
 }
 
 func TestListenLotteryUp(t *testing.T) {
-	config.Start()
 	redis.Start()
 	defer utils.Tracker(time.Now())
 
@@ -73,7 +72,6 @@ func TestListenLotteryUp(t *testing.T) {
 //}
 
 func TestAAL(t *testing.T) {
-	config.Start()
 	redis.Start()
 
 	defer utils.Tracker(time.Now())
@@ -110,7 +108,6 @@ func TestAAL(t *testing.T) {
 //}
 
 func TestHget(t *testing.T) {
-	config.Start()
 	redis.Start()
 	n := redis.RedisClient.HGet(context.Background(), "up", "123").Val()
 	fmt.Println(n)
@@ -156,7 +153,6 @@ func TestLottery5(t *testing.T) {
 }
 
 func TestLottery6(t *testing.T) {
-	config.Start()
 	redis.Start()
 	inet.DefaultClient.ReFresh(true)
 	complete := make(chan struct{})

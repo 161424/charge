@@ -1,7 +1,6 @@
 package n
 
 import (
-	"charge/config"
 	"charge/dao/redis"
 	"charge/pkg/Reserve"
 
@@ -11,13 +10,11 @@ import (
 )
 
 func TestReserve(t *testing.T) {
-	config.Start()
 	s := Reserve.ReserveFromBusinessId(2, "4345074")
 	fmt.Println(s)
 }
 
 func TestListenupforReverse(t *testing.T) {
-	config.Start()
 	redis.Start()
 	c := make(chan struct{})
 	w := utils.ListenReverse(c)

@@ -46,7 +46,6 @@ func TestTime(t *testing.T) {
 //}
 
 func TestConfig(t *testing.T) {
-	config.Start()
 	fmt.Println(config.Cfg)
 	tp := []string{"ck", "token", "access_key", "Group"}
 	uid := "DedeUserID=349869794;AAAAAAA"

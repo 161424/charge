@@ -22,7 +22,7 @@ type qlClient struct {
 var QlClient = qlClient{}
 
 // var QlClientRemote = qlClient{}
-func init() {
+func Start() {
 	QlClient.Client = &http.Client{
 		Transport: &http.Transport{
 			IdleConnTimeout: 30 * time.Second,

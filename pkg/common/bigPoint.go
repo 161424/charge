@@ -88,11 +88,42 @@ type PointList struct {
 
 var modelBigTask = "大会员积分签到"
 
+// 签到
+func VSign(idx int) int {
+	// url :(= "https://api.bilibili.com/pgc/activity/score/task/sign"
+	url := "https://api.bilibili.com/pgc/activity/score/task/sign"
+
+	reqSignBody := &reqSign{
+		T:      time.Now().UnixMilli(),
+		Device: "phone",
+		Ts:     time.Now().Unix(),
+	}
+
+	reqSignBodyStr, err := json.Marshal(reqSignBody)
+	fmt.Println(string(reqSignBodyStr))
+	resp := inet.DefaultClient.CheckSelectPost(url, "", "", config.Cfg.MobileUserAgent, idx, strings.NewReader(string(reqSignBodyStr)))
+	reS := &reSign{}
+	err = json.Unmarshal(resp, reS)
+	//fmt.Println(string(resp), reS)
+	if err != nil {
+		Note.StatusAddString(utils.ErrMsg["json"], "VSign", err.Error(), string(resp))
+		return -1
+	}
+	if reS.Code != 0 { // -401
+		Note.StatusAddString(utils.ErrMsg["code"], "VSign", reS.Code, string(resp))
+		return reS.Code
+	}
+	return 0
+
+}
+
 func BigPoint(idx int) {
 	if Note.Register(modelBigTask) { // 在第一轮执行无误后会跳过
 		Note.AddString("今日【%s】已执行完毕\n", modelBigTask)
 		return
 	}
+	config.Read() // 确保access尽可能正确
+
 	url := "https://api.bilibili.com/x/vip_point/task/combine"
 	vTask := &VipTask{}
 	resp := inet.DefaultClient.CheckSelect(url, idx)
@@ -153,13 +184,12 @@ func BigPoint(idx int) {
 								if inet.DefaultClient.Cks[idx].Access_key == "" {
 									Note.AddString("【10分钟观影任务】无法完成，因为缺少必要的Access_key\n")
 								} else {
-									config.Read() // 确保access尽可能正确
 									WatchRandomEp(idx)
 								}
 							} else if task.Task_code == "vipmallview" {
 								// 会员购
 								if VipMallView(idx) == 0 {
-									Note.AddString("【浏览会员购】每日任务 ✓")
+									Note.AddString("【浏览会员购】每日任务 ✓\n")
 								}
 							} else if task.Task_code == "dress-view" {
 								// 装扮商城
@@ -194,35 +224,6 @@ func BigPoint(idx int) {
 	} else {
 		Note.StatusAddString("今日获取积分【*%d*】, 部分任务未成功（可能是完成获取，但是接口数据延迟） ×。\n", todayPoint)
 	}
-}
-
-// 签到
-func VSign(idx int) int {
-	// url :(= "https://api.bilibili.com/pgc/activity/score/task/sign"
-	url := "https://api.bilibili.com/pgc/activity/score/task/sign2"
-
-	reqSignBody := &reqSign{
-		T:      time.Now().UnixMilli(),
-		Device: "phone",
-		Ts:     time.Now().Unix(),
-	}
-
-	reqSignBodyStr, err := json.Marshal(reqSignBody)
-	fmt.Println(string(reqSignBodyStr))
-	resp := inet.DefaultClient.CheckSelectPost(url, "", "", config.Cfg.MobileUserAgent, idx, strings.NewReader(string(reqSignBodyStr)))
-	reS := &reSign{}
-	err = json.Unmarshal(resp, reS)
-	//fmt.Println(string(resp), reS)
-	if err != nil {
-		Note.StatusAddString(utils.ErrMsg["json"], "VSign", err.Error(), string(resp))
-		return -1
-	}
-	if reS.Code != 0 { // -401
-		Note.StatusAddString(utils.ErrMsg["code"], "VSign", reS.Code, string(resp))
-		return reS.Code
-	}
-	return 0
-
 }
 
 // 接受任务

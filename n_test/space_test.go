@@ -2,7 +2,6 @@ package n
 
 import (
 	"bytes"
-	"charge/config"
 	"charge/inet"
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
@@ -11,7 +10,6 @@ import (
 )
 
 func TestSpace(t *testing.T) {
-	config.Start()
 	_url := "https://www.bilibili.com/opus/1007475508047249432"
 	opus := []string{}
 

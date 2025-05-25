@@ -8,7 +8,6 @@ import (
 	"testing"
 	"time"
 
-	"charge/config"
 	"charge/dao/redis"
 	"charge/inet"
 	getcharge2 "charge/pkg/charge/getcharge"
@@ -17,7 +16,7 @@ import (
 )
 
 func TestChargeInfo(t *testing.T) {
-	config.Start()
+
 	_url := "https://api.bilibili.com/x/polymer/web-dynamic/v1/detail?id=1006518945822277649"
 	body := inet.DefaultClient.RedundantDW(_url, "", time.Second*5)
 	data := types.FormResp{}
@@ -47,7 +46,6 @@ func TestChargeInfo(t *testing.T) {
 }
 
 func TestChargeOtherInfo(t *testing.T) {
-	config.Start()
 	_url := "https://api.vc.bilibili.com/lottery_svr/v1/lottery_svr/lottery_notice?business_id=1006518945822277649&business_type=12"
 	body := inet.DefaultClient.CheckFirst(_url)
 
@@ -59,7 +57,6 @@ func TestChargeOtherInfo(t *testing.T) {
 
 func TestGetChargeFromMonitorDefaultUsersDynamic(t *testing.T) {
 	defer utils.Tracker(time.Now())
-	config.Start()
 	redis.Start()
 	f := getcharge2.GetChargeFromMonitorDefaultUsersDynamic()
 	f()
@@ -91,7 +88,6 @@ func TestNilStruct(t *testing.T) {
 }
 
 func TestGetChargeRecordFromCharger(t *testing.T) {
-	config.Start()
 	redis.Start()
 	defer utils.Tracker(time.Now())
 	f := getcharge2.GetChargeRecordFromCharger()
@@ -99,7 +95,6 @@ func TestGetChargeRecordFromCharger(t *testing.T) {
 }
 
 func TestT(t *testing.T) {
-	config.Start()
 	redis.Start()
 	s := redis.ReadOneChargeRecord(context.Background(), "74199115", "686127")
 	fmt.Println(s)

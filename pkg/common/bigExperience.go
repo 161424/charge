@@ -2,6 +2,7 @@ package common
 
 import (
 	"charge/inet"
+	utils2 "charge/pkg/utils"
 	"charge/utils"
 	"encoding/json"
 	url2 "net/url"
@@ -21,6 +22,11 @@ import (
 type bE struct {
 	Code    int
 	Message string //用户经验已经领取、访问频繁、领取成功
+	Ttl     int
+	Data    struct {
+		Type    int
+		IsGrant bool
+	}
 }
 
 var modelBExp = "大会员10经验"
@@ -30,11 +36,16 @@ func BigExperience(idx int) {
 		Note.AddString("今日【%s】已执行完毕\n", modelBExp)
 		return
 	}
-	url := "https://api.bilibili.com/x/vip/experience/add"
+	uTable := utils2.UrlTable.VipAdd10Exp
+	url := uTable.Host + uTable.Url
 	reqBody := url2.Values{}
-	reqBody.Set("csrf", inet.DefaultClient.Cks[idx].Csrf)
+	if uTable.Query != "" {
+		reqBody.Set(uTable.Query, inet.DefaultClient.Cks[idx].Csrf)
+	}
+
 	be := &bE{}
-	resp := inet.DefaultClient.CheckSelectPost(url, utils.ContentType["x"], "", "", idx, strings.NewReader(reqBody.Encode()))
+	resp := inet.DefaultClient.CheckSelectPost(url, uTable.ContentType, uTable.Referer, "", idx, strings.NewReader(reqBody.Encode()))
+
 	err := json.Unmarshal(resp, be)
 	if err != nil {
 		Note.StatusAddString(utils.ErrMsg["json"], "BigExperience", err.Error(), string(resp))

@@ -1,7 +1,6 @@
 package n
 
 import (
-	"charge/config"
 	"charge/dao/redis"
 	"charge/inet"
 	"charge/pkg/common"
@@ -11,6 +10,7 @@ import (
 )
 
 func TestBigpoint(t *testing.T) {
+	inet.DefaultClient.ReFresh(true)
 	common.BigPoint(0)
 }
 
@@ -40,10 +40,9 @@ func TestGetTodayPoint(t *testing.T) {
 }
 
 func TestVSign(t *testing.T) {
-	config.Start()
 	redis.Start()
 	inet.DefaultClient.ReFresh(true)
-	n := common.VSign(1)
+	n := common.VSign(0)
 	fmt.Println(n)
 	fmt.Println("【123】，【哈哈哈】，[123]，[哈哈哈]")
 }
@@ -65,4 +64,10 @@ func TestGetUserInfo(t *testing.T) {
 		fmt.Printf("尊敬的 %s-【%s】您好,您的大会员在 %s 到期，还剩 %d 天。", userInfo.Data.VipLabel.Text, userInfo.Data.Uname,
 			t1, t2)
 	}
+}
+
+func TestGetBig10Exp(t *testing.T) {
+	redis.Start()
+	inet.DefaultClient.ReFresh(true)
+	common.BigExperience(0)
 }

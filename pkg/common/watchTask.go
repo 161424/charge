@@ -257,7 +257,7 @@ func WatchRandomEp(idx int) {
 		if code == 0 {
 			Note.AddString("10分钟视频观看完毕，获得40积分")
 		} else {
-
+			Note.AddString("10分钟视频观看失败，错误代码：%d", code)
 		}
 	}()
 

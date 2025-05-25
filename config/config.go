@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"strings"
 
 	"charge/utils"
 	"github.com/elliotchance/pie/v2"
@@ -84,7 +85,7 @@ type Ql struct {
 }
 
 var Cfg = &config{}
-var Ps = string(os.PathSeparator)
+var testFileName = "n_test"
 var Path = ""
 
 func init() {
@@ -108,7 +109,10 @@ func GetDevice() *Device {
 func Read() {
 
 	Path, _ = os.Getwd()
-
+	if strings.Contains(Path, testFileName) {
+		Path = strings.Replace(Path, testFileName, "", 1)
+		Path = Path[:len(Path)-1]
+	}
 	fmt.Println("rootPath:", Path+"/config/config.yaml")
 	data, err := os.OpenFile(Path+"/config/config.yaml", os.O_RDWR, 777)
 	if err != nil {

@@ -1,6 +1,7 @@
 package common
 
 import (
+	"charge/config"
 	"encoding/json"
 	"log"
 	"math/rand"
@@ -30,7 +31,7 @@ type bangumiBody struct {
 
 var BangumiList = &bangumiList{}
 
-func init() {
+func (b bangumiList) ReadFile() {
 	// 默认观看西游记，但没有观看api，暂时还没有作用
 	//GET https://api.bilibili.com/pgc/review/user?media_id=28229051
 	BangumiList.Md = 28229051
@@ -38,8 +39,7 @@ func init() {
 	BangumiList.Season = 33622
 	BangumiList.Type = 3
 
-	path, _ := os.Getwd()
-
+	path := config.Path
 	f, err := os.OpenFile(path+"/data/243343066.json", os.O_RDWR, 777)
 	if err != nil {
 		log.Fatalf("读取文件失败: %v", err)
@@ -57,5 +57,6 @@ func init() {
 }
 
 func (b bangumiList) Random() Bangumi {
+	b.ReadFile()
 	return b.List[rand.Intn(len(b.List))]
 }

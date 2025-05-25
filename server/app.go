@@ -25,6 +25,7 @@ type App struct {
 // Start 启动基础服务
 func Start() {
 	redis.Start()
+	ql.Start()
 	pkg.Start()
 }
 

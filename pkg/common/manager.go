@@ -3,7 +3,6 @@ package common
 import (
 	"charge/config"
 	"charge/inet"
-	"charge/log"
 	"charge/sender"
 	"fmt"
 	"github.com/elliotchance/pie/v2"
@@ -17,18 +16,19 @@ var MaxRunCKNum = 99
 type note struct {
 	Wait sync.WaitGroup
 
-	Uid   string
+	Uid string
+	//UidList []string
 	Title string
 
 	Status sync.Map
-
+	//StatusKeysAcName  map[string][]string
 	HasSub bool
 	Desc   string
 }
 
 type Active struct {
-	Name string // 模块名称
-
+	Name      string // 模块名称
+	Run       bool
 	ErrMsg    string
 	oldErrMsg string
 }
@@ -44,10 +44,15 @@ func init() {
 			next = time.Date(next.Year(), next.Month(), next.Day(), 0, 0, 0, 0, next.Location())
 			t := time.NewTicker(next.Sub(now))
 			<-t.C
-			Note.Wait.Wait()
-			Note.HasSub = false
+			Note.DailyRefresh()
 		}
 	}()
+}
+
+func (n *note) DailyRefresh() {
+	n.Wait.Wait()
+	n.HasSub = false
+	n.Status = sync.Map{}
 }
 
 func (n *note) SetUid(uid string) {
@@ -67,28 +72,23 @@ func (n *note) Register(title string) (stop bool) {
 	}
 
 	printHead()
-
 	ac.oldErrMsg = ac.ErrMsg
 	ac.ErrMsg = ""
 
 	if ac.oldErrMsg == "" {
-		return true
+		if ac.Run == true {
+			return true
+		}
+	} else {
+		n.AddString("上次执行Err信息：`%s`\n", ac.oldErrMsg)
 	}
-	n.AddString("上次执行Err信息：`%s`\n", ac.oldErrMsg)
-
+	ac.Run = true
 	return false
 
 }
 
 func (n *note) String() string {
 	return n.Desc
-}
-
-func (n *note) StatusAddString(format string, a ...any) {
-	ac := n.findActive(n.Title)
-	ac.ErrMsg = fmt.Sprintf(format, a...)
-
-	n.AddString(format, a...)
 }
 
 func (n *note) AddString(format string, a ...any) {
@@ -99,6 +99,13 @@ func (n *note) AddString(format string, a ...any) {
 	s += fmt.Sprintf(format, a...)
 	n.Desc += s
 	fmt.Printf(s)
+}
+
+func (n *note) StatusAddString(format string, a ...any) {
+	ac := n.findActive(n.Title)
+	ac.ErrMsg = fmt.Sprintf(format, a...)
+
+	n.AddString(format, a...)
 }
 
 func (n *note) findActive(title string) *Active {
@@ -268,7 +275,7 @@ func DailyTask() func() {
 
 		monitor.Desp = Note.String()
 		monitor.PushS()
-		log.Write(Note.Desc, day)
+		// log.Write(Note.Desc, day)  需要更新
 
 	}
 }

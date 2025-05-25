@@ -1,7 +1,6 @@
 package n
 
 import (
-	"charge/config"
 	"charge/dao/redis"
 	"charge/inet"
 	"charge/pkg/common"
@@ -10,7 +9,6 @@ import (
 )
 
 func TestDailyTask(t *testing.T) {
-	config.Start()
 	redis.Start()
 
 	inet.DefaultClient.ReFresh(true)

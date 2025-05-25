@@ -413,8 +413,6 @@ func (d *defaultClient) CheckCkAlive(skip bool) {
 				d.Once.ch = nil
 			}
 		}
-	} else {
-		close(d.Once.ch)
 	}
 	msg := "  ——————  账号检测  ———————  \n"
 	msg += fmt.Sprintf("现在是：%s\n", time.Now().Format("2006-01-02 15:04:05"))
