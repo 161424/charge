@@ -4,7 +4,6 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
-	"github.com/tidwall/gjson"
 	"io"
 	"net/http"
 	"net/url"
@@ -13,6 +12,8 @@ import (
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/tidwall/gjson"
 )
 
 func TestWbi(t *testing.T) {
@@ -82,7 +83,7 @@ func signAndGenerateURL(urlStr string) (string, error) {
 
 func encWbi(params map[string]string, imgKey, subKey string) map[string]string {
 	mixinKey := getMixinKey(imgKey + subKey)
-	currTime := "1739601221"
+	currTime := fmt.Sprintf("%d", time.Now().Unix())
 	// 	currTime := strconv.FormatInt(time.Now().Unix(), 10)
 	params["wts"] = currTime
 
@@ -109,6 +110,7 @@ func encWbi(params map[string]string, imgKey, subKey string) map[string]string {
 	// Calculate w_rid
 	hash := md5.Sum([]byte(queryStr + mixinKey))
 	params["w_rid"] = hex.EncodeToString(hash[:])
+	fmt.Println(hex.EncodeToString(hash[:]))
 	return params
 }
 
@@ -154,6 +156,7 @@ func getWbiKeys() (string, string) {
 		fmt.Printf("Error creating request: %s", err)
 		return "", ""
 	}
+	req.Header.Set("Cookie", "buvid4=BCBBE5DD-DA08-3323-C879-3B8B4181302D07932-023072221-u3CRc4RDNboKQbEiVxyj1w%3D%3D; buvid_fp_plain=undefined; enable_web_push=DISABLE; CURRENT_BLACKGAP=0; LIVE_BUVID=AUTO8517339017486916; hit-dyn-v2=1; PVID=2; enable_feed_channel=ENABLE; header_theme_version=OPEN; theme-tip-show=SHOWED; theme-avatar-tip-show=SHOWED; fingerprint=e64ff8333d9cfb1c0ed11c84e0094737; buvid_fp=e29e75ac7e31816f868eda26f99cebff; DedeUserID=74199115; DedeUserID__ckMd5=8d1ad2254e14c603; _uuid=4993814D-488D-6F28-594A-72CC5BD2C6F892229infoc; buvid3=CE589B24-D92F-6C2B-2424-1A310D6B8E9960427infoc; b_nut=1756167660; rpdid=0zbfvUmneU|u1RXHVTF|3n8|3w1V6Jye; home_feed_column=5; browser_resolution=1411-749; CURRENT_QUALITY=80; bsource=search_bing; bmg_af_switch=1; bmg_src_def_domain=i1.hdslb.com; bili_ticket=eyJhbGciOiJIUzI1NiIsImtpZCI6InMwMyIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjUwNzk5MDAsImlhdCI6MTc2NDgyMDY0MCwicGx0IjotMX0.4kdWhuhylzV-bxKQwiAgi9ZpYbCOxMe5JcPITBPQkHA; bili_ticket_expires=1765079840; SESSDATA=4d43edd3%2C1780372724%2C9295e%2Ac1CjC98Slfz_7hy_MnUhWsvggxVYZSSmjHh32SpgytxJiiHHKKYcpmoKUFaFEK1Cls_0cSVlJFcE43dEdHeWkzNW9sb0NGeWIzTU0zMktNaUlkSjBuZWlfMVlQN3pXQWxuZUZJNkJQQ1A0VzhXWjJ4WWplVS14NlVUNllDYlQtQmRwWDM5SEk5ZS1BIIEC; bili_jct=af0f76ed56fdf05589a7bc3326be1ae3; sid=5caw4hau; bp_t_offset_74199115=1142438859531878400; CURRENT_FNVAL=4048; b_lsid=C27C10E910_19AEC56F18E")
 	req.Header.Set("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36")
 	req.Header.Set("Referer", "https://www.bilibili.com/")
 	resp, err := client.Do(req)
